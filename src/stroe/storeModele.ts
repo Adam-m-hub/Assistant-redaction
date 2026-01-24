@@ -19,25 +19,17 @@ interface EtatModele {
   // ============================================
   // ÉTAT (Données)
   // ============================================
-  
-  /** Statut actuel du modèle */
-  statut: StatutModele;
-  
-  /** Progression du chargement (0-100) */
-  progression: ProgressionChargement | null;
-  
-  /** Dernière erreur survenue */
-  erreur: ErreurWebLLM | null;
-  
-  /** Nom du modèle actuellement chargé */
-  nomModele: string | null;
-  
-  /** Indique si une génération est en cours */
-  generationEnCours: boolean;
-  
-  /** Dernière réponse générée */
-  derniereReponse: ReponseModele | null;
+  statut: StatutModele; // Statut actuel du modèle
 
+  progression: ProgressionChargement | null;   // Progression du chargement (0-100) 
+  
+  erreur: ErreurWebLLM | null;  // Dernière erreur survenue 
+
+  nomModele: string | null;   // Nom du modèle actuellement chargé 
+  
+  generationEnCours: boolean;  // Indique si une génération est en cours
+  
+  derniereReponse: ReponseModele | null;   // Dernière réponse générée
   // ============================================
   // ACTIONS (Fonctions)
   // ============================================
@@ -65,20 +57,12 @@ interface EtatModele {
    */
   genererTexte: (messages: Message[]) => Promise<ReponseModele | null>;
   
-  /**
-   * Réinitialiser l'erreur
-   */
-  effacerErreur: () => void;
   
-  /**
-   * Décharger le modèle
-   */
-  dechargerModele: () => Promise<void>;
+  effacerErreur: () => void; //Réinitialiser l'erreur
   
-  /**
-   * Effacer la suggestion (dernière réponse)
-   */
-  effacerSuggestion: () => void;
+  dechargerModele: () => Promise<void>;   // Décharger le modèle
+  
+  effacerSuggestion: () => void;   // Effacer la suggestion (dernière réponse)
 }
 
 /**
@@ -195,8 +179,8 @@ export const useStoreModele = create<EtatModele>((set, _get) => {
         // Nettoyer le texte (enlever les guillemets)
             const texteNettoye = reponse.texte
             .trim()
-            .replace(/^["«]/, '')   // Enlever " ou « au début
-            .replace(/["»]$/, '')   // Enlever " ou » à la fin
+            .replace(/^["«]/, '')   
+            .replace(/["»]$/, '')   
             .trim();
                 // Mettre à jour l'état avec le texte nettoyé
         set({ 

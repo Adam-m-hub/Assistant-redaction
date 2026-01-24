@@ -18,17 +18,14 @@ export interface DocumentSauvegarde {
     longueur: Longueur;
   };
 }
-
 /**
  * Nom de la base de données
  */
 const NOM_DB = 'AssistantRedactionDB';
-
 /**
  * Version de la base de données
  */
 const VERSION_DB = 1;
-
 /**
  * Nom du store (table)
  */

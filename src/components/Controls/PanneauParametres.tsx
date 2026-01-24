@@ -31,21 +31,21 @@ export default function PanneauParametres({
   /**
    * Options de style avec icônes
    */
-  const optionsStyle: Record<StyleEcriture, { label: string; icone: string; description: string }> = {
-    formel: { label: 'Formel', icone: '👔', description: 'Professionnel et structuré' },
-    creatif: { label: 'Créatif', icone: '🎨', description: 'Original et imaginatif' },
-    concis: { label: 'Concis', icone: '⚡', description: 'Direct et précis' },
-    technique: { label: 'Technique', icone: '🔧', description: 'Détaillé et spécialisé' }
+  const optionsStyle: Record<StyleEcriture, { label: string; description: string }> = {
+    formel: { label: 'Formel', description: 'Professionnel et structuré' },
+    creatif: { label: 'Créatif', description: 'Original et imaginatif' },
+    concis: { label: 'Concis', description: 'Direct et précis' },
+    technique: { label: 'Technique', description: 'Détaillé et spécialisé' }
   };
 
   /**
    * Options de ton avec icônes
    */
-  const optionsTon: Record<Ton, { label: string; icone: string; description: string }> = {
-    neutre: { label: 'Neutre', icone: '⚖️', description: 'Objectif et équilibré' },
-    enthousiaste: { label: 'Enthousiaste', icone: '🌟', description: 'Positif et dynamique' },
-    serieux: { label: 'Sérieux', icone: '📋', description: 'Posé et réfléchi' },
-    amical: { label: 'Amical', icone: '😊', description: 'Chaleureux et accessible' }
+  const optionsTon: Record<Ton, { label: string; description: string }> = {
+    neutre: { label: 'Neutre', description: 'Objectif et équilibré' },
+    enthousiaste: { label: 'Enthousiaste', description: 'Positif et dynamique' },
+    serieux: { label: 'Sérieux', description: 'Posé et réfléchi' },
+    amical: { label: 'Amical', description: 'Chaleureux et accessible' }
   };
 
   /**
@@ -81,7 +81,7 @@ export default function PanneauParametres({
         >
           {(Object.keys(optionsStyle) as StyleEcriture[]).map((key) => (
             <option key={key} value={key}>
-              {optionsStyle[key].icone} {optionsStyle[key].label} - {optionsStyle[key].description}
+               {optionsStyle[key].label} - {optionsStyle[key].description}
             </option>
           ))}
         </select>
@@ -100,7 +100,7 @@ export default function PanneauParametres({
         >
           {(Object.keys(optionsTon) as Ton[]).map((key) => (
             <option key={key} value={key}>
-              {optionsTon[key].icone} {optionsTon[key].label} - {optionsTon[key].description}
+              {optionsTon[key].label} - {optionsTon[key].description}
             </option>
           ))}
         </select>
@@ -135,7 +135,7 @@ export default function PanneauParametres({
         <div className="space-y-1 mb-3 ">
           {/* Style */}
           <div className="flex items-center gap-1 p-1 bg-blue-50 rounded-lg">
-            <span className="text-xl">{optionsStyle[style].icone}</span>
+            <span className="text-xl"></span>
             <div className="flex-1">
               <p className="text-xs font-medium text-gray-900">{optionsStyle[style].label}</p>
               <p className="text-xs text-gray-600">{optionsStyle[style].description}</p>
@@ -144,7 +144,7 @@ export default function PanneauParametres({
 
           {/* Ton */}
           <div className="flex items-center gap-1 p-1 bg-purple-50 rounded-lg">
-            <span className="text-xl">{optionsTon[ton].icone}</span>
+            <span className="text-xl"></span>
             <div className="flex-1">
               <p className="text-xs font-medium text-gray-900">{optionsTon[ton].label}</p>
               <p className="text-xs text-gray-600">{optionsTon[ton].description}</p>
@@ -153,7 +153,7 @@ export default function PanneauParametres({
 
           {/* Longueur */}
           <div className="flex items-center gap-2 p-1 bg-green-50 rounded-lg">
-            <span className="text-xl">📏</span>
+            <span className="text-xl"></span>
             <div className="flex-1">
               <p className="text-xs font-medium text-gray-900">{optionsLongueur[longueur].label}</p>
               <p className="text-xs text-gray-600">{optionsLongueur[longueur].description}</p>

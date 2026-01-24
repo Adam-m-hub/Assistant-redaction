@@ -167,12 +167,6 @@ class ServiceMoteurWebLLM {
    * @param messages - Liste des messages de la conversation
    * @param parametres - Paramètres de génération (optionnel)
    * @returns Le texte généré
-   * 
-   * Exemple :
-   *   const reponse = await service.genererTexte([
-   *     { role: 'system', contenu: 'Tu es un assistant.' },
-   *     { role: 'user', contenu: 'Bonjour !' }
-   *   ]);
    */
   public async genererTexte(
     messages: Message[],

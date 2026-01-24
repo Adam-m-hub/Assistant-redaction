@@ -4,7 +4,7 @@ import { useStoreModele } from './stroe/storeModele';
 import { construirePrompt } from './lib/prompts/templates';
 import type { TypeAction } from './lib/prompts/templates';
 import EditorTipTap from './components/Editors/EditorTipTap';
-import PanneauParametres from './components/Controls/PanneauParametres';
+import PanneauParametres from '@/components/Controls/PanneauParametres';
 import type { StyleEcriture, Ton, Longueur } from './lib/prompts/templates';
 import { sauvegarderDocument, chargerDocument, ID_BROUILLON_AUTO } from './lib/storage/db';
 import { useEffect, useRef } from 'react';
