@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import { listerDocuments, supprimerDocument, type DocumentSauvegarde } from '../../lib/storage/db';
+import { exporterEnTexte } from '../../utils/export';
+import { exporterEnMarkdown } from '../../utils/export';
 
 /**
  * Props du composant
@@ -120,10 +122,10 @@ export default function ModalDocuments({
 
       {/* Modale */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
           
           {/* En-tête */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,8 +133,8 @@ export default function ModalDocuments({
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Mes Documents</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Mes Documents</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {documents.length} document{documents.length > 1 ? 's' : ''} sauvegardé{documents.length > 1 ? 's' : ''}
                 </p>
               </div>
@@ -141,7 +143,7 @@ export default function ModalDocuments({
             {/* Bouton fermer */}
             <button
               onClick={onFermer}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -162,11 +164,11 @@ export default function ModalDocuments({
             {/* Aucun document */}
             {!chargement && documents.length === 0 && (
               <div className="text-center py-12">
-                <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-gray-500">Aucun document sauvegardé</p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-gray-500 dark:text-gray-400">Aucun document sauvegardé</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                   Vos documents apparaîtront ici
                 </p>
               </div>
@@ -178,17 +180,17 @@ export default function ModalDocuments({
                 {documents.map((doc) => (
                   <div
                     key={doc.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all dark:bg-gray-900"
                   >
                     <div className="flex items-start justify-between gap-4">
                       
                       {/* Informations du document */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 truncate">
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                           {doc.titre || '📝 Brouillon sans titre'}
                         </h3>
                         
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
@@ -215,7 +217,7 @@ export default function ModalDocuments({
                         </div>
 
                         {/* Aperçu du contenu */}
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
                           {doc.contenu.substring(0, 120)}...
                         </p>
                       </div>
@@ -224,14 +226,27 @@ export default function ModalDocuments({
                       <div className="flex flex-col gap-2">
                         <button
                           onClick={() => handleCharger(doc)}
-                          className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+                          className="px-3 py-1.5 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm rounded transition-colors whitespace-nowrap"
                         >
                           📂 Charger
                         </button>
                         
+                        {/* AJOUTER CE BOUTON */}
+                        <button
+                          onClick={() => {
+                            // Convertir le contenu en HTML simple pour l'export
+                            // (car IndexedDB stocke du texte brut)
+                            const htmlSimple = `<p>${doc.contenu.replace(/\n/g, '</p><p>')}</p>`;
+                            exporterEnMarkdown(htmlSimple, doc.titre || 'document');
+                          }}
+                          className="px-3 py-1.5 bg-green-600 dark:bg-green-500 text-white text-sm rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors whitespace-nowrap"
+                        >
+                          📥 Exporter
+                        </button>
+                        
                         <button
                           onClick={() => handleSupprimer(doc.id)}
-                          className="px-3 py-1.5 bg-red-100 text-red-700 text-sm rounded hover:bg-red-200 transition-colors whitespace-nowrap"
+                          className="px-3 py-1.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 text-sm rounded hover:bg-red-200 dark:hover:bg-red-800 transition-colors whitespace-nowrap"
                         >
                           🗑️ Supprimer
                         </button>
@@ -244,10 +259,10 @@ export default function ModalDocuments({
           </div>
 
           {/* Pied de page */}
-          <div className="border-t border-gray-200 p-4 bg-gray-50">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900">
             <button
               onClick={onFermer}
-              className="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+              className="w-full px-4 py-2 bg-gray-600 dark:bg-gray-500 text-white rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors font-medium"
             >
               Fermer
             </button>

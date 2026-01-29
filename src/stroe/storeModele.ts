@@ -3,6 +3,7 @@
 
 import { create } from 'zustand';
 import { serviceMoteur } from '../lib/webllm/moteur';
+import { useStorePersonas } from './storePersonas';
 import type { 
   StatutModele, 
   ProgressionChargement, 
@@ -56,6 +57,7 @@ interface EtatModele {
    *   ]);
    */
   genererTexte: (messages: Message[]) => Promise<ReponseModele | null>;
+    texteEnCours: string;  // 🆕 AJOUTER CETTE LIGNE
   
   
   effacerErreur: () => void; //Réinitialiser l'erreur
@@ -63,6 +65,10 @@ interface EtatModele {
   dechargerModele: () => Promise<void>;   // Décharger le modèle
   
   effacerSuggestion: () => void;   // Effacer la suggestion (dernière réponse)
+
+   // 🌙 NOUVEAU : Mode sombre
+  modeNuit: boolean;
+  toggleModeNuit: () => void;
 }
 
 /**
@@ -71,7 +77,7 @@ interface EtatModele {
  * Utilisation dans un composant React :
  *   const { statut, chargerModele } = useStoreModele();
  */
-export const useStoreModele = create<EtatModele>((set, _get) => {
+export const useStoreModele = create<EtatModele>((set, get) => {
   
   // ============================================
   // ENREGISTRER LES OBSERVATEURS
@@ -106,6 +112,8 @@ export const useStoreModele = create<EtatModele>((set, _get) => {
     }
   });
 
+  
+
   // ============================================
   // ÉTAT INITIAL
   // ============================================
@@ -118,6 +126,7 @@ export const useStoreModele = create<EtatModele>((set, _get) => {
     nomModele: null,
     generationEnCours: false,
     derniereReponse: null,
+    texteEnCours: '',  // 🆕 AJOUTER CETTE LIGNE
 
     // ============================================
     // ACTIONS
@@ -150,61 +159,86 @@ export const useStoreModele = create<EtatModele>((set, _get) => {
     /**
      * Générer du texte
      */
-    genererTexte: async (messages: Message[]) => {
-      try {
-        // Vérifier que le modèle est prêt
-        if (!serviceMoteur.estPret()) {
-          const erreur: ErreurWebLLM = {
-            code: 'MODELE_NON_PRET',
-            message: 'Le modèle doit être chargé avant de générer du texte'
-          };
-          set({ erreur });
-          return null;
-        }
+    /**
+ * Générer du texte
+ */
+genererTexte: async (messages: Message[]) => {
+  try {
+    if (!serviceMoteur.estPret()) {
+      const erreur: ErreurWebLLM = {
+        code: 'MODELE_NON_PRET',
+        message: 'Le modèle doit être chargé avant de générer du texte'
+      };
+      set({ erreur });
+      return null;
+    }
 
-        console.log('🤔 Génération de texte en cours...');
-        
-        // Indiquer qu'une génération est en cours
-        set({ 
-          generationEnCours: true, 
-          erreur: null 
-        });
+    console.log('🤔 Génération de texte en cours...');
+    
+    set({ 
+      generationEnCours: true, 
+      erreur: null,
+      texteEnCours: ''  // 🆕 Réinitialiser
+    });
 
-        // Générer le texte
-        const reponse = await serviceMoteur.genererTexte(messages);
-        
-        console.log('✅ Texte généré :', reponse.texte.substring(0, 50) + '...');
-        
-        // Mettre à jour l'état
-        // Nettoyer le texte (enlever les guillemets)
-            const texteNettoye = reponse.texte
-            .trim()
-            .replace(/^["«]/, '')   
-            .replace(/["»]$/, '')   
-            .trim();
-                // Mettre à jour l'état avec le texte nettoyé
-        set({ 
-        derniereReponse: {
-            ...reponse,
-            texte: texteNettoye
-        },
-        generationEnCours: false 
-        });
+    // 👤 Récupérer le persona actif
+    const personaActif = useStorePersonas.getState().personaActif;
+    
+    // 👤 Ajouter le system prompt du persona
+    const messagesAvecPersona: Message[] = personaActif
+      ? [
+          {
+            role: 'system',
+            contenu: personaActif.systemPrompt
+          },
+          ...messages
+        ]
+      : messages;
 
-        return reponse;
-
-      } catch (erreur) {
-        console.error('❌ Erreur lors de la génération :', erreur);
-        
-        set({ 
-          generationEnCours: false,
-          erreur: erreur as ErreurWebLLM
-        });
-        
-        return null;
+    // 🆕 Générer avec callback streaming
+    const reponse = await serviceMoteur.genererTexte(
+      messagesAvecPersona,
+      undefined,
+      (chunk: string) => {
+        // 🆕 Mettre à jour le texte en cours à chaque chunk
+        set((state) => ({
+          texteEnCours: state.texteEnCours + chunk
+        }));
       }
-    },
+    );
+    
+    console.log('✅ Texte généré avec persona:', personaActif?.nom || 'Aucun');
+    
+    // Nettoyer le texte final
+    const texteNettoye = reponse.texte
+      .trim()
+      .replace(/^["«]/, '')   
+      .replace(/["»]$/, '')   
+      .trim();
 
+    set({ 
+      derniereReponse: {
+        ...reponse,
+        texte: texteNettoye
+      },
+      generationEnCours: false,
+      texteEnCours: ''  // 🆕 Réinitialiser
+    });
+
+    return reponse;
+
+  } catch (erreur) {
+    console.error('❌ Erreur lors de la génération :', erreur);
+    
+    set({ 
+      generationEnCours: false,
+      erreur: erreur as ErreurWebLLM,
+      texteEnCours: ''  // 🆕 Réinitialiser
+    });
+    
+    return null;
+  }
+},
     /**
      * Effacer l'erreur
      */
@@ -241,6 +275,22 @@ export const useStoreModele = create<EtatModele>((set, _get) => {
         set({ 
           derniereReponse: null 
         });
+      },
+
+       // 🌙 État initial mode sombre (false = clair par défaut)
+      modeNuit: false,
+
+      // 🌙 Toggle du mode sombre
+      toggleModeNuit: () => {
+        const nouveauMode = !get().modeNuit;
+        set({ modeNuit: nouveauMode });
+        
+        // Appliquer la classe 'dark' au document
+        if (nouveauMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       },
   };
 });

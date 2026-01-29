@@ -11,6 +11,9 @@ import type {
   ReponseModele,
   ErreurWebLLM
 } from './types';
+import { text } from "stream/consumers";
+import { useStorePersonas } from "../../stroe/storePersonas";
+
 
 /**
  * Service Singleton pour gérer le modèle WebLLM
@@ -168,9 +171,11 @@ class ServiceMoteurWebLLM {
    * @param parametres - Paramètres de génération (optionnel)
    * @returns Le texte généré
    */
+  /*
   public async genererTexte(
     messages: Message[],
-    parametres?: ParametresGeneration
+    parametres?: ParametresGeneration,
+    onChunk?: (chunk: string) => void,  // <-- Nouveau paramètre optionnel
   ): Promise<ReponseModele> {
     // 1. Vérifier que le modèle est prêt
     if (!this.estPret()) {
@@ -192,7 +197,15 @@ class ServiceMoteurWebLLM {
       };
 
       // 3. Convertir nos messages au format WebLLM
-      const messagesWebLLM = messages.map(msg => ({
+      // S'assurer que le message système est toujours en premier
+      const systemMessage = messages.find(msg => msg.role === 'system');
+      const otherMessages = messages.filter(msg => msg.role !== 'system');
+      
+      const sortedMessages = systemMessage 
+        ? [systemMessage, ...otherMessages]
+        : otherMessages;
+      
+      const messagesWebLLM = sortedMessages.map(msg => ({
         role: msg.role,
         content: msg.contenu
       }));
@@ -206,18 +219,140 @@ class ServiceMoteurWebLLM {
         max_tokens: paramsFinaux.longueurMaximale,
         top_p: paramsFinaux.topP,
         frequency_penalty: paramsFinaux.penaliteFrequence,
-        stream: false  // Pas de streaming pour l'instant (on fera ça plus tard)
+        stream: true  // Pas de streaming pour l'instant (on fera ça plus tard)
+
+
       });
 
       const tempsFin = Date.now();
       const tempsGeneration = tempsFin - tempsDebut;
 
       console.log(`✅ Texte généré en ${tempsGeneration}ms`);
+        let texteComplet = "";
+        let tokensUtilises = 0;
+
+             // Et il faudrait traiter les chunks
+      for await (const chunk of reponse) {
+          const nouveauTexte = chunk.choices[0]?.delta?.content || "";
+          // Afficher progressivement dans l'UI
+          console.log(nouveauTexte);
+          texteComplet += nouveauTexte;
+          tokensUtilises += chunk.choices[0]?.delta?.content?.length || 0;
+        }
 
       // 5. Retourner la réponse formatée
       return {
-        texte: reponse.choices[0]?.message?.content || "",
-        tokensUtilises: reponse.usage?.total_tokens || 0,
+        texte: texteComplet,
+        tokensUtilises,
+        tempsGeneration
+      };
+
+    } catch (erreur) {
+      console.error("❌ Erreur lors de la génération :", erreur);
+      
+      throw {
+        code: 'ERREUR_GENERATION',
+        message: 'Erreur lors de la génération du texte',
+        details: erreur instanceof Error ? erreur.message : String(erreur)
+      } as ErreurWebLLM;
+    }
+  }*/
+
+
+  public async genererTexte(
+    messages: Message[],
+    parametres?: ParametresGeneration,
+    onChunk?: (chunk: string) => void,  // <-- Nouveau paramètre optionnel
+  ): Promise<ReponseModele> {
+    // 1. Vérifier que le modèle est prêt
+    if (!this.estPret()) {
+      throw {
+        code: 'MODELE_NON_PRET',
+        message: 'Le modèle doit être chargé avant de générer du texte'
+      } as ErreurWebLLM;
+    }
+
+    try {
+      const tempsDebut = Date.now();
+
+      // 2. Paramètres par défaut si non fournis
+      const paramsFinaux: ParametresGeneration = {
+        temperature: parametres?.temperature ?? 0.7,
+        longueurMaximale: parametres?.longueurMaximale ?? 100,
+        topP: parametres?.topP ?? 0.9,
+        penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
+      };
+
+      // 3. Convertir nos messages au format WebLLM
+      // S'assurer que le message système est toujours en premier
+      const systemMessage = messages.find(msg => msg.role === 'system');
+      const otherMessages = messages.filter(msg => msg.role !== 'system');
+      
+      const sortedMessages = systemMessage 
+        ? [systemMessage, ...otherMessages]
+        : otherMessages;
+      
+      const messagesWebLLM = sortedMessages.map(msg => ({
+        role: msg.role,
+        content: msg.contenu
+      }));
+
+      console.log("🤔 Génération en cours...");
+
+      // 4. Générer le texte avec streaming
+      const reponseStream = await this.moteur!.chat.completions.create({
+        messages: messagesWebLLM,
+        temperature: paramsFinaux.temperature,
+        max_tokens: paramsFinaux.longueurMaximale,
+        top_p: paramsFinaux.topP,
+        frequency_penalty: paramsFinaux.penaliteFrequence,
+        stream: true  // Streaming activé
+      });
+
+      let texteComplet = "";
+      let tokensUtilises = 0;
+      let lastChunkWithUsage: any = null;
+
+      // Traiter les chunks du stream
+      for await (const chunk of reponseStream) {
+        const nouveauTexte = chunk.choices[0]?.delta?.content || "";
+        
+        // Ajouter au texte complet
+        texteComplet += nouveauTexte;
+        
+        // Appeler le callback si fourni (pour l'UI)
+        if (onChunk && nouveauTexte) {
+          onChunk(nouveauTexte);
+        }
+        
+        // Afficher dans la console pour le débogage
+        if (nouveauTexte) {
+          console.log("Chunk reçu:", nouveauTexte);
+        }
+        
+        // Garder une référence au dernier chunk (qui contient souvent les infos d'usage)
+        lastChunkWithUsage = chunk;
+      }
+
+      const tempsFin = Date.now();
+      const tempsGeneration = tempsFin - tempsDebut;
+
+      // Récupérer le nombre de tokens depuis le dernier chunk ou l'usage
+      if (lastChunkWithUsage?.usage?.total_tokens) {
+        tokensUtilises = lastChunkWithUsage.usage.total_tokens;
+      } else {
+        // Estimation approximative si l'API ne fournit pas l'usage dans le streaming
+        tokensUtilises = Math.ceil(texteComplet.length / 4); // Estimation: ~4 caractères par token
+      }
+
+      console.log(`✅ Texte généré en ${tempsGeneration}ms`);
+      console.log(`Longueur totale: ${texteComplet.length} caractères`);
+      console.log(`Tokens estimés: ${tokensUtilises}`);
+
+      // 5. Retourner la réponse formatée
+      return {
+        texte: texteComplet,
+        tokensUtilises,
         tempsGeneration
       };
 
@@ -231,6 +366,7 @@ class ServiceMoteurWebLLM {
       } as ErreurWebLLM;
     }
   }
+
 
   /**
    * Décharger le modèle de la mémoire

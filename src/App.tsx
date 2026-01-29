@@ -10,6 +10,9 @@ import { sauvegarderDocument, chargerDocument, ID_BROUILLON_AUTO } from './lib/s
 import { useEffect, useRef } from 'react';
 import ModalDocuments from './components/UI/ModalDocuments';
 import type { DocumentSauvegarde } from './lib/storage/db';
+import { ToggleModeNuit } from './components/UI/ToggleModeNuit';
+import { SelecteurPersonas } from './lib/personas/SelecteurPersonas';
+import Header from './components/UI/header';
 
 
 function App() {
@@ -24,7 +27,8 @@ function App() {
     dechargerModele,
     genererTexte,
     effacerErreur,
-    effacerSuggestion
+    effacerSuggestion,
+    texteEnCours, 
   } = useStoreModele();
 
   // État local pour le texte de l'éditeur
@@ -38,8 +42,11 @@ function App() {
   // État pour la modale des documents
   const [modaleDocumentsOuverte, setModaleDocumentsOuverte] = useState(false);
   
-  // Référence pour le timer de sauvegarde automatique
-  const timerSauvegardeRef = useRef<NodeJS.Timeout | null>(null);
+  // Document actuellement ouvert
+const [documentActuel, setDocumentActuel] = useState<DocumentSauvegarde | null>(null);
+
+// Le texte a-t-il été modifié depuis la dernière sauvegarde ?
+const [estModifie, setEstModifie] = useState(false);
 
   /**
    * Gestionnaire pour charger le modèle
@@ -89,38 +96,103 @@ function App() {
   /**
    * Charger un document depuis la liste
    */
-  const handleChargerDocument = (doc: DocumentSauvegarde) => {
-    setTexteEditeur(doc.contenu);
-    
-    // Restaurer les paramètres si disponibles
-    if (doc.parametres) {
-      setStyle(doc.parametres.style);
-      setTon(doc.parametres.ton);
-      setLongueur(doc.parametres.longueur);
-    }
-    
-    console.log('✅ Document chargé :', doc.id);
-  };
+const handleChargerDocument = (doc: DocumentSauvegarde) => {
+  setTexteEditeur(doc.contenu);
+  if (doc.parametres) {
+    setStyle(doc.parametres.style);
+    setTon(doc.parametres.ton);
+    setLongueur(doc.parametres.longueur);
+  }
+  setDocumentActuel(doc);    // ← AJOUTER
+  setEstModifie(false);       // ← AJOUTER
+  console.log('✅ Document chargé :', doc.id);
+};
 
+/**
+ * Créer un nouveau document vierge
+ */
+const handleNouveauDocument = () => {
+  // Vérifier s'il y a des modifications non sauvegardées
+  if (estModifie && texteEditeur.trim()) {
+    const confirmer = confirm('⚠️ Vous avez des modifications non sauvegardées. Continuer ?');
+    if (!confirmer) return;
+  }
+  
+  // Réinitialiser tout
+  setTexteEditeur('');
+  setDocumentActuel(null);
+  setEstModifie(false);
+  setStyle('formel');
+  setTon('neutre');
+  setLongueur('moyen');
+  effacerSuggestion();
+  
+  console.log('📄 Nouveau document créé');
+};
   /**
-   * Sauvegarder automatiquement après 2 secondes sans modification
-   */
-  const sauvegarderAuto = async () => {
-    if (!texteEditeur.trim()) return; // Ne pas sauvegarder si vide
+ * Enregistrer le document
+ */
+const handleEnregistrer = async () => {
+  // Vérifier que le texte n'est pas vide
+  if (!texteEditeur.trim()) {
+    alert('⚠️ Le document est vide');
+    return;
+  }
 
-    try {
-      await sauvegarderDocument({
-        id: ID_BROUILLON_AUTO,
+  try {
+   // Si c'est un nouveau document OU si le document actuel a été supprimé
+    if (!documentActuel || documentActuel.id.startsWith('doc_')) {
+      // Demander un nouveau titre à chaque fois
+      const titre = prompt('📝 Titre du document :', documentActuel?.titre || '');
+      
+      // Si l'utilisateur annule
+      if (titre === null) return;
+      
+      // Si le titre est vide
+      if (!titre.trim()) {
+        alert('⚠️ Le titre ne peut pas être vide');
+        return;
+      }
+
+      // Créer un nouveau document
+      const nouveauDoc: DocumentSauvegarde = {
+        id: `doc_${Date.now()}`,
+        titre: titre.trim(),
         contenu: texteEditeur,
         dateCreation: new Date(),
         dateModification: new Date(),
         parametres: { style, ton, longueur }
-      });
-      console.log('💾 Sauvegarde automatique effectuée');
-    } catch (erreur) {
-      console.error('Erreur sauvegarde auto :', erreur);
+      };
+
+      await sauvegarderDocument(nouveauDoc);
+      setDocumentActuel(nouveauDoc);
+      setEstModifie(false);
+      
+      console.log('✅ Document créé :', nouveauDoc.titre);
+      
+    } else {
+      // Mettre à jour le document existant
+      const docMisAJour: DocumentSauvegarde = {
+        ...documentActuel,
+        contenu: texteEditeur,
+        dateModification: new Date(),
+        parametres: { style, ton, longueur }
+      };
+
+      await sauvegarderDocument(docMisAJour);
+      setDocumentActuel(docMisAJour);
+      setEstModifie(false);
+      
+      console.log('✅ Document mis à jour :', docMisAJour.titre);
     }
-  };
+    
+  } catch (erreur) {
+    console.error('❌ Erreur sauvegarde :', erreur);
+    alert('❌ Erreur lors de la sauvegarde');
+  }
+};
+
+ 
 
   /**
    * Obtenir le texte et la couleur du statut
@@ -168,133 +240,43 @@ function App() {
     restaurerBrouillon();
   }, []); // Exécuter une seule fois au montage
 
+  
+
   /**
-   * Détecter les changements et sauvegarder après 2 secondes
-   */
-  useEffect(() => {
-    // Annuler le timer précédent
-    if (timerSauvegardeRef.current) {
-      clearTimeout(timerSauvegardeRef.current);
-    }
+ * Détecter les modifications du texte
+ */
+useEffect(() => {
+  if (texteEditeur) {
+    setEstModifie(true);
+  }
+}, [texteEditeur]);
 
-    // Lancer un nouveau timer de 2 secondes
-    timerSauvegardeRef.current = setTimeout(() => {
-      sauvegarderAuto();
-    }, 2000);
-
-    // Cleanup : annuler le timer si le composant est démonté
-    return () => {
-      if (timerSauvegardeRef.current) {
-        clearTimeout(timerSauvegardeRef.current);
-      }
-    };
-  }, [texteEditeur, style, ton, longueur]); // Relancer quand ces valeurs changent
 
   return (
-    <div className="min-h-screen bg-gray-60 space-y-1">
+    <div className="min-h-screen bg-gray-60 space-y-1 dark:bg-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-full mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Assistant de Rédaction IA</h1>
-                <p className="text-sm text-gray-500">Propulsé par WebLLM - 100% Local</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              {/* Statut du modèle */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100">
-                <div className={`w-2 h-2 rounded-full ${infoStatut.couleur}`} />
-                <span className="text-sm font-medium text-gray-700">
-                  {infoStatut.texte}
-                </span>
-              </div>
-              
-              {/* Boutons d'action */}
-              {statut === 'inactif' && (
-                <button 
-                  onClick={handleChargerModele}
-                  className="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                >
-                  Charger le modèle IA
-                </button>
-              )}
-              
-              {statut === 'pret' && (
-                <>
-                  <button 
-                    onClick={() => setModaleDocumentsOuverte(true)}
-                    className="px-4 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
-                  >
-                    📁 Mes documents
-                  </button>
-                  <button 
-                    onClick={dechargerModele}
-                    className="px-4 py-1 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-                  >
-                    Décharger le modèle
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Barre de progression */}
-          {statut === 'chargement' && progression && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <span>{progression.etape}</span>
-                <span>{Math.round(progression.pourcentage)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${progression.pourcentage}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Affichage des erreurs */}
-          {erreur && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-red-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-red-800">{erreur.message}</h3>
-                  {erreur.details && (
-                    <p className="text-sm text-red-600 mt-1">{erreur.details}</p>
-                  )}
-                </div>
-                <button
-                  onClick={effacerErreur}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </header>
+        <Header
+          statut={statut}
+          progression={progression}
+          erreur={erreur}
+          texteEditeur={texteEditeur}
+          estModifie={estModifie}
+          onChargerModele={handleChargerModele}
+          onDechargerModele={dechargerModele}
+          onNouveauDocument={handleNouveauDocument}
+          onOuvrirDocuments={() => setModaleDocumentsOuverte(true)}
+          onEnregistrer={handleEnregistrer}
+          onEffacerErreur={effacerErreur}
+        />
 
       {/* Zone principale - 3 colonnes */}
-      <main className="max-w-full mx-auto p-1">
-        <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)]">
+      <main className="max-w-full mx-auto p-1 dark:bg-gray-800 dark:text-gray-100">
+        <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
               {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto">
+        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100">
+              {/* 👤 NOUVEAU : Sélecteur de Personas */}
+            <SelecteurPersonas />
           <PanneauParametres
             style={style}
             ton={ton}
@@ -303,10 +285,11 @@ function App() {
             onTonChange={setTon}
             onLongueurChange={setLongueur}
           />
+       
         </div>
 
           {/* Zone centrale - Éditeur de texte */}
-          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100">
             
             {/* Zone d'édition avec TipTap */}
             <div className="flex-1 overflow-hidden">
@@ -319,8 +302,8 @@ function App() {
             </div>
 
             {/* Boutons d'action rapide */}
-            <div className="border-t border-gray-200 p-4 bg-gray-50">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="border-t border-gray-200 p-5  bg-gray-50 dark:bg-gray-700">
+              <div className="flex justify-center items-center gap-8 flex-wrap">
                 <button 
                   onClick={() => handleAction('ameliorer')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
@@ -354,16 +337,29 @@ function App() {
           </div>
 
           {/* Panneau droit - Résultats et suggestions */}
-          <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Suggestions</h2>
+          <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 dark:text-gray-100">Suggestions</h2>
             
-            {/* Génération en cours */}
-            {generationEnCours && (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-sm text-gray-600">Génération en cours...</p>
-              </div>
-            )}
+                {/* Génération en cours avec streaming */}
+              {generationEnCours && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span className="text-sm font-medium">Génération en cours...</span>
+                  </div>
+                  
+                  {/* 🆕 Afficher le texte en cours de génération */}
+                  {texteEnCours && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900 dark:border-blue-800">
+                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap dark:text-gray-100">
+                        {texteEnCours}
+                        <span className="inline-block w-1 h-4 bg-blue-600 animate-pulse ml-1"></span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
 
              {/* Modale des documents */}
             <ModalDocuments
@@ -375,8 +371,8 @@ function App() {
             {/* Résultat disponible */}
             {!generationEnCours && derniereReponse && (
               <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900 dark:border-blue-800">
+                  <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap dark:text-gray-100">
                     {derniereReponse.texte}
                   </p>
                 </div>
@@ -391,7 +387,7 @@ function App() {
                 <div className="flex gap-2">
                   <button
                     onClick={handleAppliquerSuggestion}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
                   >
                     ✓ Appliquer
                   </button>

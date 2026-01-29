@@ -10,23 +10,15 @@ import CharacterCount from '@tiptap/extension-character-count';
  * Props du composant EditorTipTap
  */
 interface EditorTipTapProps {
-  contenu: string;                              // Contenu initial de l'éditeur
-  onChange: (texte: string) => void;            // Callback quand le texte change
-  placeholder?: string;                         // Texte de placeholder
-  desactive?: boolean;                          // Désactiver l'éditeur
-  className?: string;                           // Classes CSS personnalisées
+  contenu: string;
+  onChange: (texte: string) => void;
+  placeholder?: string;
+  desactive?: boolean;
+  className?: string;
 }
 
 /**
  * Composant TipTap - Éditeur de texte riche
- * 
- * Fonctionnalités :
- * - Gras, Italique, Souligné
- * - Titres (H1, H2, H3)
- * - Listes à puces et numérotées
- * - Citations
- * - Code
- * - Annuler/Rétablir
  */
 export default function EditorTipTap({
   contenu,
@@ -40,43 +32,38 @@ export default function EditorTipTap({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Configuration des extensions
         heading: {
-          levels: [1, 2, 3], // H1, H2, H3
+          levels: [1, 2, 3],
         },
       }),
-      CharacterCount,  // ← Ajoute cette ligne
+      CharacterCount,
     ],
     content: contenu,
     editable: !desactive,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[400px] px-6 py-4',
+        // ✅ MODIFIÉ : Retiré min-h-[400px] pour éviter débordement
+        class: 'prose prose-sm dark:prose-invert max-w-none focus:outline-none px-6 py-4',
       },
     },
-    // Appelé à chaque modification
     onUpdate: ({ editor }) => {
-      // Récupérer le texte brut (sans HTML)
       const texte = editor.getText();
       onChange(texte);
     },
   });
 
-  // Mettre à jour le contenu si il change de l'extérieur
   useEffect(() => {
     if (editor && contenu !== editor.getText()) {
       editor.commands.setContent(contenu);
     }
   }, [contenu, editor]);
 
-  // Mettre à jour l'état editable
   useEffect(() => {
     if (editor) {
       editor.setEditable(!desactive);
     }
   }, [desactive, editor]);
 
-  // Si l'éditeur n'est pas encore chargé
   if (!editor) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -86,16 +73,18 @@ export default function EditorTipTap({
   }
 
   return (
-    <div className={`flex flex-col h-full ${className}`}>
-      {/* Barre d'outils */}
-      <div className="border-b border-gray-200 p-4 bg-gray-50 flex items-center gap-1 flex-wrap">
+    // ✅ MODIFIÉ : Hauteur fixe + flex column
+    <div className={`flex flex-col h-[675px] bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 ${className}`}>
+      
+      {/* Barre d'outils - FIXE en haut */}
+      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900 flex items-center gap-1 flex-wrap">
         
         {/* Bouton Gras */}
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={desactive}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('bold') ? 'bg-gray-300' : ''
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('bold') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Gras (Ctrl+B)"
         >
@@ -108,8 +97,8 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={desactive}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('italic') ? 'bg-gray-300' : ''
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('italic') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Italique (Ctrl+I)"
         >
@@ -118,15 +107,14 @@ export default function EditorTipTap({
           </svg>
         </button>
 
-        {/* Séparateur */}
-        <div className="w-px h-6 bg-gray-300 mx-2"></div>
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2"></div>
 
         {/* Bouton H1 */}
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           disabled={desactive}
-          className={`px-3 py-2 rounded hover:bg-gray-200 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('heading', { level: 1 }) ? 'bg-gray-300' : ''
+          className={`px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('heading', { level: 1 }) ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Titre 1"
         >
@@ -137,8 +125,8 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           disabled={desactive}
-          className={`px-3 py-2 rounded hover:bg-gray-200 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('heading', { level: 2 }) ? 'bg-gray-300' : ''
+          className={`px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('heading', { level: 2 }) ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Titre 2"
         >
@@ -149,23 +137,22 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           disabled={desactive}
-          className={`px-3 py-2 rounded hover:bg-gray-200 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('heading', { level: 3 }) ? 'bg-gray-300' : ''
+          className={`px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('heading', { level: 3 }) ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Titre 3"
         >
           H3
         </button>
 
-        {/* Séparateur */}
-        <div className="w-px h-6 bg-gray-300 mx-2"></div>
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2"></div>
 
         {/* Bouton Liste à puces */}
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           disabled={desactive}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('bulletList') ? 'bg-gray-300' : ''
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('bulletList') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Liste à puces"
         >
@@ -178,8 +165,8 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           disabled={desactive}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('orderedList') ? 'bg-gray-300' : ''
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('orderedList') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Liste numérotée"
         >
@@ -192,8 +179,8 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           disabled={desactive}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            editor.isActive('blockquote') ? 'bg-gray-300' : ''
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            editor.isActive('blockquote') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
           title="Citation"
         >
@@ -202,14 +189,13 @@ export default function EditorTipTap({
           </svg>
         </button>
 
-        {/* Séparateur */}
-        <div className="w-px h-6 bg-gray-300 mx-2"></div>
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2"></div>
 
         {/* Bouton Annuler */}
         <button
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo() || desactive}
-          className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           title="Annuler (Ctrl+Z)"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -221,7 +207,7 @@ export default function EditorTipTap({
         <button
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo() || desactive}
-          className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           title="Rétablir (Ctrl+Shift+Z)"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -230,23 +216,24 @@ export default function EditorTipTap({
         </button>
       </div>
 
-      {/* Zone d'édition */}
-      <div className="flex-1 overflow-y-auto bg-white">
+      {/* ✅ Zone d'édition - AVEC SCROLL INTERNE */}
+      <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
         <EditorContent editor={editor} />
       </div>
-      {/* Compteur de mots en bas */}
-        <div className="border-t border-gray-200 px-4 py-2 bg-gray-50">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>
-              📝 {editor.storage.characterCount?.words() || 0} mots
-              <span className="mx-2">•</span>
-              {editor.getText().length} caractères
-            </span>
-            <span className="text-gray-400">
-              {desactive ? '🔒 Lecture seule' : '✏️ Édition'}
-            </span>
-          </div>
+
+      {/* Compteur - FIXE en bas */}
+      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-900">
+        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <span>
+            📝 {editor.storage.characterCount?.words() || 0} mots
+            <span className="mx-2">•</span>
+            {editor.getText().length} caractères
+          </span>
+          <span className="text-gray-400">
+            {desactive ? '🔒 Lecture seule' : '✏️ Édition'}
+          </span>
         </div>
+      </div>
     </div>
   );
 }
