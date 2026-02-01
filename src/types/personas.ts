@@ -6,8 +6,6 @@ export interface Persona {
   id: string;
   nom: string;
   description: string;
-  style: string;
-  ton: string;
   expertise: string[];
   exempleTexte: string;
   systemPrompt: string;
@@ -23,8 +21,6 @@ export interface Persona {
 export interface CreerPersonaParams {
   nom: string;
   description: string;
-  style: string;
-  ton: string;
   expertise: string[];
   exempleTexte?: string;
   temperature?: number;

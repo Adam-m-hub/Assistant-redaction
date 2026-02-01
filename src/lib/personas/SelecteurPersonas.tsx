@@ -4,6 +4,7 @@ import { useStorePersonas } from '../../stroe/storePersonas';
 import { Plus, Info } from 'lucide-react';
 import { ModalCreerPersona } from './ModalCreerPersona';
 //import { ModalDetailsPersona } from './ModalDetailsPersona';
+import { ModalEditerPersona } from './ModalEditerPersona';  //
 
 export function SelecteurPersonas() {
   const {
@@ -11,11 +12,13 @@ export function SelecteurPersonas() {
     personaActif,
     chargerPersonas,
     selectionnerPersona,
+    supprimerPersona,  // 🆕
   } = useStorePersonas();
 
   const [modalDetailsOuvert, setModalDetailsOuvert] = useState(false);
   const [modalCreerOuvert, setModalCreerOuvert] = useState(false);
   const [personaPourDetails, setPersonaPourDetails] = useState<any>(null);
+   const [modalEditerOuvert, setModalEditerOuvert] = useState(false);  // 🆕
 
   // Charger les personas au montage
   useEffect(() => {
@@ -26,6 +29,22 @@ export function SelecteurPersonas() {
     setPersonaPourDetails(persona);
     setModalDetailsOuvert(true);
   };
+
+   // Supprimer un persona personnalisé
+  const handleSupprimer = async () => {
+    if (!personaPourDetails) return;
+    
+    if (!confirm(`Supprimer "${personaPourDetails.nom}" ?`)) return;
+
+    try {
+      await supprimerPersona(personaPourDetails.id);
+      setModalDetailsOuvert(false);
+      setPersonaPourDetails(null);
+    } catch (erreur) {
+      alert('❌ Erreur lors de la suppression');
+    }
+  };
+ 
 
   return (
     <div className="space-y-3">
@@ -118,6 +137,14 @@ export function SelecteurPersonas() {
         onFermer={() => setModalCreerOuvert(false)}
       />
 
+
+        {/* 🆕 Modal d'édition */}
+        <ModalEditerPersona 
+          ouvert={modalEditerOuvert}
+          persona={personaPourDetails}
+          onFermer={() => setModalEditerOuvert(false)}
+        />
+
       {/* Modal pour les détails */}
       {modalDetailsOuvert && personaPourDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
@@ -137,81 +164,88 @@ export function SelecteurPersonas() {
               </div>
             </div>
 
-            {/* Contenu */}
-            <div className="p-6 space-y-5">
-              {/* Description */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                  Description
-                </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {personaPourDetails.description}
-                </p>
-              </div>
+{/* Contenu */}
+<div className="p-6 space-y-5">
+  {/* Description */}
+  <div className="space-y-2">
+    <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200">
+      Description
+    </h4>
+    <p className="text-sm text-gray-600 dark:text-gray-400">
+      {personaPourDetails.description}
+    </p>
+  </div>
 
-              {/* Style et Ton */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Style
-                  </span>
-                  <p className="text-sm text-gray-900 dark:text-gray-100">
-                    {personaPourDetails.style}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Ton
-                  </span>
-                  <p className="text-sm text-gray-900 dark:text-gray-100">
-                    {personaPourDetails.ton}
-                  </p>
-                </div>
-              </div>
+  {/* Expertises */}
+  <div className="space-y-2">
+    <span className="text-xs text-gray-500 dark:text-gray-400">
+      Expertises
+    </span>
+    <div className="flex flex-wrap gap-2">
+      {personaPourDetails.expertise.map((exp: string, idx: number) => (
+        <span
+          key={idx}
+          className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 
+                     text-gray-700 dark:text-gray-300 text-sm rounded"
+        >
+          {exp}
+        </span>
+      ))}
+    </div>
+  </div>
 
-              {/* Expertises */}
-              <div className="space-y-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Expertises
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {personaPourDetails.expertise.map((exp: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 
-                                 text-gray-700 dark:text-gray-300 text-sm rounded"
-                    >
-                      {exp}
-                    </span>
-                  ))}
-                </div>
-              </div>
+  {/* Exemple de texte */}
+  {personaPourDetails.exempleTexte && (
+    <div className="space-y-2">
+      <span className="text-xs text-gray-500 dark:text-gray-400">
+        Exemple
+      </span>
+      <p className="text-sm text-gray-600 dark:text-gray-400 italic p-3 
+                   border border-gray-200 dark:border-gray-700 rounded">
+        {personaPourDetails.exempleTexte}
+      </p>
+    </div>
+  )}
 
-              {/* Exemple de texte */}
-              {personaPourDetails.exempleTexte && (
-                <div className="space-y-2">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Exemple
-                  </span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 italic p-3 
-                               border border-gray-200 dark:border-gray-700 rounded">
-                    {personaPourDetails.exempleTexte}
-                  </p>
-                </div>
-              )}
+  {/* Boutons Modifier/Supprimer - SEULEMENT pour personnalisés */}
+  {!personaPourDetails.estPredefini && (
+    <div className="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+      <button
+        onClick={() => {
+          setModalDetailsOuvert(false);
+          setModalEditerOuvert(true);
+        }}
+        className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 
+                   text-gray-700 dark:text-gray-300 
+                   hover:bg-gray-200 dark:hover:bg-gray-600 
+                   rounded-lg text-sm font-medium transition-colors"
+      >
+        ✏️ Modifier
+      </button>
+      <button
+        onClick={handleSupprimer}
+        className="flex-1 px-4 py-2 bg-red-50 dark:bg-red-900/20 
+                   text-red-600 dark:text-red-400 
+                   hover:bg-red-100 dark:hover:bg-red-900/30 
+                   rounded-lg text-sm font-medium transition-colors"
+      >
+        🗑️ Supprimer
+      </button>
+    </div>
+  )}
 
-              {/* Bouton de fermeture */}
-              <button
-                onClick={() => setModalDetailsOuvert(false)}
-                className="w-full mt-4 px-4 py-2.5 
-                           border border-gray-300 dark:border-gray-600 
-                           text-gray-700 dark:text-gray-300 
-                           hover:bg-gray-50 dark:hover:bg-gray-700 
-                           rounded-lg text-sm font-medium transition-colors"
-              >
-                Fermer
-              </button>
-            </div>
+  {/* Bouton Fermer */}
+  <button
+    onClick={() => setModalDetailsOuvert(false)}
+    className="w-full mt-2 px-4 py-2.5 
+               border border-gray-300 dark:border-gray-600 
+               text-gray-700 dark:text-gray-300 
+               hover:bg-gray-50 dark:hover:bg-gray-700 
+               rounded-lg text-sm font-medium transition-colors"
+  >
+    Fermer
+  </button>
+</div>
           </div>
         </div>
       )}

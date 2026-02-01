@@ -13,12 +13,10 @@ interface ModalEditerPersonaProps {
 export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPersonaProps) {
   const { modifierPersona } = useStorePersonas();
 
-  // État du formulaire
+  // ✅ État du formulaire SANS style/ton
   const [formulaire, setFormulaire] = useState({
     nom: '',
     description: '',
-    style: '',
-    ton: '',
     expertise: [] as string[],
     exempleTexte: '',
     temperature: 0.7,
@@ -33,8 +31,6 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
       setFormulaire({
         nom: persona.nom,
         description: persona.description,
-        style: persona.style,
-        ton: persona.ton,
         expertise: [...persona.expertise],
         exempleTexte: persona.exempleTexte || '',
         temperature: persona.temperature,
@@ -136,36 +132,7 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
             />
           </div>
 
-          {/* Style et Ton */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Style
-              </label>
-              <input
-                type="text"
-                value={formulaire.style}
-                onChange={(e) => setFormulaire({ ...formulaire, style: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Ton
-              </label>
-              <input
-                type="text"
-                value={formulaire.ton}
-                onChange={(e) => setFormulaire({ ...formulaire, ton: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-              />
-            </div>
-          </div>
+          {/* ❌ SECTION STYLE/TON SUPPRIMÉE */}
 
           {/* Expertises */}
           <div>

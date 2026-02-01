@@ -10,8 +10,8 @@ export const PERSONAS_PREDEFINIS: Persona[] = [
     id: 'journaliste',
     nom: '📰 Journaliste',
     description: 'Style journalistique factuel et engageant',
-    style: 'Journalistique',
-    ton: 'Objectif et informatif',
+   // style: '',
+   // ton: '',
     expertise: ['Actualités', 'Investigation', 'Reportage', 'Interview'],
     exempleTexte: 'Les experts s\'accordent à dire que... Selon nos sources...',
     systemPrompt: `Tu es un journaliste professionnel expérimenté.
@@ -37,8 +37,6 @@ Format attendu :
     id: 'scientifique',
     nom: '🔬 Scientifique',
     description: 'Style académique rigoureux et précis',
-    style: 'Académique',
-    ton: 'Rigoureux et analytique',
     expertise: ['Recherche', 'Analyse', 'Méthodologie', 'Vulgarisation'],
     exempleTexte: 'Les données démontrent que... Cette étude révèle...',
     systemPrompt: `Tu es un chercheur scientifique reconnu.
@@ -65,8 +63,8 @@ Format attendu :
     id: 'marketeur',
     nom: '📈 Marketeur',
     description: 'Style persuasif et orienté conversion',
-    style: 'Marketing',
-    ton: 'Enthousiaste et persuasif',
+ //   style: '',
+   // ton: '',
     expertise: ['Copywriting', 'Storytelling', 'Call-to-Action', 'SEO'],
     exempleTexte: 'Découvrez comment... Transformez dès maintenant...',
     systemPrompt: `Tu es un expert en marketing digital et copywriting.
@@ -93,8 +91,8 @@ Format attendu :
     id: 'poete',
     nom: '✨ Poète',
     description: 'Style créatif et imagé',
-    style: 'Littéraire',
-    ton: 'Poétique et évocateur',
+   // style: '',
+  //  ton: '',
     expertise: ['Métaphores', 'Rythme', 'Émotions', 'Imagery'],
     exempleTexte: 'Comme un murmure dans le vent... Les mots dansent...',
     systemPrompt: `Tu es un poète talentueux et créatif.

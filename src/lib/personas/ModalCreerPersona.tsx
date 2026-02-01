@@ -12,12 +12,10 @@ interface ModalCreerPersonaProps {
 export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) {
   const { creerPersona } = useStorePersonas();
 
-  // État du formulaire
+  // ✅ État du formulaire SANS style/ton
   const [formulaire, setFormulaire] = useState<CreerPersonaParams>({
     nom: '',
     description: '',
-    style: '',
-    ton: '',
     expertise: [],
     exempleTexte: '',
     temperature: 0.7,
@@ -39,14 +37,6 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
       nouvellesErreurs.description = 'La description est requise';
     }
 
-    if (!formulaire.style.trim()) {
-      nouvellesErreurs.style = 'Le style est requis';
-    }
-
-    if (!formulaire.ton.trim()) {
-      nouvellesErreurs.ton = 'Le ton est requis';
-    }
-
     if (formulaire.expertise.length === 0) {
       nouvellesErreurs.expertise = 'Ajoutez au moins une expertise';
     }
@@ -66,7 +56,6 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
       });
       setExpertiseInput('');
       
-      // Effacer l'erreur si elle existe
       if (erreurs.expertise) {
         setErreurs({ ...erreurs, expertise: '' });
       }
@@ -94,21 +83,16 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
     try {
       await creerPersona(formulaire);
       
-      // Réinitialiser le formulaire
+      // ✅ Réinitialiser SANS style/ton
       setFormulaire({
         nom: '',
         description: '',
-        style: '',
-        ton: '',
         expertise: [],
         exempleTexte: '',
         temperature: 0.7,
       });
       
-      // Fermer le modal
       onFermer();
-      
-      // Notification de succès
       alert('✅ Persona créé avec succès !');
       
     } catch (erreur) {
@@ -170,7 +154,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
             <textarea
               value={formulaire.description}
               onChange={(e) => setFormulaire({ ...formulaire, description: e.target.value })}
-              placeholder="Décrivez le style d'écriture de ce persona..."
+              placeholder="Décrivez le rôle et l'expertise de ce persona..."
               rows={3}
               className={`w-full px-4 py-2 border rounded-lg
                          bg-white dark:bg-gray-700 
@@ -184,50 +168,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
             )}
           </div>
 
-          {/* Style et Ton */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Style *
-              </label>
-              <input
-                type="text"
-                value={formulaire.style}
-                onChange={(e) => setFormulaire({ ...formulaire, style: e.target.value })}
-                placeholder="Ex: Conversationnel"
-                className={`w-full px-4 py-2 border rounded-lg
-                           bg-white dark:bg-gray-700 
-                           text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                           transition-colors
-                           ${erreurs.style ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-              />
-              {erreurs.style && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{erreurs.style}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Ton *
-              </label>
-              <input
-                type="text"
-                value={formulaire.ton}
-                onChange={(e) => setFormulaire({ ...formulaire, ton: e.target.value })}
-                placeholder="Ex: Décontracté"
-                className={`w-full px-4 py-2 border rounded-lg
-                           bg-white dark:bg-gray-700 
-                           text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                           transition-colors
-                           ${erreurs.ton ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-              />
-              {erreurs.ton && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{erreurs.ton}</p>
-              )}
-            </div>
-          </div>
+          {/* ❌ SECTION STYLE/TON SUPPRIMÉE */}
 
           {/* Expertises */}
           <div>
@@ -235,7 +176,6 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
               Expertises * (au moins 1)
             </label>
             
-            {/* Input + Bouton Ajouter */}
             <div className="flex gap-2">
               <input
                 type="text"
@@ -261,7 +201,6 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
               </button>
             </div>
 
-            {/* Liste des expertises */}
             {formulaire.expertise.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {formulaire.expertise.map((exp, index) => (

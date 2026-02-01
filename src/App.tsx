@@ -13,6 +13,8 @@ import type { DocumentSauvegarde } from './lib/storage/db';
 import { ToggleModeNuit } from './components/UI/ToggleModeNuit';
 import { SelecteurPersonas } from './lib/personas/SelecteurPersonas';
 import Header from './components/UI/header';
+import { useStorePersonas } from './stroe/storePersonas';
+import PanneauDroit from './components/Controls/PanneauDroit';
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
     effacerErreur,
     effacerSuggestion,
     texteEnCours, 
+
   } = useStoreModele();
 
   // État local pour le texte de l'éditeur
@@ -38,6 +41,7 @@ function App() {
   const [style, setStyle] = useState<StyleEcriture>('formel');
   const [ton, setTon] = useState<Ton>('neutre');
   const [longueur, setLongueur] = useState<Longueur>('moyen');
+  const [tabActif, setTabActif] = useState<'suggestions' | 'statistiques'>('suggestions');
   
   // État pour la modale des documents
   const [modaleDocumentsOuverte, setModaleDocumentsOuverte] = useState(false);
@@ -56,32 +60,36 @@ const [estModifie, setEstModifie] = useState(false);
   };
 
   /**
-   * Gestionnaire générique pour les actions
-   * Construit le prompt et génère le texte
-   */
-  const handleAction = async (action: TypeAction) => {
-    // Vérifier que le texte n'est pas vide
-    if (!texteEditeur.trim()) {
-      return;
-    }
+ * Gestionnaire générique pour les actions
+ * Construit le prompt et génère le texte
+ */
+const handleAction = async (action: TypeAction) => {
+  // Vérifier que le texte n'est pas vide
+  if (!texteEditeur.trim()) {
+    return;
+  }
 
-    try {
-      // Construire le prompt pour l'action
-      const prompt = construirePrompt({
-        action,
-        texte: texteEditeur,
-        style,      // Dynamique !
-        ton,        // Dynamique !
-        longueur    // Dynamique !
-      });
+  try {
+    // 🆕 Récupérer le persona actif (s'il existe)
+    const { personaActif } = useStorePersonas.getState();
+    
+    // ✅ Construire le prompt complet (avec ou sans persona)
+    const prompt = construirePrompt({
+      action,
+      texte: texteEditeur,
+      style,
+      ton,
+      longueur,
+      systemPrompt: personaActif?.systemPrompt  // undefined si pas de persona
+    });
 
-      // Générer le texte
-      await genererTexte(prompt.messages);
+    // ✅ Générer le texte avec les messages prêts
+    await genererTexte(prompt.messages);
 
-    } catch (error) {
-      console.error('Erreur lors de la génération :', error);
-    }
-  };
+  } catch (error) {
+    console.error('Erreur lors de la génération :', error);
+  }
+};
 
   /**
    * Appliquer la suggestion (remplacer le texte)
@@ -240,7 +248,25 @@ const handleEnregistrer = async () => {
     restaurerBrouillon();
   }, []); // Exécuter une seule fois au montage
 
-  
+  const { mettreAJourParametres } = useStoreModele();
+
+// Quand l'utilisateur change le style
+const handleStyleChange = (nouveauStyle: StyleEcriture) => {
+  setStyle(nouveauStyle);
+  mettreAJourParametres({ style: nouveauStyle });
+};
+
+
+const handleTonChange = (nouveauTon: Ton) => {
+  setTon(nouveauTon);
+  mettreAJourParametres({ ton: nouveauTon });
+};
+
+const handleLongueurChange = (nouvelleLongueur: Longueur) => {
+  setLongueur(nouvelleLongueur);
+  mettreAJourParametres({ longueur: nouvelleLongueur });
+};
+
 
   /**
  * Détecter les modifications du texte
@@ -270,26 +296,27 @@ useEffect(() => {
         />
 
       {/* Zone principale - 3 colonnes */}
-      <main className="max-w-full mx-auto p-1 dark:bg-gray-800 dark:text-gray-100">
+      <main className="max-w-full mx-auto p-1 dark:bg-gray-800 dark:text-gray-100 ">
         <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
               {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100">
+        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100 h-[750px]">
               {/* 👤 NOUVEAU : Sélecteur de Personas */}
             <SelecteurPersonas />
           <PanneauParametres
             style={style}
             ton={ton}
             longueur={longueur}
-            onStyleChange={setStyle}
-            onTonChange={setTon}
-            onLongueurChange={setLongueur}
+           // onStyleChange={setStyle}
+            onStyleChange={handleStyleChange} 
+            onTonChange={handleTonChange}
+            onLongueurChange={handleLongueurChange}
           />
        
         </div>
 
           {/* Zone centrale - Éditeur de texte */}
-          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100">
+          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[750px]">
             
             {/* Zone d'édition avec TipTap */}
             <div className="flex-1 overflow-hidden">
@@ -336,89 +363,21 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* Panneau droit - Résultats et suggestions */}
-          <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 dark:text-gray-100">Suggestions</h2>
-            
-                {/* Génération en cours avec streaming */}
-              {generationEnCours && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm font-medium">Génération en cours...</span>
-                  </div>
-                  
-                  {/* 🆕 Afficher le texte en cours de génération */}
-                  {texteEnCours && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900 dark:border-blue-800">
-                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap dark:text-gray-100">
-                        {texteEnCours}
-                        <span className="inline-block w-1 h-4 bg-blue-600 animate-pulse ml-1"></span>
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-
-             {/* Modale des documents */}
-            <ModalDocuments
-              ouvert={modaleDocumentsOuverte}
-              onFermer={() => setModaleDocumentsOuverte(false)}
-              onCharger={handleChargerDocument}
-            />
-
-            {/* Résultat disponible */}
-            {!generationEnCours && derniereReponse && (
-              <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900 dark:border-blue-800">
-                  <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap dark:text-gray-100">
-                    {derniereReponse.texte}
-                  </p>
-                </div>
-
-                {/* Informations sur la génération */}
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p>🕐 Temps : {(derniereReponse.tempsGeneration / 1000).toFixed(2)}s</p>
-                  <p>📊 Tokens : {derniereReponse.tokensUtilises}</p>
-                </div>
-
-                {/* Boutons d'action */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleAppliquerSuggestion}
-                    className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
-                  >
-                    ✓ Appliquer
-                  </button>
-                  <button
-                    onClick={() => handleAction('ameliorer')}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
-                    title="Régénérer"
-                  >
-                    ↻
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* État initial */}
-            {!generationEnCours && !derniereReponse && statut === 'pret' && (
-              <div className="text-sm text-gray-500 text-center py-8">
-                <svg className="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                <p>Les suggestions apparaîtront ici</p>
-              </div>
-            )}
-
-            {/* Modèle non chargé */}
-            {statut !== 'pret' && (
-              <div className="text-sm text-gray-500 text-center py-8">
-                <p>Chargez d'abord le modèle pour commencer</p>
-              </div>
-            )}
-          </div>
+              {/* Panneau droit */}
+              <PanneauDroit
+                tabActif={tabActif}
+                onTabChange={setTabActif}
+                generationEnCours={generationEnCours}
+                texteEnCours={texteEnCours}
+                derniereReponse={derniereReponse}
+                statut={statut}
+                onAppliquerSuggestion={handleAppliquerSuggestion}
+                onRegenererer={() => handleAction('ameliorer')}
+                modaleDocumentsOuverte={modaleDocumentsOuverte}
+                onFermerModalDocuments={() => setModaleDocumentsOuverte(false)}
+                onChargerDocument={handleChargerDocument}
+                texteEditeur={texteEditeur}
+              />
 
         </div>
       </main>

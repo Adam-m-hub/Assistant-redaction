@@ -78,8 +78,8 @@ export const useStorePersonas = create<StorePersonas>()(
             id,
             nom: params.nom,
             description: params.description,
-            style: params.style,
-            ton: params.ton,
+           //  style: params.style,
+            // ton: params.ton,
             expertise: params.expertise,
             exempleTexte: params.exempleTexte || '',
             systemPrompt: genererSystemPrompt(params),
@@ -111,44 +111,45 @@ export const useStorePersonas = create<StorePersonas>()(
       /**
        * Modifier un persona existant
        */
-      modifierPersona: async (id: string, params: Partial<CreerPersonaParams>) => {
-        try {
-          const personaExistant = get().personas.find(p => p.id === id);
+  /**
+ * Modifier un persona existant
+ */
+modifierPersona: async (id: string, params: Partial<CreerPersonaParams>) => {
+  try {
+    const personaExistant = get().personas.find(p => p.id === id);
 
-          if (!personaExistant) {
-            throw new Error(`Persona non trouvé : ${id}`);
-          }
+    if (!personaExistant) {
+      throw new Error(`Persona non trouvé : ${id}`);
+    }
 
-          if (personaExistant.estPredefini) {
-            throw new Error('Impossible de modifier un persona prédéfini');
-          }
+    if (personaExistant.estPredefini) {
+      throw new Error('Impossible de modifier un persona prédéfini');
+    }
 
-          // Fusionner les modifications
-          const personaModifie: Persona = {
-            ...personaExistant,
-            ...params,
-            systemPrompt: params.style || params.ton 
-              ? genererSystemPrompt({ ...personaExistant, ...params })
-              : personaExistant.systemPrompt,
-            modifieLe: new Date(),
-          };
+    // ✅ Fusionner les modifications (SANS style/ton)
+    const personaModifie: Persona = {
+      ...personaExistant,
+      ...params,
+      systemPrompt: genererSystemPrompt({ ...personaExistant, ...params }),
+      modifieLe: new Date(),
+    };
 
-          // Sauvegarder dans IndexedDB
-          await servicePersonasDB.sauvegarder(personaModifie);
+    // Sauvegarder dans IndexedDB
+    await servicePersonasDB.sauvegarder(personaModifie);
 
-          // Mettre à jour le store
-          set((state) => ({
-            personas: state.personas.map(p => p.id === id ? personaModifie : p),
-            personaActif: state.personaActif?.id === id ? personaModifie : state.personaActif,
-          }));
+    // Mettre à jour le store
+    set((state) => ({
+      personas: state.personas.map(p => p.id === id ? personaModifie : p),
+      personaActif: state.personaActif?.id === id ? personaModifie : state.personaActif,
+    }));
 
-          console.log(`✅ Persona modifié : ${personaModifie.nom}`);
+    console.log(`✅ Persona modifié : ${personaModifie.nom}`);
 
-        } catch (erreur) {
-          console.error('❌ Erreur modification persona:', erreur);
-          throw erreur;
-        }
-      },
+  } catch (erreur) {
+    console.error('❌ Erreur modification persona:', erreur);
+    throw erreur;
+  }
+},
 
       /**
        * Supprimer un persona personnalisé
@@ -223,13 +224,34 @@ export const useStorePersonas = create<StorePersonas>()(
  * Générer un system prompt à partir des paramètres
  */
 function genererSystemPrompt(params: Partial<CreerPersonaParams>): string {
-  return `Tu es un assistant de rédaction spécialisé.
+  return `Tu es un expert spécialisé dans : ${params.expertise?.join(', ') || 'rédaction générale'}.
 
-Caractéristiques :
-- Style : ${params.style || 'Adapté'}
-- Ton : ${params.ton || 'Professionnel'}
-- Expertises : ${params.expertise?.join(', ') || 'Rédaction générale'}
+Description de ton rôle :
+${params.description || 'Assistant de rédaction professionnel'}
 
-Ta mission est de rédiger des textes de qualité en respectant strictement ces caractéristiques.
-Sois ${params.ton?.toLowerCase() || 'professionnel'} et adopte un style ${params.style?.toLowerCase() || 'adapté'}.`;
+Tes caractéristiques :
+- Maîtrise parfaite de tes domaines : ${params.expertise?.join(', ') || 'rédaction'}
+- Style adapté à ton expertise
+- Vocabulaire spécifique à ton domaine
+- Structure claire et cohérente
+
+${params.exempleTexte ? `Exemple du style attendu :
+"${params.exempleTexte}"
+
+Écris toujours dans un style similaire à cet exemple.` : ''}
+
+RÈGLES ABSOLUES À RESPECTER :
+- Réponds UNIQUEMENT avec le texte demandé, RIEN d'autre
+- INTERDICTION STRICTE d'ajouter des explications, commentaires ou notes
+- INTERDICTION d'utiliser des astérisques (*) ou des annotations
+- Ne dis JAMAIS "Voici", "J'ai amélioré", ou toute autre introduction
+- Ne mentionne JAMAIS les modifications que tu as faites
+- Écris UNIQUEMENT le résultat final, comme si c'était toi qui l'avais écrit
+- Respecte toujours la langue du texte original
+- Garde le sens général du texte
+- Sois naturel et fluide dans ton écriture
+- Reste dans le rôle de cet expert
+- Pas d'explications ni de commentaires
+- Adapte ton style selon les paramètres du panneau latéral.`;
 }
+ 

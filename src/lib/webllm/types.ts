@@ -55,3 +55,18 @@ export interface ErreurWebLLM {
   message: string;            // Message d'erreur
   details?: string;           // Détails supplémentaires
 }
+/**
+ * Persona pour la génération de texte
+ */
+export interface Persona {
+  id: string;
+  nom: string;
+  description: string;
+  expertise: string[];
+  exempleTexte?: string;
+  systemPrompt?: string;
+  estPredefini: boolean;
+  temperature: number;  // ← Garde seulement temperature
+  creeLe: Date;
+  modifieLe: Date;
+}

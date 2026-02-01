@@ -278,7 +278,7 @@ class ServiceMoteurWebLLM {
       // 2. Paramètres par défaut si non fournis
       const paramsFinaux: ParametresGeneration = {
         temperature: parametres?.temperature ?? 0.7,
-        longueurMaximale: parametres?.longueurMaximale ?? 100,
+        longueurMaximale: parametres?.longueurMaximale ?? 500,
         topP: parametres?.topP ?? 0.9,
         penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
       };
@@ -366,6 +366,10 @@ class ServiceMoteurWebLLM {
       } as ErreurWebLLM;
     }
   }
+
+
+
+    
 
 
   /**

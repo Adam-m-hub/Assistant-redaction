@@ -2,8 +2,8 @@
 // Store Zustand pour gérer l'état du modèle WebLLM
 
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { serviceMoteur } from '../lib/webllm/moteur';
-import { useStorePersonas } from './storePersonas';
 import type { 
   StatutModele, 
   ProgressionChargement, 
@@ -14,283 +14,227 @@ import type {
 
 /**
  * Interface de l'état du store
- * Décrit toutes les données stockées
  */
 interface EtatModele {
-  // ============================================
-  // ÉTAT (Données)
-  // ============================================
-  statut: StatutModele; // Statut actuel du modèle
-
-  progression: ProgressionChargement | null;   // Progression du chargement (0-100) 
-  
-  erreur: ErreurWebLLM | null;  // Dernière erreur survenue 
-
-  nomModele: string | null;   // Nom du modèle actuellement chargé 
-  
-  generationEnCours: boolean;  // Indique si une génération est en cours
-  
-  derniereReponse: ReponseModele | null;   // Dernière réponse générée
-  // ============================================
-  // ACTIONS (Fonctions)
-  // ============================================
-  
-  /**
-   * Charger le modèle WebLLM
-   * 
-   * @param nomModele - Nom du modèle à charger
-   * 
-   * Exemple :
-   *   chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC")
-   */
-  chargerModele: (nomModele: string) => Promise<void>;
-  
-  /**
-   * Générer du texte avec le modèle
-   * 
-   * @param messages - Messages de la conversation
-   * @returns La réponse générée
-   * 
-   * Exemple :
-   *   const reponse = await genererTexte([
-   *     { role: 'user', contenu: 'Bonjour' }
-   *   ]);
-   */
-  genererTexte: (messages: Message[]) => Promise<ReponseModele | null>;
-    texteEnCours: string;  // 🆕 AJOUTER CETTE LIGNE
-  
-  
-  effacerErreur: () => void; //Réinitialiser l'erreur
-  
-  dechargerModele: () => Promise<void>;   // Décharger le modèle
-  
-  effacerSuggestion: () => void;   // Effacer la suggestion (dernière réponse)
-
-   // 🌙 NOUVEAU : Mode sombre
+  // État
+  statut: StatutModele;
+  progression: ProgressionChargement | null;
+  erreur: ErreurWebLLM | null;
+  nomModele: string | null;
+  generationEnCours: boolean;
+  derniereReponse: ReponseModele | null;
+  texteEnCours: string;
   modeNuit: boolean;
+  parametres: {
+    style: string;
+    ton: string;
+    longueur: string;
+  } | null;
+  
+  // Actions
+  chargerModele: (nomModele: string) => Promise<void>;
+  genererTexte: (messages: Message[]) => Promise<ReponseModele | null>;
+  effacerErreur: () => void;
+  dechargerModele: () => Promise<void>;
+  effacerSuggestion: () => void;
   toggleModeNuit: () => void;
+  mettreAJourParametres: (params: { style?: string; ton?: string; longueur?: string }) => void;
 }
 
 /**
  * Créer le store Zustand
- * 
- * Utilisation dans un composant React :
- *   const { statut, chargerModele } = useStoreModele();
  */
-export const useStoreModele = create<EtatModele>((set, get) => {
-  
-  // ============================================
-  // ENREGISTRER LES OBSERVATEURS
-  // Connecter le service WebLLM au store
-  // ============================================
-  
-  serviceMoteur.enregistrerObservateurs({
-    // Quand le statut change
-    surChangementStatut: (nouveauStatut: StatutModele) => {
-      console.log('📊 Statut changé :', nouveauStatut);
-      set({ statut: nouveauStatut });
-      
-      // Si le modèle est prêt, effacer la progression
-      if (nouveauStatut === 'pret') {
-        set({ progression: null });
-      }
-    },
-    
-    // Quand la progression avance
-    surProgression: (nouvelleProgression: ProgressionChargement) => {
-      console.log(`📈 Progression : ${nouvelleProgression.pourcentage}%`);
-      set({ progression: nouvelleProgression });
-    },
-    
-    // Quand une erreur survient
-    surErreur: (nouvelleErreur: ErreurWebLLM) => {
-      console.error('❌ Erreur :', nouvelleErreur);
-      set({ 
-        erreur: nouvelleErreur,
-        generationEnCours: false 
-      });
-    }
-  });
-
-  
-
-  // ============================================
-  // ÉTAT INITIAL
-  // ============================================
-  
-  return {
-    // État initial
-    statut: 'inactif',
-    progression: null,
-    erreur: null,
-    nomModele: null,
-    generationEnCours: false,
-    derniereReponse: null,
-    texteEnCours: '',  // 🆕 AJOUTER CETTE LIGNE
-
-    // ============================================
-    // ACTIONS
-    // ============================================
-
-    /**
-     * Charger le modèle WebLLM
-     */
-    chargerModele: async (nomModele: string) => {
-      try {
-        console.log(`🚀 Demande de chargement du modèle : ${nomModele}`);
+export const useStoreModele = create<EtatModele>()(
+  persist(
+    (set, get) => {
+      // Enregistrer les observateurs
+      serviceMoteur.enregistrerObservateurs({
+        surChangementStatut: (nouveauStatut: StatutModele) => {
+          console.log('📊 Statut changé :', nouveauStatut);
+          set({ statut: nouveauStatut });
+          if (nouveauStatut === 'pret') {
+            set({ progression: null });
+          }
+        },
         
-        // Effacer les anciennes erreurs
-        set({ erreur: null, nomModele });
+        surProgression: (nouvelleProgression: ProgressionChargement) => {
+          console.log(`📈 Progression : ${nouvelleProgression.pourcentage}%`);
+          set({ progression: nouvelleProgression });
+        },
         
-        // Charger le modèle via le service
-        await serviceMoteur.chargerModele({
-          nom: nomModele,
-          description: "Modèle chargé depuis l'interface"
-        });
-        
-        console.log('✅ Modèle chargé avec succès !');
-        
-      } catch (erreur) {
-        console.error('❌ Échec du chargement :', erreur);
-        // L'erreur est déjà gérée par l'observateur surErreur
-      }
-    },
-
-    /**
-     * Générer du texte
-     */
-    /**
- * Générer du texte
- */
-genererTexte: async (messages: Message[]) => {
-  try {
-    if (!serviceMoteur.estPret()) {
-      const erreur: ErreurWebLLM = {
-        code: 'MODELE_NON_PRET',
-        message: 'Le modèle doit être chargé avant de générer du texte'
-      };
-      set({ erreur });
-      return null;
-    }
-
-    console.log('🤔 Génération de texte en cours...');
-    
-    set({ 
-      generationEnCours: true, 
-      erreur: null,
-      texteEnCours: ''  // 🆕 Réinitialiser
-    });
-
-    // 👤 Récupérer le persona actif
-    const personaActif = useStorePersonas.getState().personaActif;
-    
-    // 👤 Ajouter le system prompt du persona
-    const messagesAvecPersona: Message[] = personaActif
-      ? [
-          {
-            role: 'system',
-            contenu: personaActif.systemPrompt
-          },
-          ...messages
-        ]
-      : messages;
-
-    // 🆕 Générer avec callback streaming
-    const reponse = await serviceMoteur.genererTexte(
-      messagesAvecPersona,
-      undefined,
-      (chunk: string) => {
-        // 🆕 Mettre à jour le texte en cours à chaque chunk
-        set((state) => ({
-          texteEnCours: state.texteEnCours + chunk
-        }));
-      }
-    );
-    
-    console.log('✅ Texte généré avec persona:', personaActif?.nom || 'Aucun');
-    
-    // Nettoyer le texte final
-    const texteNettoye = reponse.texte
-      .trim()
-      .replace(/^["«]/, '')   
-      .replace(/["»]$/, '')   
-      .trim();
-
-    set({ 
-      derniereReponse: {
-        ...reponse,
-        texte: texteNettoye
-      },
-      generationEnCours: false,
-      texteEnCours: ''  // 🆕 Réinitialiser
-    });
-
-    return reponse;
-
-  } catch (erreur) {
-    console.error('❌ Erreur lors de la génération :', erreur);
-    
-    set({ 
-      generationEnCours: false,
-      erreur: erreur as ErreurWebLLM,
-      texteEnCours: ''  // 🆕 Réinitialiser
-    });
-    
-    return null;
-  }
-},
-    /**
-     * Effacer l'erreur
-     */
-    effacerErreur: () => {
-      set({ erreur: null });
-    },
-
-    /**
-     * Décharger le modèle
-     */
-    dechargerModele: async () => {
-      try {
-        console.log('🗑️ Déchargement du modèle...');
-        
-        await serviceMoteur.dechargerModele();
-        
-        set({ 
-          statut: 'inactif',
-          nomModele: null,
-          progression: null,
-          derniereReponse: null
-        });
-        
-        console.log('✅ Modèle déchargé');
-        
-      } catch (erreur) {
-        console.error('❌ Erreur lors du déchargement :', erreur);
-      }
-    },
-          /**
-       * Effacer la suggestion
-       */
-      effacerSuggestion: () => {
-        set({ 
-          derniereReponse: null 
-        });
-      },
-
-       // 🌙 État initial mode sombre (false = clair par défaut)
-      modeNuit: false,
-
-      // 🌙 Toggle du mode sombre
-      toggleModeNuit: () => {
-        const nouveauMode = !get().modeNuit;
-        set({ modeNuit: nouveauMode });
-        
-        // Appliquer la classe 'dark' au document
-        if (nouveauMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+        surErreur: (nouvelleErreur: ErreurWebLLM) => {
+          console.error('❌ Erreur :', nouvelleErreur);
+          set({ 
+            erreur: nouvelleErreur,
+            generationEnCours: false 
+          });
         }
-      },
-  };
-});
+      });
+
+      return {
+        // État initial
+        statut: 'inactif',
+        progression: null,
+        erreur: null,
+        nomModele: null,
+        generationEnCours: false,
+        derniereReponse: null,
+        texteEnCours: '',
+        modeNuit: false,
+        parametres: null,
+
+        // Actions
+        chargerModele: async (nomModele: string) => {
+          try {
+            console.log(`🚀 Chargement du modèle : ${nomModele}`);
+            set({ erreur: null, nomModele });
+            
+            await serviceMoteur.chargerModele({
+              nom: nomModele,
+              description: "Modèle chargé depuis l'interface"
+            });
+            
+            console.log('✅ Modèle chargé avec succès !');
+          } catch (erreur) {
+            console.error('❌ Échec du chargement :', erreur);
+          }
+        },
+
+        /**
+         * ✅ SIMPLIFIÉ : Génère directement avec les messages fournis
+         * Les messages sont DÉJÀ construits dans App.tsx via construirePrompt()
+         */
+        genererTexte: async (messages: Message[]) => {
+          try {
+            if (!serviceMoteur.estPret()) {
+              const erreur: ErreurWebLLM = {
+                code: 'MODELE_NON_PRET',
+                message: 'Le modèle doit être chargé avant de générer du texte'
+              };
+              set({ erreur });
+              return null;
+            }
+
+            console.log('🤔 Génération de texte en cours...');
+            
+            set({ 
+              generationEnCours: true, 
+              erreur: null,
+              texteEnCours: ''
+            });
+
+            // Adapter max_tokens selon la longueur du panneau
+            const parametres = get().parametres;
+            let maxTokens = 600; // Par défaut
+            
+            if (parametres?.longueur === 'court') {
+              maxTokens = 300;
+            } else if (parametres?.longueur === 'moyen') {
+              maxTokens = 600;
+            } else if (parametres?.longueur === 'long') {
+              maxTokens = 1000;
+            }
+
+            // ✅ Générer avec les messages (déjà prêts !)
+            const reponse = await serviceMoteur.genererTexte(
+              messages,
+              { longueurMaximale: maxTokens,
+                temperature: 0.7,
+                topP: 0.9
+               },
+              (chunk: string) => {
+                set((state) => ({
+                  texteEnCours: state.texteEnCours + chunk
+                }));
+              }
+            );
+            
+            console.log('✅ Texte généré avec', maxTokens, 'tokens max');
+            
+            // Nettoyer le texte
+            const texteNettoye = reponse.texte
+              .trim()
+              .replace(/^["«]/, '')   
+              .replace(/["»]$/, '')   
+              .trim();
+
+            set({ 
+              derniereReponse: {
+                ...reponse,
+                texte: texteNettoye
+              },
+              generationEnCours: false,
+              texteEnCours: ''
+            });
+
+            return reponse;
+
+          } catch (erreur) {
+            console.error('❌ Erreur lors de la génération :', erreur);
+            
+            set({ 
+              generationEnCours: false,
+              erreur: erreur as ErreurWebLLM,
+              texteEnCours: ''
+            });
+            
+            return null;
+          }
+        },
+
+        effacerErreur: () => {
+          set({ erreur: null });
+        },
+
+        dechargerModele: async () => {
+          try {
+            console.log('🗑️ Déchargement du modèle...');
+            await serviceMoteur.dechargerModele();
+            
+            set({ 
+              statut: 'inactif',
+              nomModele: null,
+              progression: null,
+              derniereReponse: null
+            });
+            
+            console.log('✅ Modèle déchargé');
+          } catch (erreur) {
+            console.error('❌ Erreur lors du déchargement :', erreur);
+          }
+        },
+
+        effacerSuggestion: () => {
+          set({ derniereReponse: null });
+        },
+
+        mettreAJourParametres: (params) => {
+          set((state) => ({
+            parametres: { 
+              ...state.parametres, 
+              ...params 
+            } as { style: string; ton: string; longueur: string }
+          }));
+        },
+
+        toggleModeNuit: () => {
+          const nouveauMode = !get().modeNuit;
+          set({ modeNuit: nouveauMode });
+          
+          if (nouveauMode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        },
+      };
+    },
+    {
+      name: 'assistant-redaction-storage',
+      partialize: (state) => ({
+        modeNuit: state.modeNuit,
+        parametres: state.parametres,
+      }),
+    }
+  )
+);

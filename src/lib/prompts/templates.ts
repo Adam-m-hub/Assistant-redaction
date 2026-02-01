@@ -27,19 +27,20 @@ export type Longueur = 'court' | 'moyen' | 'long';
  * Paramètres pour construire un prompt
  */
 export interface ParametresPrompt {
-  action: TypeAction;           // Action à effectuer
-  texte: string;                // Texte de l'utilisateur
-  style?: StyleEcriture;        // Style d'écriture (optionnel)
-  ton?: Ton;                    // Ton du texte (optionnel)
-  longueur?: Longueur;          // Longueur cible (optionnel)
+  action: TypeAction;
+  texte: string;
+  style?: StyleEcriture;
+  ton?: Ton;
+  longueur?: Longueur;
+  systemPrompt?: string;  // System prompt du persona (optionnel)
 }
 
 /**
  * Résultat de la construction du prompt
  */
 export interface PromptConstruit {
-  messages: Message[];          // Messages prêts pour WebLLM
-  description: string;          // Description de ce qui va être fait
+  messages: Message[];
+  description: string;
 }
 
 // ============================================
@@ -47,8 +48,7 @@ export interface PromptConstruit {
 // ============================================
 
 /**
- * Instructions système de base
- * Commune à toutes les actions
+ * Instructions système de base (SANS persona)
  */
 const INSTRUCTIONS_SYSTEME_BASE = `Tu es un assistant de rédaction professionnel expert en français.
 
@@ -133,26 +133,20 @@ const DESCRIPTIONS_LONGUEUR: Record<Longueur, string> = {
  * Nombres de mots cibles pour raccourcir
  */
 const MOTS_CIBLES_RACCOURCIR: Record<string, number> = {
-  'tres_long': 50,    // Plus de 150 mots → réduire à 50
-  'long': 40,         // 100-150 mots → réduire à 40
-  'moyen': 30,        // 50-100 mots → réduire à 30
-  'court': 20         // Moins de 50 mots → réduire à 20
+  'tres_long': 50,
+  'long': 40,
+  'moyen': 30,
+  'court': 20
 };
 
 // ============================================
 // FONCTIONS UTILITAIRES
 // ============================================
 
-/**
- * Calculer le nombre de mots dans un texte
- */
 function compterMots(texte: string): number {
   return texte.trim().split(/\s+/).filter(Boolean).length;
 }
 
-/**
- * Déterminer la longueur cible pour raccourcir
- */
 function obtenirLongueurCibleRaccourcir(texte: string): number {
   const nombreMots = compterMots(texte);
   
@@ -163,7 +157,7 @@ function obtenirLongueurCibleRaccourcir(texte: string): number {
 }
 
 /**
- * Construire les instructions de style
+ * Construire les instructions de style du panneau
  */
 function construireInstructionsStyle(
   style?: StyleEcriture,
@@ -173,7 +167,6 @@ function construireInstructionsStyle(
 ): string {
   const instructions: string[] = [];
   
-  // Style d'écriture
   if (style) {
     const descriptions: Record<StyleEcriture, string> = {
       formel: 'formel et professionnel',
@@ -184,7 +177,6 @@ function construireInstructionsStyle(
     instructions.push(`Style : ${descriptions[style]}`);
   }
   
-  // Ton
   if (ton) {
     const descriptions: Record<Ton, string> = {
       neutre: 'neutre et objectif',
@@ -195,7 +187,6 @@ function construireInstructionsStyle(
     instructions.push(`Ton : ${descriptions[ton]}`);
   }
   
-  // Longueur (sauf pour raccourcir qui a sa propre logique)
   if (longueur && action !== 'raccourcir') {
     instructions.push(`Longueur cible : ${DESCRIPTIONS_LONGUEUR[longueur]}`);
   }
@@ -212,30 +203,34 @@ function construireInstructionsStyle(
 /**
  * Construire un prompt complet pour WebLLM
  * 
- * @param params - Paramètres du prompt
- * @returns Messages formatés pour WebLLM + description
- * 
- * @example
- * const prompt = construirePrompt({
- *   action: 'ameliorer',
- *   texte: 'Bonjour je veux un truc',
- *   style: 'formel',
- *   ton: 'neutre'
- * });
+ * LOGIQUE :
+ * - SI persona fourni → Utilise systemPrompt du persona
+ * - SINON → Utilise instructions de base
+ * - TOUJOURS → Ajoute action + style/ton/longueur du panneau
  */
 export function construirePrompt(params: ParametresPrompt): PromptConstruit {
-  const { action, texte, style, ton, longueur } = params;
+  const { action, texte, style, ton, longueur, systemPrompt } = params;
   
-  // Vérifier que le texte n'est pas vide
   if (!texte.trim()) {
     throw new Error('Le texte ne peut pas être vide');
   }
   
   // 1. Construire le prompt système
-  let promptSysteme = INSTRUCTIONS_SYSTEME_BASE;
+  let promptSysteme = '';
+  
+  // ✅ SI PERSONA : Utiliser son systemPrompt
+  if (systemPrompt) {
+    promptSysteme = systemPrompt;
+  } 
+  // ✅ SINON : Utiliser instructions de base
+  else {
+    promptSysteme = INSTRUCTIONS_SYSTEME_BASE;
+  }
+  
+  // ✅ TOUJOURS : Ajouter l'action
   promptSysteme += '\n\n' + INSTRUCTIONS_PAR_ACTION[action];
   
-  // Ajouter les paramètres de style
+  // ✅ TOUJOURS : Ajouter style/ton/longueur du panneau
   promptSysteme += construireInstructionsStyle(style, ton, longueur, action);
   
   // 2. Construire le prompt utilisateur
@@ -260,7 +255,7 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
       break;
   }
   
-  // 3. Créer les messages pour WebLLM
+  // 3. Messages pour WebLLM
   const messages: Message[] = [
     {
       role: 'system',
@@ -272,7 +267,7 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
     }
   ];
   
-  // 4. Créer la description pour l'utilisateur
+  // 4. Description
   const descriptionsAction: Record<TypeAction, string> = {
     ameliorer: 'Amélioration du texte',
     corriger: 'Correction des erreurs',
@@ -284,28 +279,4 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
     messages,
     description: descriptionsAction[action]
   };
-}
-
-/**
- * Construire un prompt personnalisé
- * Pour des cas d'usage avancés
- * 
- * @param instructionsSysteme - Instructions système personnalisées
- * @param instructionsUtilisateur - Instructions utilisateur personnalisées
- * @returns Messages formatés pour WebLLM
- */
-export function construirePromptPersonnalise(
-  instructionsSysteme: string,
-  instructionsUtilisateur: string
-): Message[] {
-  return [
-    {
-      role: 'system',
-      contenu: instructionsSysteme
-    },
-    {
-      role: 'user',
-      contenu: instructionsUtilisateur
-    }
-  ];
 }
