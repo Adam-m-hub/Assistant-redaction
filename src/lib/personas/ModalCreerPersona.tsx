@@ -12,7 +12,7 @@ interface ModalCreerPersonaProps {
 export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) {
   const { creerPersona } = useStorePersonas();
 
-  // ✅ État du formulaire SANS style/ton
+  //  État du formulaire 
   const [formulaire, setFormulaire] = useState<CreerPersonaParams>({
     nom: '',
     description: '',
@@ -83,7 +83,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
     try {
       await creerPersona(formulaire);
       
-      // ✅ Réinitialiser SANS style/ton
+      //  Réinitialiser  le formulaire
       setFormulaire({
         nom: '',
         description: '',
@@ -167,8 +167,6 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">{erreurs.description}</p>
             )}
           </div>
-
-          {/* ❌ SECTION STYLE/TON SUPPRIMÉE */}
 
           {/* Expertises */}
           <div>

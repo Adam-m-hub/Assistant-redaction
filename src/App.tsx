@@ -70,10 +70,10 @@ const handleAction = async (action: TypeAction) => {
   }
 
   try {
-    // 🆕 Récupérer le persona actif (s'il existe)
+    //  Récupérer le persona actif (s'il existe)
     const { personaActif } = useStorePersonas.getState();
     
-    // ✅ Construire le prompt complet (avec ou sans persona)
+    //  Construire le prompt complet (avec ou sans persona)
     const prompt = construirePrompt({
       action,
       texte: texteEditeur,
@@ -83,7 +83,7 @@ const handleAction = async (action: TypeAction) => {
       systemPrompt: personaActif?.systemPrompt  // undefined si pas de persona
     });
 
-    // ✅ Générer le texte avec les messages prêts
+    //  Générer le texte avec les messages prêts
     await genererTexte(prompt.messages);
 
   } catch (error) {
@@ -135,7 +135,7 @@ const handleNouveauDocument = () => {
   setLongueur('moyen');
   effacerSuggestion();
   
-  console.log('📄 Nouveau document créé');
+  console.log(' Nouveau document créé');
 };
   /**
  * Enregistrer le document
@@ -143,7 +143,7 @@ const handleNouveauDocument = () => {
 const handleEnregistrer = async () => {
   // Vérifier que le texte n'est pas vide
   if (!texteEditeur.trim()) {
-    alert('⚠️ Le document est vide');
+    alert(' Le document est vide');
     return;
   }
 
@@ -151,7 +151,7 @@ const handleEnregistrer = async () => {
    // Si c'est un nouveau document OU si le document actuel a été supprimé
     if (!documentActuel || documentActuel.id.startsWith('doc_')) {
       // Demander un nouveau titre à chaque fois
-      const titre = prompt('📝 Titre du document :', documentActuel?.titre || '');
+      const titre = prompt(' Titre du document :', documentActuel?.titre || '');
       
       // Si l'utilisateur annule
       if (titre === null) return;
@@ -300,9 +300,7 @@ useEffect(() => {
         <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
               {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100 h-[750px]">
-              {/* 👤 NOUVEAU : Sélecteur de Personas */}
-            <SelecteurPersonas />
+        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100 h-[640px]">
           <PanneauParametres
             style={style}
             ton={ton}
@@ -316,7 +314,7 @@ useEffect(() => {
         </div>
 
           {/* Zone centrale - Éditeur de texte */}
-          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[750px]">
+          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[640px]">
             
             {/* Zone d'édition avec TipTap */}
             <div className="flex-1 overflow-hidden">

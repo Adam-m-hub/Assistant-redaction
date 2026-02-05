@@ -126,15 +126,24 @@ class ServiceMoteurWebLLM {
 
       console.log(`🔄 Début du chargement du modèle : ${config.nom}`);
 
+      //  Variable pour tracer le dernier pourcentage affiché
+      let dernierPourcentage = 0;
+
       // 3. Créer le moteur WebLLM avec suivi de progression
       this.moteur = await CreateMLCEngine(
         config.nom,
         {
           // Callback appelé pendant le chargement
           initProgressCallback: (rapport) => {
-            console.log(`📊 Progression : ${rapport.text}`);
+            const pourcentage = Math.round(rapport.progress * 100);
             
-            // Notifier les observateurs
+            //  Afficher seulement tous les 10% ou à 100%
+            if (pourcentage >= dernierPourcentage + 10 || pourcentage === 100) {
+              console.log(`⏳ ${pourcentage}% - ${rapport.text}`);
+              dernierPourcentage = pourcentage;
+            }
+            
+            // Notifier les observateurs (garde la progression exacte pour l'UI)
             this.notifierProgression({
               pourcentage: rapport.progress * 100,
               etape: rapport.text
@@ -171,11 +180,11 @@ class ServiceMoteurWebLLM {
    * @param parametres - Paramètres de génération (optionnel)
    * @returns Le texte généré
    */
-  /*
+ 
   public async genererTexte(
     messages: Message[],
     parametres?: ParametresGeneration,
-    onChunk?: (chunk: string) => void,  // <-- Nouveau paramètre optionnel
+    onChunk?: (chunk: string) => void,   
   ): Promise<ReponseModele> {
     // 1. Vérifier que le modèle est prêt
     if (!this.estPret()) {
@@ -187,11 +196,16 @@ class ServiceMoteurWebLLM {
 
     try {
       const tempsDebut = Date.now();
+          // 🔍 CONSOLE LOG ICI - Voir le prompt complet envoyé
+        console.log("--------------------------------");
+        console.log(" PROMPT ENVOYÉ AU MODÈLE:");
+        console.log(messages.map(msg => `[${msg.role.toUpperCase()}]: ${msg.contenu}`).join("\n"));
+        console.log("--------------------------------");
 
       // 2. Paramètres par défaut si non fournis
       const paramsFinaux: ParametresGeneration = {
         temperature: parametres?.temperature ?? 0.7,
-        longueurMaximale: parametres?.longueurMaximale ?? 100,
+        longueurMaximale: parametres?.longueurMaximale ?? 1000,
         topP: parametres?.topP ?? 0.9,
         penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
       };
@@ -210,94 +224,7 @@ class ServiceMoteurWebLLM {
         content: msg.contenu
       }));
 
-      console.log("🤔 Génération en cours...");
-
-      // 4. Générer le texte (mode non-streaming pour l'instant)
-      const reponse = await this.moteur!.chat.completions.create({
-        messages: messagesWebLLM,
-        temperature: paramsFinaux.temperature,
-        max_tokens: paramsFinaux.longueurMaximale,
-        top_p: paramsFinaux.topP,
-        frequency_penalty: paramsFinaux.penaliteFrequence,
-        stream: true  // Pas de streaming pour l'instant (on fera ça plus tard)
-
-
-      });
-
-      const tempsFin = Date.now();
-      const tempsGeneration = tempsFin - tempsDebut;
-
-      console.log(`✅ Texte généré en ${tempsGeneration}ms`);
-        let texteComplet = "";
-        let tokensUtilises = 0;
-
-             // Et il faudrait traiter les chunks
-      for await (const chunk of reponse) {
-          const nouveauTexte = chunk.choices[0]?.delta?.content || "";
-          // Afficher progressivement dans l'UI
-          console.log(nouveauTexte);
-          texteComplet += nouveauTexte;
-          tokensUtilises += chunk.choices[0]?.delta?.content?.length || 0;
-        }
-
-      // 5. Retourner la réponse formatée
-      return {
-        texte: texteComplet,
-        tokensUtilises,
-        tempsGeneration
-      };
-
-    } catch (erreur) {
-      console.error("❌ Erreur lors de la génération :", erreur);
-      
-      throw {
-        code: 'ERREUR_GENERATION',
-        message: 'Erreur lors de la génération du texte',
-        details: erreur instanceof Error ? erreur.message : String(erreur)
-      } as ErreurWebLLM;
-    }
-  }*/
-
-
-  public async genererTexte(
-    messages: Message[],
-    parametres?: ParametresGeneration,
-    onChunk?: (chunk: string) => void,  // <-- Nouveau paramètre optionnel
-  ): Promise<ReponseModele> {
-    // 1. Vérifier que le modèle est prêt
-    if (!this.estPret()) {
-      throw {
-        code: 'MODELE_NON_PRET',
-        message: 'Le modèle doit être chargé avant de générer du texte'
-      } as ErreurWebLLM;
-    }
-
-    try {
-      const tempsDebut = Date.now();
-
-      // 2. Paramètres par défaut si non fournis
-      const paramsFinaux: ParametresGeneration = {
-        temperature: parametres?.temperature ?? 0.7,
-        longueurMaximale: parametres?.longueurMaximale ?? 500,
-        topP: parametres?.topP ?? 0.9,
-        penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
-      };
-
-      // 3. Convertir nos messages au format WebLLM
-      // S'assurer que le message système est toujours en premier
-      const systemMessage = messages.find(msg => msg.role === 'system');
-      const otherMessages = messages.filter(msg => msg.role !== 'system');
-      
-      const sortedMessages = systemMessage 
-        ? [systemMessage, ...otherMessages]
-        : otherMessages;
-      
-      const messagesWebLLM = sortedMessages.map(msg => ({
-        role: msg.role,
-        content: msg.contenu
-      }));
-
-      console.log("🤔 Génération en cours...");
+      console.log(" Génération en cours...");
 
       // 4. Générer le texte avec streaming
       const reponseStream = await this.moteur!.chat.completions.create({
@@ -327,7 +254,7 @@ class ServiceMoteurWebLLM {
         
         // Afficher dans la console pour le débogage
         if (nouveauTexte) {
-          console.log("Chunk reçu:", nouveauTexte);
+         // console.log("Chunk reçu:", nouveauTexte);
         }
         
         // Garder une référence au dernier chunk (qui contient souvent les infos d'usage)
@@ -366,12 +293,6 @@ class ServiceMoteurWebLLM {
       } as ErreurWebLLM;
     }
   }
-
-
-
-    
-
-
   /**
    * Décharger le modèle de la mémoire
    * Utile pour libérer de la RAM

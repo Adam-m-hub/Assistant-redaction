@@ -2,6 +2,8 @@
 // Panneau de personnalisation avec selects déroulants
 
 import type { StyleEcriture, Ton, Longueur } from '../../lib/prompts/templates';
+import { useStorePersonas } from '@/stroe/storePersonas'; 
+import {SelecteurPersonas} from '../../lib/personas/SelecteurPersonas';
 
 /**
  * Props du composant
@@ -68,8 +70,12 @@ export default function PanneauParametres({
         </p>
       </div>
 
+     
+
       {/* Section : Style d'écriture */}
       <div className="space-y-1 mb-6">
+         {/*  NOUVEAU : Sélecteur de Personas */}
+          <SelecteurPersonas />
         <label htmlFor="style-select" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
           📝 Style d'écriture
         </label>

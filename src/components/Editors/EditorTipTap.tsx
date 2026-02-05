@@ -74,7 +74,7 @@ export default function EditorTipTap({
 
   return (
     // ✅ MODIFIÉ : Hauteur fixe + flex column
-    <div className={`flex flex-col h-[675px] bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`flex flex-col h-[560px] bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 ${className}`}>
       
       {/* Barre d'outils - FIXE en haut */}
       <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900 flex items-center gap-1 flex-wrap">

@@ -58,7 +58,7 @@ export const useStoreModele = create<EtatModele>()(
         },
         
         surProgression: (nouvelleProgression: ProgressionChargement) => {
-          console.log(`📈 Progression : ${nouvelleProgression.pourcentage}%`);
+        //console.log(`📈 Progression : ${nouvelleProgression.pourcentage}%`);
           set({ progression: nouvelleProgression });
         },
         
@@ -101,7 +101,7 @@ export const useStoreModele = create<EtatModele>()(
         },
 
         /**
-         * ✅ SIMPLIFIÉ : Génère directement avec les messages fournis
+         *  SIMPLIFIÉ : Génère directement avec les messages fournis
          * Les messages sont DÉJÀ construits dans App.tsx via construirePrompt()
          */
         genererTexte: async (messages: Message[]) => {

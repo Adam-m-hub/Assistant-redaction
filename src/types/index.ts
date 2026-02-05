@@ -1,5 +1,7 @@
 // src/types/index.ts
 
+
+
 // Types pour les paramètres de génération
 export interface GenerationParams {
   temperature: number;

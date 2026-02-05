@@ -13,7 +13,7 @@ interface ModalEditerPersonaProps {
 export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPersonaProps) {
   const { modifierPersona } = useStorePersonas();
 
-  // ✅ État du formulaire SANS style/ton
+  //  État du formulaire 
   const [formulaire, setFormulaire] = useState({
     nom: '',
     description: '',
@@ -131,8 +131,6 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
                          focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
             />
           </div>
-
-          {/* ❌ SECTION STYLE/TON SUPPRIMÉE */}
 
           {/* Expertises */}
           <div>

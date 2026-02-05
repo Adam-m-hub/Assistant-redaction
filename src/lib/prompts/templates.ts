@@ -50,9 +50,12 @@ export interface PromptConstruit {
 /**
  * Instructions système de base (SANS persona)
  */
-const INSTRUCTIONS_SYSTEME_BASE = `Tu es un assistant de rédaction professionnel expert en français.
+const INSTRUCTIONS_SYSTEME_BASE = `Tu es un assistant de rédaction professionnel.
 
-RÈGLES ABSOLUES À RESPECTER :
+  # Important : LIS ATTENTIVEMENT les instructions ci-dessous avant de répondre.
+  
+  # RÈGLES GÉNÉRALES :
+
 - Réponds UNIQUEMENT avec le texte demandé, RIEN d'autre
 - INTERDICTION STRICTE d'ajouter des explications, commentaires ou notes
 - INTERDICTION d'utiliser des astérisques (*) ou des annotations
@@ -218,19 +221,19 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
   // 1. Construire le prompt système
   let promptSysteme = '';
   
-  // ✅ SI PERSONA : Utiliser son systemPrompt
+  //  SI PERSONA : Utiliser son systemPrompt
   if (systemPrompt) {
     promptSysteme = systemPrompt;
   } 
-  // ✅ SINON : Utiliser instructions de base
+  //  SINON : Utiliser instructions de base
   else {
     promptSysteme = INSTRUCTIONS_SYSTEME_BASE;
   }
   
-  // ✅ TOUJOURS : Ajouter l'action
+  //  TOUJOURS : Ajouter l'action
   promptSysteme += '\n\n' + INSTRUCTIONS_PAR_ACTION[action];
   
-  // ✅ TOUJOURS : Ajouter style/ton/longueur du panneau
+  //  TOUJOURS : Ajouter style/ton/longueur du panneau
   promptSysteme += construireInstructionsStyle(style, ton, longueur, action);
   
   // 2. Construire le prompt utilisateur
