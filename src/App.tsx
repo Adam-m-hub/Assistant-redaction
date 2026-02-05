@@ -300,7 +300,7 @@ useEffect(() => {
         <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
               {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto dark:bg-gray-800 dark:text-gray-100 h-[640px]">
+        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:text-gray-100 h-[640px]">
           <PanneauParametres
             style={style}
             ton={ton}

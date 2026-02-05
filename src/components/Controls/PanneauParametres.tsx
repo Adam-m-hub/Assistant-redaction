@@ -60,8 +60,7 @@ export default function PanneauParametres({
   };
 
   return (
-    <div className="space-y-2">
-      
+    <div className="space-y-1  ">
       {/* En-tête */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">⚙️ Paramètres</h2>
