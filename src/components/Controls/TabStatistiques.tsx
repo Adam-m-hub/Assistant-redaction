@@ -1,10 +1,12 @@
 // src/components/UI/TabStatistiques.tsx
-
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 interface TabStatistiquesProps {
   texteEditeur: string;
 }
 
 export default function TabStatistiques({ texteEditeur }: TabStatistiquesProps) {
+  const { t } = useTranslation();
   
   if (!texteEditeur.trim()) {
     return (
@@ -12,7 +14,7 @@ export default function TabStatistiques({ texteEditeur }: TabStatistiquesProps) 
         <svg className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
-        <p>Écrivez du texte pour voir les statistiques</p>
+        <p>{t("texte.Écrivez_du_texte_pour_voir_les_statistiques")}</p>
       </div>
     );
   }
@@ -46,26 +48,26 @@ export default function TabStatistiques({ texteEditeur }: TabStatistiquesProps) 
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{mots.length}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Mots</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("texte.mots")}</p>
         </div>
         <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{caracteres}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Caractères</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("texte.caracteres")}</p>
         </div>
         <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">{phrases.length}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Phrases</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("texte.phrases")}</p>
         </div>
         <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{moyenneMots}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Mots/Phrase</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("texte.moyenne_mots_par_phrase")}</p>
         </div>
       </div>
 
       {/* Score de lisibilité */}
       <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-gray-300">📖 Lisibilité</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">📖 {t("texte.lisibilite")}</span>
           <span className={`text-sm font-semibold ${couleurScore}`}>{scorePhrase}</span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 mt-2">
@@ -79,7 +81,7 @@ export default function TabStatistiques({ texteEditeur }: TabStatistiquesProps) 
       {/* Mots les plus utilisés */}
       {motsTries.length > 0 && (
         <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🔤 Mots les plus utilisés</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🔤 {t("texte.mots_plus_utilises")}</p>
           <div className="space-y-2">
             {motsTries.map(([mot, nombre]) => (
               <div key={mot} className="flex items-center gap-2">

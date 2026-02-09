@@ -43,13 +43,13 @@ export default function Header({
   const obtenirInfoStatut = () => {
     switch (statut) {
       case 'pret':
-        return { texte: 'Modèle prêt', couleur: 'bg-green-500' };
+        return { texte: t('statut.modele_pret'), couleur: 'bg-green-500' };
       case 'chargement':
-        return { texte: 'Chargement...', couleur: 'bg-yellow-500 animate-pulse' };
+        return { texte: t('statut.chargement'), couleur: 'bg-yellow-500 animate-pulse' };
       case 'erreur':
-        return { texte: 'Erreur', couleur: 'bg-red-500' };
+        return { texte: t('statut.erreur'), couleur: 'bg-red-500' };
       default:
-        return { texte: 'Hors ligne', couleur: 'bg-gray-400' };
+        return { texte: t('statut.hors_ligne'), couleur: 'bg-gray-400' };
     }
   };
 
@@ -92,7 +92,7 @@ export default function Header({
                 onClick={onChargerModele}
                 className="px-2 py-1 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
               >
-                Charger le modèle IA
+                {t('buttons.charger_le_modele_ia')}
               </button>
             )}
             
@@ -104,14 +104,14 @@ export default function Header({
                   onClick={onNouveauDocument}
                   className="px-2 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
-                  📄 Nouveau
+                  📄 {t('buttons.nouveau_document')}
                 </button>
                 
                 <button 
                   onClick={onOuvrirDocuments}
                   className="px-2 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
                 >
-                  📁 Mes documents
+                  📁 {t('buttons.mes_documents')}
                 </button>
               
                 {/* Bouton Enregistrer avec indicateur */}
@@ -124,14 +124,14 @@ export default function Header({
                       : 'bg-green-600 text-white hover:bg-green-700'
                   }`}
                 >
-                  {estModifie ? '● Enregistrer' : '✓ Sauvegardé'}
+                  {estModifie ? '● ' + t('buttons.enregistrer') : '✓ ' + t('buttons.sauvegarde')}
                 </button>
                 
                 <button 
                   onClick={onDechargerModele}
                   className="px-2 py-1 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
                 >
-                  Décharger le modèle
+                  {t('buttons.decharger_le_modele')}
                 </button>
               </>
             )}

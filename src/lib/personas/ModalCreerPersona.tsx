@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useStorePersonas } from '../../stroe/storePersonas';
 import type { CreerPersonaParams } from '../../types/personas';
+import { useTranslation } from 'react-i18next';
 
 interface ModalCreerPersonaProps {
   ouvert: boolean;
@@ -11,6 +12,7 @@ interface ModalCreerPersonaProps {
 
 export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) {
   const { creerPersona } = useStorePersonas();
+  const { t } = useTranslation();
 
   //  État du formulaire 
   const [formulaire, setFormulaire] = useState<CreerPersonaParams>({
@@ -111,7 +113,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            ✨ Créer un Nouveau Persona
+            ✨ {t('personas.creer_un_nouveau_persona')}
           </h2>
           <button
             onClick={onFermer}
@@ -127,13 +129,13 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
           {/* Nom */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Nom du Persona *
+              {t('personas.nom_du_persona')} *
             </label>
             <input
               type="text"
               value={formulaire.nom}
               onChange={(e) => setFormulaire({ ...formulaire, nom: e.target.value })}
-              placeholder="Ex: Blogueur Tech"
+              placeholder={t('personas.exemple_nom_persona')}
               className={`w-full px-4 py-2 border rounded-lg
                          bg-white dark:bg-gray-700 
                          text-gray-900 dark:text-white
@@ -149,12 +151,12 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Description *
+              {t('personas.description')} *
             </label>
             <textarea
               value={formulaire.description}
               onChange={(e) => setFormulaire({ ...formulaire, description: e.target.value })}
-              placeholder="Décrivez le rôle et l'expertise de ce persona..."
+              placeholder={t('personas.decriver_le_role_et_les_caracteristiques')}
               rows={3}
               className={`w-full px-4 py-2 border rounded-lg
                          bg-white dark:bg-gray-700 
@@ -171,7 +173,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
           {/* Expertises */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Expertises * (au moins 1)
+              {t('personas.expertises')} * {t('personas.au_moins_une_expertise')}
             </label>
             
             <div className="flex gap-2">
@@ -180,7 +182,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
                 value={expertiseInput}
                 onChange={(e) => setExpertiseInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), ajouterExpertise())}
-                placeholder="Ex: SEO, Storytelling..."
+                placeholder={t('personas.exemples_de_expertise')}
                 className={`flex-1 px-4 py-2 border rounded-lg
                            bg-white dark:bg-gray-700 
                            text-gray-900 dark:text-white
@@ -195,7 +197,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
                            flex items-center gap-2 transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                Ajouter
+                {t('buttons.ajouter')}
               </button>
             </div>
 
@@ -223,19 +225,19 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
             )}
 
             {erreurs.expertise && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{erreurs.expertise}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{t(erreurs.expertise)}</p>
             )}
           </div>
 
           {/* Exemple de texte */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Exemple de texte (optionnel)
+              {t('personas.exemples')}
             </label>
             <textarea
               value={formulaire.exempleTexte}
               onChange={(e) => setFormulaire({ ...formulaire, exempleTexte: e.target.value })}
-              placeholder="Ex: Yo les amis ! Aujourd'hui on parle de..."
+              placeholder={t('personas.exemples_de_phrase')}
               rows={2}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
                          bg-white dark:bg-gray-700 
@@ -248,7 +250,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
           {/* Température */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Créativité (Temperature: {formulaire.temperature})
+              {t('personas.temperature_creativite')} : {formulaire.temperature}
             </label>
             <input
               type="range"
@@ -266,8 +268,8 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
                          [&::-webkit-slider-thumb]:cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-              <span>Conservateur (0.1)</span>
-              <span>Créatif (1.0)</span>
+              <span>{t('temperature.conservateur_0_1')}</span>
+              <span>{t('temperature.creatif_1_0')}</span>
             </div>
           </div>
 
@@ -281,7 +283,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
                          hover:bg-gray-50 dark:hover:bg-gray-700
                          transition-colors"
             >
-              Annuler
+              {t('buttons.annuler')}
             </button>
             <button
               type="submit"
@@ -292,7 +294,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
                          disabled:opacity-50 disabled:cursor-not-allowed
                          transition-all"
             >
-              {enCours ? 'Création...' : '✨ Créer le Persona'}
+              {enCours ? t('personas.creation_en_cours') : t('personas.creer_le_persona')}
             </button>
           </div>
         </form>

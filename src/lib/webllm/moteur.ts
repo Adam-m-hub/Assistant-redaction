@@ -2,6 +2,7 @@
 // Service principal pour gérer WebLLM - Pattern Singleton
 
 import { CreateMLCEngine, MLCEngine } from "@mlc-ai/web-llm";
+//import { appConfig } from "./appConfig";
 import type {
   StatutModele,
   ProgressionChargement,
@@ -11,9 +12,10 @@ import type {
   ReponseModele,
   ErreurWebLLM
 } from './types';
-import { text } from "stream/consumers";
-import { useStorePersonas } from "../../stroe/storePersonas";
 
+
+// ou
+//console.log(MLCEngine);
 
 /**
  * Service Singleton pour gérer le modèle WebLLM
@@ -53,9 +55,6 @@ class ServiceMoteurWebLLM {
 
   /**
    * Obtenir l'instance unique du service (Singleton)
-   * 
-   * Utilisation :
-   *   const service = ServiceMoteurWebLLM.obtenirInstance();
    */
   public static obtenirInstance(): ServiceMoteurWebLLM {
     if (!ServiceMoteurWebLLM.instance) {
@@ -66,14 +65,6 @@ class ServiceMoteurWebLLM {
 
   /**
    * Enregistrer des callbacks pour être notifié des changements
-   * 
-   * @param callbacks - Fonctions à appeler lors d'événements
-   * 
-   * Exemple :
-   *   service.enregistrerObservateurs({
-   *     surChangementStatut: (statut) => console.log(statut),
-   *     surProgression: (prog) => console.log(prog.pourcentage + "%")
-   *   });
    */
   public enregistrerObservateurs(callbacks: {
     surChangementStatut?: (statut: StatutModele) => void;
@@ -85,8 +76,6 @@ class ServiceMoteurWebLLM {
 
   /**
    * Obtenir le statut actuel du modèle
-   * 
-   * @returns Le statut actuel ('inactif', 'chargement', 'pret', 'erreur')
    */
   public obtenirStatut(): StatutModele {
     return this.statut;
@@ -94,8 +83,6 @@ class ServiceMoteurWebLLM {
 
   /**
    * Vérifier si le modèle est prêt à générer du texte
-   * 
-   * @returns true si le modèle est chargé et prêt
    */
   public estPret(): boolean {
     return this.statut === 'pret' && this.moteur !== null;
@@ -103,14 +90,9 @@ class ServiceMoteurWebLLM {
 
   /**
    * Charger le modèle WebLLM
-   * 
-   * @param config - Configuration du modèle à charger
-   * 
-   * Exemple :
-   *   await service.chargerModele({
-   *     nom: "Phi-3-mini-4k-instruct-q4f16_1-MLC",
-   *     description: "Modèle Phi-3 Mini"
-   *   });
+   */
+  /**
+   * Charger le modèle WebLLM
    */
   public async chargerModele(config: ConfigurationModele): Promise<void> {
     try {
@@ -126,18 +108,19 @@ class ServiceMoteurWebLLM {
 
       console.log(`🔄 Début du chargement du modèle : ${config.nom}`);
 
-      //  Variable pour tracer le dernier pourcentage affiché
+      // Variable pour tracer le dernier pourcentage affiché
       let dernierPourcentage = 0;
 
-      // 3. Créer le moteur WebLLM avec suivi de progression
+      // 3. Créer le moteur WebLLM avec suivi de progression + appConfig
       this.moteur = await CreateMLCEngine(
         config.nom,
         {
+         // appConfig, // ← UTILISATION DE appConfig ICI
           // Callback appelé pendant le chargement
           initProgressCallback: (rapport) => {
             const pourcentage = Math.round(rapport.progress * 100);
             
-            //  Afficher seulement tous les 10% ou à 100%
+            // Afficher seulement tous les 10% ou à 100%
             if (pourcentage >= dernierPourcentage + 10 || pourcentage === 100) {
               console.log(`⏳ ${pourcentage}% - ${rapport.text}`);
               dernierPourcentage = pourcentage;
@@ -172,15 +155,71 @@ class ServiceMoteurWebLLM {
       throw erreurFormatee;
     }
   }
+/*
+// Dans moteur.ts - REMPLACE toute la fonction chargerModele
+public async chargerModele(config: ConfigurationModele): Promise<void> {
+  try {
+    if (this.statut === 'chargement') return;
+    
+    this.changerStatut('chargement');
+    this.configuration = config;
+
+    console.log(`🔄 Chargement du modèle : ${config.nom}`);
+
+    let dernierPourcentage = 0;
+
+    // NOUVELLE MÉTHODE : utilise l'URL CDN directe
+    this.moteur = await CreateMLCEngine(
+      config.nom,
+      {
+        // WebLLM va chercher automatiquement
+        initProgressCallback: (rapport) => {
+          const pourcentage = Math.round(rapport.progress * 100);
+          
+          if (pourcentage >= dernierPourcentage + 10 || pourcentage === 100) {
+            console.log(`⏳ ${pourcentage}% - ${rapport.text}`);
+            dernierPourcentage = pourcentage;
+          }
+          
+          this.notifierProgression({
+            pourcentage: rapport.progress * 100,
+            etape: rapport.text
+          });
+        }
+      }
+    );
+
+    console.log("✅ Modèle chargé avec succès !");
+    this.changerStatut('pret');
+
+  } catch (erreur) {
+    console.error("❌ Erreur :", erreur);
+    
+    // Si échec, essaie avec un modèle plus simple
+    if (config.nom.includes("Llama")) {
+      console.log("🔄 Essaie avec TinyLlama à la place...");
+      // Essaie automatiquement avec TinyLlama
+      await this.chargerModele({
+        nom: "TinyLlama-1.1B-Chat-v1.0-q4f16_1",
+        tailleMemoire: 512,
+        description: "TinyLlama (backup)"
+      });
+      return;
+    }
+    
+    this.changerStatut('erreur');
+    this.notifierErreur({
+      code: 'ERREUR_CHARGEMENT',
+      message: "Impossible de charger le modèle",
+      details: erreur instanceof Error ? erreur.message : String(erreur)
+    });
+  }
+}*/
+
 
   /**
    * Générer du texte avec le modèle
-   * 
-   * @param messages - Liste des messages de la conversation
-   * @param parametres - Paramètres de génération (optionnel)
-   * @returns Le texte généré
    */
- 
   public async genererTexte(
     messages: Message[],
     parametres?: ParametresGeneration,
@@ -196,11 +235,16 @@ class ServiceMoteurWebLLM {
 
     try {
       const tempsDebut = Date.now();
-          // 🔍 CONSOLE LOG ICI - Voir le prompt complet envoyé
-        console.log("--------------------------------");
-        console.log(" PROMPT ENVOYÉ AU MODÈLE:");
-        console.log(messages.map(msg => `[${msg.role.toUpperCase()}]: ${msg.contenu}`).join("\n"));
-        console.log("--------------------------------");
+      
+      // 📊 CONSOLE LOG - Messages envoyés au modèle WebLLM
+      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      console.log("📤 MOTEUR : Envoi au modèle WebLLM");
+      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      messages.forEach((msg, index) => {
+        console.log(`\n[Message ${index + 1}] ${msg.role.toUpperCase()}:`);
+        console.log(msg.contenu);
+      });
+      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
       // 2. Paramètres par défaut si non fournis
       const paramsFinaux: ParametresGeneration = {
@@ -209,6 +253,8 @@ class ServiceMoteurWebLLM {
         topP: parametres?.topP ?? 0.9,
         penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
       };
+
+      console.log("⚙️ Paramètres WebLLM :", paramsFinaux);
 
       // 3. Convertir nos messages au format WebLLM
       // S'assurer que le message système est toujours en premier
@@ -224,7 +270,7 @@ class ServiceMoteurWebLLM {
         content: msg.contenu
       }));
 
-      console.log(" Génération en cours...");
+      console.log("🔄 Génération en cours...");
 
       // 4. Générer le texte avec streaming
       const reponseStream = await this.moteur!.chat.completions.create({
@@ -252,29 +298,25 @@ class ServiceMoteurWebLLM {
           onChunk(nouveauTexte);
         }
         
-        // Afficher dans la console pour le débogage
-        if (nouveauTexte) {
-         // console.log("Chunk reçu:", nouveauTexte);
-        }
-        
-        // Garder une référence au dernier chunk (qui contient souvent les infos d'usage)
+        // Garder une référence au dernier chunk
         lastChunkWithUsage = chunk;
       }
 
       const tempsFin = Date.now();
       const tempsGeneration = tempsFin - tempsDebut;
 
-      // Récupérer le nombre de tokens depuis le dernier chunk ou l'usage
+      // Récupérer le nombre de tokens
       if (lastChunkWithUsage?.usage?.total_tokens) {
         tokensUtilises = lastChunkWithUsage.usage.total_tokens;
       } else {
-        // Estimation approximative si l'API ne fournit pas l'usage dans le streaming
-        tokensUtilises = Math.ceil(texteComplet.length / 4); // Estimation: ~4 caractères par token
+        // Estimation approximative
+        tokensUtilises = Math.ceil(texteComplet.length / 4);
       }
 
-      console.log(`✅ Texte généré en ${tempsGeneration}ms`);
-      console.log(`Longueur totale: ${texteComplet.length} caractères`);
-      console.log(`Tokens estimés: ${tokensUtilises}`);
+      //console.log(`✅ Texte généré en ${tempsGeneration}ms`);
+      //console.log(`📏 Longueur : ${texteComplet.length} caractères`);
+      //console.log(`🎯 Tokens : ${tokensUtilises}`);
+      //console.log(`📝 Aperçu : ${texteComplet.substring(0, 100)}...`);
 
       // 5. Retourner la réponse formatée
       return {
@@ -293,15 +335,13 @@ class ServiceMoteurWebLLM {
       } as ErreurWebLLM;
     }
   }
+
   /**
    * Décharger le modèle de la mémoire
-   * Utile pour libérer de la RAM
    */
   public async dechargerModele(): Promise<void> {
     if (this.moteur) {
       console.log("🗑️ Déchargement du modèle...");
-      // Note: WebLLM n'a pas de méthode explicite de déchargement
-      // On met juste à null pour permettre au garbage collector de nettoyer
       this.moteur = null;
       this.changerStatut('inactif');
       this.configuration = null;

@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import { listerDocuments, supprimerDocument, type DocumentSauvegarde } from '../../lib/storage/db';
-import { exporterEnTexte } from '../../utils/export';
 import { exporterEnMarkdown } from '../../utils/export';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props du composant
@@ -24,6 +24,7 @@ export default function ModalDocuments({
   onFermer,
   onCharger
 }: ModalDocumentsProps) {
+  const { t } = useTranslation();
   // État local
   const [documents, setDocuments] = useState<DocumentSauvegarde[]>([]);
   const [chargement, setChargement] = useState(true);
@@ -89,11 +90,11 @@ export default function ModalDocuments({
     const heures = Math.floor(minutes / 60);
     const jours = Math.floor(heures / 24);
 
-    if (minutes < 1) return 'À l\'instant';
-    if (minutes < 60) return `Il y a ${minutes} min`;
-    if (heures < 24) return `Il y a ${heures}h`;
-    if (jours === 1) return 'Hier';
-    if (jours < 7) return `Il y a ${jours} jours`;
+    if (minutes < 1) return t("texte.a_l_instant");
+    if (minutes < 60) return `${t("texte.il_y_a")} ${minutes} min`;
+    if (heures < 24) return `${t("texte.il_y_a")} ${heures}h`;
+    if (jours === 1) return t("texte.hier");
+    if (jours < 7) return `${t("texte.il_y_a")} ${jours} jours`;
     
     return date.toLocaleDateString('fr-FR', {
       day: 'numeric',
@@ -133,9 +134,9 @@ export default function ModalDocuments({
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Mes Documents</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t("texte.documents_sauvegardes")}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {documents.length} document{documents.length > 1 ? 's' : ''} sauvegardé{documents.length > 1 ? 's' : ''}
+                  {documents.length} {t("texte.document")} {documents.length > 1 ? t("texte.sauvegardes") : t("texte.sauvegarde")}
                 </p>
               </div>
             </div>
@@ -167,9 +168,9 @@ export default function ModalDocuments({
                 <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-gray-500 dark:text-gray-400">Aucun document sauvegardé</p>
+                <p className="text-gray-500 dark:text-gray-400">{t("texte.aucun_document_sauvegarde")}</p>
                 <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                  Vos documents apparaîtront ici
+                  {t("texte.vos_documents_apparaissent_ici")}
                 </p>
               </div>
             )}
@@ -202,7 +203,7 @@ export default function ModalDocuments({
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                             </svg>
-                            {compterMots(doc.contenu)} mots
+                            {compterMots(doc.contenu)} {t("texte.mots")}
                           </span>
 
                           {/* Paramètres si disponibles */}
@@ -228,7 +229,7 @@ export default function ModalDocuments({
                           onClick={() => handleCharger(doc)}
                           className="px-3 py-1.5 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm rounded transition-colors whitespace-nowrap"
                         >
-                          📂 Charger
+                          📂 {t('buttons.charger')}
                         </button>
                         
                         {/* AJOUTER CE BOUTON */}
@@ -241,14 +242,14 @@ export default function ModalDocuments({
                           }}
                           className="px-3 py-1.5 bg-green-600 dark:bg-green-500 text-white text-sm rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors whitespace-nowrap"
                         >
-                          📥 Exporter
+                          📥 {t('buttons.exporter')}
                         </button>
                         
                         <button
                           onClick={() => handleSupprimer(doc.id)}
                           className="px-3 py-1.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 text-sm rounded hover:bg-red-200 dark:hover:bg-red-800 transition-colors whitespace-nowrap"
                         >
-                          🗑️ Supprimer
+                          🗑️ {t('buttons.supprimer')}
                         </button>
                       </div>
                     </div>
@@ -264,7 +265,7 @@ export default function ModalDocuments({
               onClick={onFermer}
               className="w-full px-4 py-2 bg-gray-600 dark:bg-gray-500 text-white rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors font-medium"
             >
-              Fermer
+              {t('buttons.fermer')}
             </button>
           </div>
 

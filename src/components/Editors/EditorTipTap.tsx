@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect } from 'react';
 import CharacterCount from '@tiptap/extension-character-count';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props du composant EditorTipTap
@@ -71,6 +72,7 @@ export default function EditorTipTap({
       </div>
     );
   }
+  const { t } = useTranslation();
 
   return (
     // ✅ MODIFIÉ : Hauteur fixe + flex column
@@ -154,7 +156,7 @@ export default function EditorTipTap({
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             editor.isActive('bulletList') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
-          title="Liste à puces"
+          title={t("texte.liste_a_puces")}
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
@@ -168,7 +170,7 @@ export default function EditorTipTap({
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             editor.isActive('orderedList') ? 'bg-gray-300 dark:bg-gray-600' : ''
           }`}
-          title="Liste numérotée"
+          title={t("texte.liste_numerotee")}
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
@@ -225,12 +227,12 @@ export default function EditorTipTap({
       <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-900">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <span>
-            📝 {editor.storage.characterCount?.words() || 0} mots
+            📝 {editor.storage.characterCount?.words() || 0} {t("texte.mots")}
             <span className="mx-2">•</span>
-            {editor.getText().length} caractères
+            {editor.getText().length} {t("texte.caracteres")}
           </span>
           <span className="text-gray-400">
-            {desactive ? '🔒 Lecture seule' : '✏️ Édition'}
+            {desactive ? `🔒 ${t("texte.lecture_seule")}` : `✏️ ${t("texte.edition")}`}
           </span>
         </div>
       </div>

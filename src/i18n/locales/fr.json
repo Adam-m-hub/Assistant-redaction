@@ -1,3 +1,4 @@
+
 {
   "common": {
     "api_ne_fournit_pas_l": "API ne fournit pas l",
@@ -7,6 +8,7 @@
     "ajouter_une_expertise": "Ajouter une expertise...",
     "ajoutez_au_moins_une_expertise": "Ajoutez au moins une expertise",
     "amical": "Amical",
+    "Améliorer": "Améliorer",
     "analyse": "Analyse",
      "assistant_de_redaction_ia": "Assistant de redaction IA",
     "assistant_de_redaction_professionnel": "Assistant de rédaction professionnel",
@@ -166,5 +168,220 @@
   },
   "modals": {
     "annuler_ctrl_z": "Annuler (Ctrl+Z)"
-  }
+  },
+  "personas": {
+      "journaliste": {
+      "nom": "📰 Journaliste",
+      "description": "Style journalistique factuel et engageant"
+    },
+    "scientifique": {
+      "nom": "🔬 Scientifique",
+      "description": "Style académique rigoureux et précis"
+    },
+    "marketeur": {
+      "nom": "📈 Marketeur",
+      "description": "Style persuasif et orienté conversion"
+    },
+    "poete": {
+      "nom": "🎭 Poète",
+      "description": "Style créatif et imagé"
+    },
+    "creer_un_persona": "Créer un Persona",
+    "creer_un_nouveau_persona": "Créer un nouveau persona",
+    "impossible_de_modifier_un_persona_predef": "Impossible de modifier un persona prédéfini",
+    "impossible_de_supprimer_un_persona_prede": "Impossible de supprimer un persona prédéfini",
+    "supprimer_le_persona": "Supprimer le persona",
+    "creer_le_persona": "Créer le persona",
+    "modifier_le_persona": "Modifier le persona",
+    "creation_en_cours": "Création en cours...",
+    "modification_en_cours": "Modification en cours...",
+    "description": "Description",
+    "expertises": "Expertises",
+    "au_moins_une_expertise": "(au moins 1)",
+    "exemples": "Exemples de phrases que ce persona pourrait dire (optionnel)",
+    "nom_du_persona": "Nom du persona",
+    "personas_predefinis": "Personas prédéfinis",
+    "personas_personnalises": "Personas personnalisés",
+    "creation": "Création",
+    "creer": "Créer",
+    "temperature_creativite": "Température (Créativité)",
+    "modification": "Modification",
+    "suppression": "Suppression",
+    "creation_reussie": "Persona créé avec succès",
+    "modification_reussie": "Persona modifié avec succès",
+    "suppression_reussie": "Persona supprimé avec succès",
+    "confirmation_suppression": "Êtes-vous sûr de vouloir supprimer ce persona ?",
+    "erreur_creation": "Erreur lors de la création du persona",
+    "erreur_modification": "Erreur lors de la modification du persona",
+    "erreur_suppression": "Erreur lors de la suppression du persona",
+    "decriver_le_role_et_les_caracteristiques": "Décriver le rôle et les caractéristiques de ce persona.",
+    "exemples_de_expertise": "SEO, Rédaction, Journalisme, etc.",
+    "exemples_de_phrase": "Yo les amis ! Aujourd'hui, on va parler de...\"",
+    "exemple_nom_persona": "Developpeur Web, Journaliste"
+  },
+  "buttons": {
+    "ajouter": "Ajouter",
+    "ameliorer": "Améliorer",
+    "allonger": "Allonger",
+    "corriger": "Corriger",
+    "raccourcir": "Raccourcir",
+    "annuler": "Annuler",
+    "confirmer": "Confirmer",
+    "supprimer": "Supprimer",
+    "charger_le_modele_ia": "Charger le modèle IA",
+    "decharger_le_modele": "Décharger le modèle",
+    "generer": "Générer",
+    "regenerer": "Régénérer",
+    "appliquer": "Appliquer",
+    "fermer": "Fermer",
+    "sauvegarder": "Sauvegarder",
+    "charger": "Charger",
+    "exporter": "Exporter",
+    "vider": "Vider",
+    "nouveau_document": "Nouveau",
+    "mes_documents": "Mes documents",
+    "enregistrer": "Enregistrer",
+    "sauvegarde": "Sauvegardé",
+    "suggestions": "Suggestions",
+    "statistiques": "Statistiques",
+    "creer_nouveau_persona": "Créer un Persona",
+    "modifier_persona": "Modifier le Persona",
+    "supprimer_persona": "Supprimer le Persona",
+    "details_persona": "Détails",
+    "modifier": "Modifier"
+
+  },
+  "placeholders": {
+    "description_persona": "Description du persona...",
+    "nom_persona": "Nom du persona...",
+    "recherche_personas": "Rechercher personas...",
+    "recherche_documents": "Rechercher documents...",
+    "recherche_expertises": "Rechercher expertises..."
+  },
+  "labels": {
+    "predefinis": "prédéfinis",
+    "personnalises": "personnalisés",
+    "documents": "Documents",
+    "expertises": "Expertises",
+    "style": "Style",
+    "ton": "Ton",
+    "longueur": "Longueur",
+    "choisir_un_persona": "Choisir un persona",
+    "longueur_cible": "Longueur cible",
+    "style_ecriture": "Style d'écriture",
+    "parametres": "Paramètres",
+    "court": "Court",
+    "moyen": "Moyen",
+    "long": "Long"
+  },
+  "style": {
+    "academique": "Académique",
+    "creatif": "Créatif",
+    "journalistique": "Journalistique",
+    "persuasif": "Persuasif",
+     "formel": "Formel",
+     "concis": "Concis",
+     "technique": "Technique"
+  },
+  "ton": {
+    "amical": "Amical",
+    "enthousiaste": "Enthousiaste",
+    "serieux": "Sérieux",
+    "neutre": "Neutre"
+  },
+  "descStyle": {
+    "professionnel_et_structure": "professionnel et structuré",
+    "direct_et_precis": "direct et précis",
+    "objectif_et_equilibre": "objectif et équilibré",
+    "technique_et_detaille": "technique et détaillé",
+    "concis_et_direct": "concis et direct",
+     "original_et_imaginatif": "original et imaginatif"
+  },
+  "descTon": {
+    "chaleureux_et_accessible": "chaleureux et accessible",
+    "objectif_et_equilibre": "objectif et équilibré",
+    "positif_et_dynamique": "positif et dynamique",
+    "pose_et_reflechi": "posé et réfléchi"
+  },
+  "longueur": {
+    "court": "Court",
+    "moyen": "Moyen",
+    "long": "Long"
+  },
+  "difficulte": {
+    "facile": "Facile",
+    "intermediaire": "Intermédiaire",
+    "difficile": "Difficile"
+  },
+  "temperature": {
+    "conservateur_0_1": "Conservateur (0.1)",
+    "equilibre_0_5": "Équilibré (0.5)",
+    "creatif_1_0": "Créatif (1.0)"
+  },
+  "statut": {
+    "modele_pret": "Modèle prêt",
+    "chargement": "Chargement...",
+    "erreur": "Erreur",
+    "hors_ligne": "Hors ligne"
+  },
+  "texte": {
+    "Écrivez_du_texte_pour_voir_les_statistiques": "Écrivez du texte pour voir les statistiques",
+    "mots": "Mots",
+    "caracteres": "Caractères",
+    "phrases": "Phrases",
+    "moyenne_mots_par_phrase": "Moyenne mots/phrase",
+    "lisibilite": "Lisibilité",
+    "mots_plus_utilises": "Mots les plus utilisés",
+    "temps": "Temps de génération",
+    "tokens_utilises": "Tokens utilisés",
+    "les_suggestions_apparaitront_ici": "Les suggestions apparaîtront ici",
+    "chargez_d_abord_le_modele_pour_commencer": "Chargez d'abord le modèle pour commencer",
+    "le_texte_ne_peut_pas_etre_vide": "Le texte ne peut pas être vide",
+    "generation_en_cours": "Génération en cours...",
+    "erreur_generation": "Erreur lors de la génération du texte",
+    "lecture_seule": "Lecteur seul",
+    "edition": "Édition",
+    "selection_actuelle": "Sélection actuelle",
+    "astuce": "Astuce : ",
+    "personnalisez_le_style_de_generation": "Personnalisez le style de génération",
+    "parametres_influencent_generation": "Ces paramètres influencent la génération du texte. ",
+    "experimenter_pour_trouver_ce_qui_vous_convient": "Expérimentez pour trouver ce qui vous convient le mieux !",
+    "document":"Document",
+    "sauvegarde":"Sauvegarde",
+     "sauvegardes":"Sauvegardes",
+    "sauvegarde_reussie":"Sauvegardé avec succès",
+    "erreur_sauvegarde":"Erreur lors de la sauvegarde",
+     "il_y_a": "Il y a",
+    "minute": "minute",
+    "seconde": "second",
+    "jour": "jour",
+    "heure": "heure",
+    "documents_sauvegardes": "Documents sauvegardés",
+    "description_court": "50-100 mots",
+    "description_moyen": "100-200 mots",
+    "description_long": "300-500 mots",
+    
+    "chaleureux_et_accessible": "chaleureux et accessible",
+    "direct_et_precis": "direct et précis",
+    "objectif_et_equilibre": "objectif et équilibré",
+    "original_et_imaginatif": "original et imaginatif",
+    "positif_et_dynamique": "positif et dynamique",
+    "pose_et_reflechi": "posé et réfléchi",
+    "serieux": "sérieux",
+    "technique": "technique",
+    "vulgarisation": "vulgarisation"
+  },
+  "nom": {
+   "developpeur_web": "Développeur Web",
+   "scietifique": "Scientifique",
+    "expert_seo": "Expert SEO",
+   "journaliste": "Journaliste",
+    "redacteur_seo": "Rédacteur SEO",
+    "blogueur_tech": "Blogueur Tech",
+    "expert_marketing": "Expert Marketing",
+    "professeur_universitaire": "Professeur Universitaire",
+    "scientifique_recherche": "Scientifique Recherche",
+    "copywriter_publicitaire": "Copywriter Publicitaire",
+    "auteur_creatif": "Auteur Créatif"
+  } 
 }

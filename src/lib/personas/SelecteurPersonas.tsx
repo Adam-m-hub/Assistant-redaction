@@ -4,7 +4,8 @@ import { useStorePersonas } from '../../stroe/storePersonas';
 import { Plus, Info } from 'lucide-react';
 import { ModalCreerPersona } from './ModalCreerPersona';
 //import { ModalDetailsPersona } from './ModalDetailsPersona';
-import { ModalEditerPersona } from './ModalEditerPersona';  //
+import { ModalEditerPersona } from './ModalEditerPersona';  
+import { useTranslation } from 'react-i18next';
 
 export function SelecteurPersonas() {
   const {
@@ -14,7 +15,7 @@ export function SelecteurPersonas() {
     selectionnerPersona,
     supprimerPersona,  
   } = useStorePersonas();
-
+  const { t } = useTranslation();
   const [modalDetailsOuvert, setModalDetailsOuvert] = useState(false);
   const [modalCreerOuvert, setModalCreerOuvert] = useState(false);
   const [personaPourDetails, setPersonaPourDetails] = useState<any>(null);
@@ -34,14 +35,15 @@ export function SelecteurPersonas() {
   const handleSupprimer = async () => {
     if (!personaPourDetails) return;
     
-    if (!confirm(`Supprimer "${personaPourDetails.nom}" ?`)) return;
+    if (!confirm(`${t("personas.confirmation_suppression")} ${personaPourDetails.nom.toUpperCase()} ?`)) return;
+   // if (!confirm(t("personas.suppression_avec_nom", { nom: personaPourDetails.nom }))) return;
 
     try {
       await supprimerPersona(personaPourDetails.id);
       setModalDetailsOuvert(false);
       setPersonaPourDetails(null);
     } catch (erreur) {
-      alert('❌ Erreur lors de la suppression');
+      alert(`${t("personas.erreur_suppression")}`);
     }
   };
  
@@ -52,7 +54,7 @@ export function SelecteurPersonas() {
       {/* Sélecteur */}
       <div className="space-y-1">
         <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-          Sélectionner un Persona
+          {t("labels.choisir_un_persona")}
         </label>
         <select
           value={personaActif?.id || ''}
@@ -70,20 +72,26 @@ export function SelecteurPersonas() {
                      cursor-pointer transition-colors"
         >
           {/* Prédéfinis */}
-          <optgroup label="Prédéfinis">
+          <optgroup label={t("labels.predefinis")}>
             {personas.filter(p => p.estPredefini).map(persona => (
               <option key={persona.id} value={persona.id}>
-                {persona.nom}
+                  {persona.estPredefini 
+              ? t(`personas.${persona.id}.nom`)  // Traduction pour prédéfinis
+              : persona.nom                      // Nom tel quel pour custom
+            }
               </option>
             ))}
           </optgroup>
 
           {/* Personnalisés */}
           {personas.some(p => !p.estPredefini) && (
-            <optgroup label="Personnalisés">
+            <optgroup label={t("labels.personnalises")}>
               {personas.filter(p => !p.estPredefini).map(persona => (
                 <option key={persona.id} value={persona.id}>
-                  {persona.nom}
+                    {persona.estPredefini 
+              ? t(`personas.${persona.id}.nom`)  // Traduction pour prédéfinis
+              : persona.nom                      // Nom tel quel pour custom
+            }
                 </option>
               ))}
             </optgroup>
@@ -94,14 +102,17 @@ export function SelecteurPersonas() {
         {personaActif && (
           <div className="flex items-center justify-between mt-2">
             <span className="text-sm text-gray-900 dark:text-gray-100">
-              {personaActif.nom}
+              {personaActif.estPredefini 
+              ? t(`personas.${personaActif.id}.nom`)  // Traduction pour prédéfinis
+              : personaActif.nom                      // Nom tel quel pour custom
+            }
             </span>
             <button
               onClick={() => ouvrirDetails(personaActif)}
               className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
             >
               <Info className="w-3 h-3" />
-              Détails
+              {t("buttons.details_persona")}
             </button>
           </div>
         )}
@@ -116,10 +127,10 @@ export function SelecteurPersonas() {
                    text-gray-600 dark:text-gray-400 
                    hover:text-blue-600 dark:hover:text-blue-400
                    rounded-lg text-sm transition-all hover:shadow-sm"
-        title="Créer un nouveau persona"
+        title={t("buttons.creer_nouveau_persona")}
       >
         <Plus className="w-4 h-4" />
-        <span>Créer un Persona</span>
+        <span>{t("buttons.creer_nouveau_persona")}</span>
       </button>
 
       {/* Modals */}
@@ -159,7 +170,7 @@ export function SelecteurPersonas() {
                 {/* Description */}
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                    Description
+                    {t("personas.description")}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {personaPourDetails.description}
@@ -169,7 +180,7 @@ export function SelecteurPersonas() {
                 {/* Expertises */}
                 <div className="space-y-2">
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Expertises
+                    {t("personas.expertises")}
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {personaPourDetails.expertise.map((exp: string, idx: number) => (
@@ -188,7 +199,7 @@ export function SelecteurPersonas() {
                 {personaPourDetails.exempleTexte && (
                   <div className="space-y-2">
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      Exemple
+                      {t("personas.exemple_texte")}
                     </span>
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic p-3 
                                 border border-gray-200 dark:border-gray-700 rounded">
@@ -210,7 +221,7 @@ export function SelecteurPersonas() {
                                 hover:bg-gray-200 dark:hover:bg-gray-600 
                                 rounded-lg text-sm font-medium transition-colors"
                     >
-                      ✏️ Modifier
+                      ✏️ {t("buttons.modifier")}
                     </button>
                     <button
                       onClick={handleSupprimer}
@@ -219,7 +230,7 @@ export function SelecteurPersonas() {
                                 hover:bg-red-100 dark:hover:bg-red-900/30 
                                 rounded-lg text-sm font-medium transition-colors"
                     >
-                      🗑️ Supprimer
+                      🗑️ {t("buttons.supprimer")}
                     </button>
                   </div>
                 )}
@@ -233,7 +244,7 @@ export function SelecteurPersonas() {
                             hover:bg-gray-50 dark:hover:bg-gray-700 
                             rounded-lg text-sm font-medium transition-colors"
                 >
-                  Fermer
+                  {t("buttons.fermer")}
                 </button>
               </div>
           </div>

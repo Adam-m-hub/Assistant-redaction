@@ -12,7 +12,7 @@ i18n
     resources: {
       fr: { translation: fr },
       en: { translation: en }
-    },
+    }, 
     lng: langueStockee,
     fallbackLng: 'fr',
     interpolation: {

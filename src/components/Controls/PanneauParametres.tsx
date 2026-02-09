@@ -4,6 +4,7 @@
 import type { StyleEcriture, Ton, Longueur } from '../../lib/prompts/templates';
 import { useStorePersonas } from '@/stroe/storePersonas'; 
 import {SelecteurPersonas} from '../../lib/personas/SelecteurPersonas';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props du composant
@@ -29,43 +30,44 @@ export default function PanneauParametres({
   onTonChange,
   onLongueurChange
 }: PanneauParametresProps) {
+  const { t } = useTranslation();
 
   /**
    * Options de style avec icônes
    */
   const optionsStyle: Record<StyleEcriture, { label: string; description: string }> = {
-    formel: { label: 'Formel', description: 'Professionnel et structuré' },
-    creatif: { label: 'Créatif', description: 'Original et imaginatif' },
-    concis: { label: 'Concis', description: 'Direct et précis' },
-    technique: { label: 'Technique', description: 'Détaillé et spécialisé' }
+    formel: { label: t("style.formel"), description: t("descStyle.professionnel_et_structure") },
+    creatif: { label: t("style.creatif"), description: t("descStyle.original_et_imaginatif") },
+    concis: { label: t("style.concis"), description: t("descStyle.concis_et_direct") },
+    technique: { label: t("style.technique"), description: t("descStyle.technique_et_detaille") }
   };
 
   /**
    * Options de ton avec icônes
    */
   const optionsTon: Record<Ton, { label: string; description: string }> = {
-    neutre: { label: 'Neutre', description: 'Objectif et équilibré' },
-    enthousiaste: { label: 'Enthousiaste', description: 'Positif et dynamique' },
-    serieux: { label: 'Sérieux', description: 'Posé et réfléchi' },
-    amical: { label: 'Amical', description: 'Chaleureux et accessible' }
+    neutre: { label: t("ton.neutre"), description: t("descTon.objectif_et_equilibre") },
+    enthousiaste: { label: t("ton.enthousiaste"), description: t("descTon.positif_et_dynamique") },
+    serieux: { label: t("ton.serieux"), description: t("descTon.pose_et_reflechi") },
+    amical: { label: t("ton.amical"), description: t("descTon.chaleureux_et_accessible") }
   };
 
   /**
    * Options de longueur
    */
   const optionsLongueur: Record<Longueur, { label: string; description: string }> = {
-    court: { label: 'Court', description: '30-50 mots' },
-    moyen: { label: 'Moyen', description: '100-200 mots' },
-    long: { label: 'Long', description: '300-500 mots' }
+    court: { label: t("labels.court"), description: t("texte.description_court") },
+    moyen: { label: t("labels.moyen"), description: t("texte.description_moyen") },
+    long: { label: t("labels.long"), description: t("texte.description_long") }
   };
 
   return (
     <div className="space-y-1  ">
       {/* En-tête */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">⚙️ Paramètres</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">⚙️ {t("labels.parametres")}</h2>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Personnalisez le style de génération
+          {t("texte.personnalisez_le_style_de_generation")}
         </p>
       </div>
 
@@ -76,7 +78,7 @@ export default function PanneauParametres({
          {/*  NOUVEAU : Sélecteur de Personas */}
           <SelecteurPersonas />
         <label htmlFor="style-select" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-          📝 Style d'écriture
+          📝 {t("labels.style_ecriture")}
         </label>
         <select
           id="style-select"
@@ -95,7 +97,7 @@ export default function PanneauParametres({
       {/* Section : Ton */}
       <div className="space-y-1 mb-6">
         <label htmlFor="ton-select" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-          💬 Ton
+          💬 {t("labels.ton")}
         </label>
         <select
           id="ton-select"
@@ -114,7 +116,7 @@ export default function PanneauParametres({
       {/* Section : Longueur cible */}
       <div className="space-y-1 mb-3">
         <label htmlFor="longueur-select" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-          📏 Longueur cible
+          📏 {t("labels.longueur_cible")}
         </label>
         <select
           id="longueur-select"
@@ -133,7 +135,7 @@ export default function PanneauParametres({
       {/* Résumé visuel des paramètres sélectionnés */}
       <div className="pt-1 border-t border-gray-200 dark:border-gray-700">
         <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-          Sélection actuelle
+          {t("texte.selection_actuelle")}
         </h3>
         
         {/* Cartes résumé */}
@@ -170,8 +172,9 @@ export default function PanneauParametres({
       {/* Info bulle */}
       <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
         <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-          💡 <span className="font-medium">Astuce :</span> Ces paramètres influencent la génération de texte. 
-          Expérimentez pour trouver ce qui vous convient !
+          💡 <span className="font-medium">{t("texte.astuce")} </span> {t("texte.parametres_influencent_generation")}
+            <br />
+          {t("texte.experimenter_pour_trouver_ce_qui_vous_convient")}
         </p>
       </div>
 

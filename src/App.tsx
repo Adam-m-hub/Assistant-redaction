@@ -8,13 +8,12 @@ import PanneauParametres from '@/components/Controls/PanneauParametres';
 import type { StyleEcriture, Ton, Longueur } from './lib/prompts/templates';
 import { sauvegarderDocument, chargerDocument, ID_BROUILLON_AUTO } from './lib/storage/db';
 import { useEffect, useRef } from 'react';
-import ModalDocuments from './components/UI/ModalDocuments';
 import type { DocumentSauvegarde } from './lib/storage/db';
-import { ToggleModeNuit } from './components/UI/ToggleModeNuit';
-import { SelecteurPersonas } from './lib/personas/SelecteurPersonas';
+ 
 import Header from './components/UI/header';
 import { useStorePersonas } from './stroe/storePersonas';
 import PanneauDroit from './components/Controls/PanneauDroit';
+import { useTranslation } from 'react-i18next';
 
 
 function App() {
@@ -46,18 +45,28 @@ function App() {
   // État pour la modale des documents
   const [modaleDocumentsOuverte, setModaleDocumentsOuverte] = useState(false);
   
-  // Document actuellement ouvert
-const [documentActuel, setDocumentActuel] = useState<DocumentSauvegarde | null>(null);
+    // Document actuellement ouvert
+  const [documentActuel, setDocumentActuel] = useState<DocumentSauvegarde | null>(null);
 
-// Le texte a-t-il été modifié depuis la dernière sauvegarde ?
-const [estModifie, setEstModifie] = useState(false);
+  // Le texte a-t-il été modifié depuis la dernière sauvegarde ?
+  const [estModifie, setEstModifie] = useState(false);
 
   /**
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-    await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+   // await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+ //   await chargerModele("Phi-3-medium-4k-instruct-q4f16_1-MLC");
+   // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1");
+  // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
+  //await chargerModele("Llama-3.2-1B-Instruct-q4f16_1-MLC");
+ await chargerModele("gemma-2-2b-it-q4f16_1-MLC");
+ //await chargerModele("gemma-2-2b-it-q4f16_1-MLC");
+ // await chargerModele("Qwen2-1.5B-Instruct-q4f16_1-MLC");
+ //await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC");
   };
+
+
 
   /**
  * Gestionnaire générique pour les actions
@@ -277,6 +286,8 @@ useEffect(() => {
   }
 }, [texteEditeur]);
 
+const {t} = useTranslation();
+
 
   return (
     <div className="min-h-screen bg-gray-60 space-y-1 dark:bg-gray-900 dark:text-gray-100">
@@ -334,28 +345,28 @@ useEffect(() => {
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
                   className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {generationEnCours ? '⏳' : '✨'} Améliorer
+                  {generationEnCours ? '⏳' : '✨'} {t('buttons.ameliorer')}
                 </button>
                 <button 
                   onClick={() => handleAction('corriger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
                   className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {generationEnCours ? '⏳' : '✓'} Corriger
+                  {generationEnCours ? '⏳' : '✓'} {t('buttons.corriger')}
                 </button>
                 <button 
                   onClick={() => handleAction('raccourcir')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
                   className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {generationEnCours ? '⏳' : '📏'} Raccourcir
+                  {generationEnCours ? '⏳' : '📏'} {t('buttons.raccourcir')}
                 </button>
                 <button 
                   onClick={() => handleAction('allonger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
                   className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {generationEnCours ? '⏳' : '📝'} Allonger
+                  {generationEnCours ? '⏳' : '📝'} {t('buttons.allonger')}
                 </button>
               </div>
             </div>
