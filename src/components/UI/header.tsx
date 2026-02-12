@@ -2,6 +2,8 @@
 import { ToggleModeNuit } from '../UI/ToggleModeNuit';
 import { useTranslation } from 'react-i18next';
 import SelecteurLangue from './SelecteurLangue';
+import { useStoreHistorique } from '../../stroe/storeHistorique';
+import { useEffect } from 'react';
 
 interface HeaderProps {
   statut: 'inactif' | 'chargement' | 'pret' | 'erreur';
@@ -37,6 +39,13 @@ export default function Header({
   onEffacerErreur
 }: HeaderProps) {
     const { t } = useTranslation();
+    const { ouvrirModale, chargerHistorique } = useStoreHistorique();
+    
+    // Charger l'historique au montage
+    useEffect(() => {
+      chargerHistorique();
+    }, []);
+
   /**
    * Obtenir le texte et la couleur du statut
    */
@@ -112,6 +121,14 @@ export default function Header({
                   className="px-2 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
                 >
                   📁 {t('buttons.mes_documents')}
+                </button>
+
+                {/* 🟢 NOUVEAU : BOUTON HISTORIQUE */}
+                <button 
+                  onClick={ouvrirModale}
+                  className="px-2 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                >
+                  📜 Historique
                 </button>
               
                 {/* Bouton Enregistrer avec indicateur */}

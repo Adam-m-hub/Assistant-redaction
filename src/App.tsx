@@ -14,6 +14,9 @@ import Header from './components/UI/header';
 import { useStorePersonas } from './stroe/storePersonas';
 import PanneauDroit from './components/Controls/PanneauDroit';
 import { useTranslation } from 'react-i18next';
+import { ModaleHistorique } from './components/UI/ModalHistorique';
+import { useStoreHistorique } from './stroe/storeHistorique';
+import { calculerStatistiques } from './utils/calculerStats';
 
 
 function App() {
@@ -33,6 +36,9 @@ function App() {
 
   } = useStoreModele();
 
+  //  NOUVEAU : Hook pour l'historique
+  const { ajouterEntree } = useStoreHistorique();
+
   // État local pour le texte de l'éditeur
   const [texteEditeur, setTexteEditeur] = useState('');
   
@@ -51,19 +57,55 @@ function App() {
   // Le texte a-t-il été modifié depuis la dernière sauvegarde ?
   const [estModifie, setEstModifie] = useState(false);
 
+  //  NOUVEAU : États pour l'historique
+  const [texteAvantModification, setTexteAvantModification] = useState('');
+  const [actionEnCours, setActionEnCours] = useState<TypeAction | null>(null);
+
   /**
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-   // await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
- //   await chargerModele("Phi-3-medium-4k-instruct-q4f16_1-MLC");
-   // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1");
-  // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
-  //await chargerModele("Llama-3.2-1B-Instruct-q4f16_1-MLC");
- await chargerModele("gemma-2-2b-it-q4f16_1-MLC");
- //await chargerModele("gemma-2-2b-it-q4f16_1-MLC");
- // await chargerModele("Qwen2-1.5B-Instruct-q4f16_1-MLC");
- //await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC");
+            // Phi-3 Mini (Recommandé pour débuter)
+          //await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+         // await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
+
+          // Phi-4 Mini (Plus intelligent)
+          //await chargerModele("Phi-4-mini-4k-instruct-q4f16_1-MLC");
+        //  await chargerModele("Phi-4-mini-instruct-q4f32_1-MLC");
+         // await chargerModele("Phi-4-mini-4k-instruct-q4f32_1-MLC");
+          // TinyLlama 1.1B (Très léger, bon pour l'édition simple)
+          //await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
+          // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC");
+          // // Qwen2.5 - Très léger
+          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f32_1-MLC");
+
+          // // Qwen1.5
+          // await chargerModele("Qwen2-1.5B-Instruct-q4f16_1-MLC");
+          // await chargerModele("Qwen2-1.5B-Instruct-q4f32_1-MLC");
+          // // Llama 3.2 - 1B (TOP RECOMMANDÉ)
+          // await chargerModele("Llama-3.2-1B-Instruct-q4f16_1-MLC");
+          // await chargerModele("Llama-3.2-1B-Instruct-q4f32_1-MLC");
+
+          // Llama 3.2 - 3B (Plus puissant)
+        //  await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC"); // un peu bete
+         // await chargerModele("Llama-3.2-3B-Instruct-q4f32_1-MLC");
+          // Gemma 2 - 2B (Très bon pour l'écriture)
+          await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
+         // await chargerModele("gemma-2-2b-it-q4f32_1-MLC");
+         // await chargerModele("gemma-2-9b-it-q4f16_1-MLC"); // Attention: lourd!
+          // Hermes 3 - Très bon pour l'écriture
+       //   await chargerModele("Hermes-3-Llama-3.2-3B-q4f16_1-MLC");
+          // await chargerModele("Hermes-3-Llama-3.2-3B-q4f32_1-MLC");
+          // // Mistral 7B - Excellent mais très lourd
+          // await chargerModele("Mistral-7B-Instruct-v0.3-q4f16_1-MLC"); // Très lourd
+          // // Llama 3.1 - 8B (Excellente qualité mais lourd)
+          // await chargerModele("Llama-3.1-8B-Instruct-q4f16_1-MLC");
+          // await chargerModele("Llama-3.1-8B-Instruct-q4f32_1-MLC");
+          // // Qwen2.5 - 3B (Très bon compromis)
+          // await chargerModele("Qwen2.5-3B-Instruct-q4f16_1-MLC");
+          // await chargerModele("Qwen2.5-3B-Instruct-q4f32_1-MLC");
+
   };
 
 
@@ -79,6 +121,10 @@ const handleAction = async (action: TypeAction) => {
   }
 
   try {
+    // 🟢 NOUVEAU : Sauvegarder le texte AVANT modification
+    setTexteAvantModification(texteEditeur);
+    setActionEnCours(action);
+
     //  Récupérer le persona actif (s'il existe)
     const { personaActif } = useStorePersonas.getState();
     
@@ -103,12 +149,41 @@ const handleAction = async (action: TypeAction) => {
   /**
    * Appliquer la suggestion (remplacer le texte)
    */
-      const handleAppliquerSuggestion = () => {
-        if (derniereReponse) {
-          setTexteEditeur(derniereReponse.texte);
-          effacerSuggestion(); 
-        }
-      };
+const handleAppliquerSuggestion = async () => {
+  if (!derniereReponse || !texteAvantModification || !actionEnCours) {
+    console.warn('⚠️ Pas de suggestion à appliquer');
+    return;
+  }
+
+  // Appliquer le texte dans l'éditeur
+  setTexteEditeur(derniereReponse.texte);
+  
+  // 🟢 NOUVEAU : Enregistrer dans l'historique
+  try {
+    const { personaActif } = useStorePersonas.getState();
+    
+    await ajouterEntree({
+      texteInitial: texteAvantModification,
+      texteModifie: derniereReponse.texte,
+      action: actionEnCours,
+      personaNom: personaActif?.nom || 'Par défaut',
+      statsInitial: calculerStatistiques(texteAvantModification),
+      statsFinal: calculerStatistiques(derniereReponse.texte)
+    });
+    
+    console.log('✅ Modification enregistrée dans l\'historique');
+    
+    // Réinitialiser
+    setTexteAvantModification('');
+    setActionEnCours(null);
+    
+  } catch (erreur) {
+    console.error('❌ Erreur enregistrement historique:', erreur);
+  }
+  
+  // Effacer la suggestion
+  effacerSuggestion();
+};
 
   /**
    * Charger un document depuis la liste
@@ -288,6 +363,8 @@ useEffect(() => {
 
 const {t} = useTranslation();
 
+// 🟢 NOUVEAU : Référence à l'éditeur pour la modale
+const editorRef = useRef<any>(null);
 
   return (
     <div className="min-h-screen bg-gray-60 space-y-1 dark:bg-gray-900 dark:text-gray-100">
@@ -334,6 +411,7 @@ const {t} = useTranslation();
                 onChange={setTexteEditeur}
                 placeholder="Commencez à écrire ou demandez à l'IA de vous aider..."
                 desactive={statut !== 'pret' || generationEnCours}
+                onEditorReady={(editor) => { editorRef.current = editor; }}
               />
             </div>
 
@@ -390,6 +468,13 @@ const {t} = useTranslation();
 
         </div>
       </main>
+
+      {/* 🟢 NOUVEAU : Modale Historique */}
+      <ModaleHistorique 
+        editor={editorRef.current} 
+        texteEditeur={texteEditeur}
+        setTexteEditeur={setTexteEditeur}
+      />
     </div>
   );
 }

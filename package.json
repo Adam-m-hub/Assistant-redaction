@@ -11,6 +11,7 @@
     "extract-texts": "node scripts/extraire-textes.js"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@mlc-ai/web-llm": "^0.2.80",
     "@tiptap/extension-character-count": "^3.16.0",
     "@tiptap/pm": "^3.15.3",

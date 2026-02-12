@@ -248,7 +248,10 @@
     "modifier_persona": "Modifier le Persona",
     "supprimer_persona": "Supprimer le Persona",
     "details_persona": "Détails",
-    "modifier": "Modifier"
+    "modifier": "Modifier",
+    "recuperer_texte_initial": "Récupérer le texte initial",
+    "recuperer_texte_modifie": "Récupérer le texte modifié",
+    "supprimer_tout": "Supprimer tout"
 
   },
   "placeholders": {
@@ -369,7 +372,21 @@
     "pose_et_reflechi": "posé et réfléchi",
     "serieux": "sérieux",
     "technique": "technique",
-    "vulgarisation": "vulgarisation"
+    "vulgarisation": "vulgarisation",
+    "historique_modifications": "Historique des modifications",
+    "aucun_historique": "Aucun historique",
+    "modification_apparaissent_ici": "Les modifications apparaîtront ici",
+    "texte_modifie": "Texte modifié",
+    "texte_initial": "Texte initial",
+    "maximum_50": "Maximum 50 ",
+    "entrees": "Entrées",
+    "entree": "Entrée",
+    "corrige": "Corrigé",
+    "ameliore": "Amélioré",
+    "allonge": "Allongé",
+    "raccourci": "Raccourci"
+    
+
   },
   "nom": {
    "developpeur_web": "Développeur Web",
@@ -383,5 +400,13 @@
     "scientifique_recherche": "Scientifique Recherche",
     "copywriter_publicitaire": "Copywriter Publicitaire",
     "auteur_creatif": "Auteur Créatif"
-  } 
+  },
+  "title":{
+    "suppprimer": "Supprimer"
+  },
+  "alert": {
+    "vider_editeur_avant_recuperer": "Veuillez vider l'éditeur avant de récupérer ce texte.",
+    "supprimer_entree_historique": "Êtes-vous sûr de vouloir supprimer cette entrée de l'historique ?",
+    "supprimer_tout_historique": "Êtes-vous sûr de vouloir supprimer tout l'historique ?"
+  }
 }

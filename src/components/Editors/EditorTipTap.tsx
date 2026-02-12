@@ -16,6 +16,7 @@ interface EditorTipTapProps {
   placeholder?: string;
   desactive?: boolean;
   className?: string;
+  onEditorReady?: (editor: any) => void;
 }
 
 /**

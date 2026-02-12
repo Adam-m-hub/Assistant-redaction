@@ -155,186 +155,147 @@ class ServiceMoteurWebLLM {
       throw erreurFormatee;
     }
   }
-/*
-// Dans moteur.ts - REMPLACE toute la fonction chargerModele
-public async chargerModele(config: ConfigurationModele): Promise<void> {
-  try {
-    if (this.statut === 'chargement') return;
-    
-    this.changerStatut('chargement');
-    this.configuration = config;
-
-    console.log(`🔄 Chargement du modèle : ${config.nom}`);
-
-    let dernierPourcentage = 0;
-
-    // NOUVELLE MÉTHODE : utilise l'URL CDN directe
-    this.moteur = await CreateMLCEngine(
-      config.nom,
-      {
-        // WebLLM va chercher automatiquement
-        initProgressCallback: (rapport) => {
-          const pourcentage = Math.round(rapport.progress * 100);
-          
-          if (pourcentage >= dernierPourcentage + 10 || pourcentage === 100) {
-            console.log(`⏳ ${pourcentage}% - ${rapport.text}`);
-            dernierPourcentage = pourcentage;
-          }
-          
-          this.notifierProgression({
-            pourcentage: rapport.progress * 100,
-            etape: rapport.text
-          });
-        }
-      }
-    );
-
-    console.log("✅ Modèle chargé avec succès !");
-    this.changerStatut('pret');
-
-  } catch (erreur) {
-    console.error("❌ Erreur :", erreur);
-    
-    // Si échec, essaie avec un modèle plus simple
-    if (config.nom.includes("Llama")) {
-      console.log("🔄 Essaie avec TinyLlama à la place...");
-      // Essaie automatiquement avec TinyLlama
-      await this.chargerModele({
-        nom: "TinyLlama-1.1B-Chat-v1.0-q4f16_1",
-        tailleMemoire: 512,
-        description: "TinyLlama (backup)"
-      });
-      return;
-    }
-    
-    this.changerStatut('erreur');
-    this.notifierErreur({
-      code: 'ERREUR_CHARGEMENT',
-      message: "Impossible de charger le modèle",
-      details: erreur instanceof Error ? erreur.message : String(erreur)
-    });
-  }
-}*/
+ 
 
 
   /**
    * Générer du texte avec le modèle
    */
-  public async genererTexte(
-    messages: Message[],
-    parametres?: ParametresGeneration,
-    onChunk?: (chunk: string) => void,   
-  ): Promise<ReponseModele> {
-    // 1. Vérifier que le modèle est prêt
-    if (!this.estPret()) {
-      throw {
-        code: 'MODELE_NON_PRET',
-        message: 'Le modèle doit être chargé avant de générer du texte'
-      } as ErreurWebLLM;
-    }
-
-    try {
-      const tempsDebut = Date.now();
-      
-      // 📊 CONSOLE LOG - Messages envoyés au modèle WebLLM
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.log("📤 MOTEUR : Envoi au modèle WebLLM");
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      messages.forEach((msg, index) => {
-        console.log(`\n[Message ${index + 1}] ${msg.role.toUpperCase()}:`);
-        console.log(msg.contenu);
-      });
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-      // 2. Paramètres par défaut si non fournis
-      const paramsFinaux: ParametresGeneration = {
-        temperature: parametres?.temperature ?? 0.7,
-        longueurMaximale: parametres?.longueurMaximale ?? 1000,
-        topP: parametres?.topP ?? 0.9,
-        penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
-      };
-
-      console.log("⚙️ Paramètres WebLLM :", paramsFinaux);
-
-      // 3. Convertir nos messages au format WebLLM
-      // S'assurer que le message système est toujours en premier
-      const systemMessage = messages.find(msg => msg.role === 'system');
-      const otherMessages = messages.filter(msg => msg.role !== 'system');
-      
-      const sortedMessages = systemMessage 
-        ? [systemMessage, ...otherMessages]
-        : otherMessages;
-      
-      const messagesWebLLM = sortedMessages.map(msg => ({
-        role: msg.role,
-        content: msg.contenu
-      }));
-
-      console.log("🔄 Génération en cours...");
-
-      // 4. Générer le texte avec streaming
-      const reponseStream = await this.moteur!.chat.completions.create({
-        messages: messagesWebLLM,
-        temperature: paramsFinaux.temperature,
-        max_tokens: paramsFinaux.longueurMaximale,
-        top_p: paramsFinaux.topP,
-        frequency_penalty: paramsFinaux.penaliteFrequence,
-        stream: true  // Streaming activé
-      });
-
-      let texteComplet = "";
-      let tokensUtilises = 0;
-      let lastChunkWithUsage: any = null;
-
-      // Traiter les chunks du stream
-      for await (const chunk of reponseStream) {
-        const nouveauTexte = chunk.choices[0]?.delta?.content || "";
-        
-        // Ajouter au texte complet
-        texteComplet += nouveauTexte;
-        
-        // Appeler le callback si fourni (pour l'UI)
-        if (onChunk && nouveauTexte) {
-          onChunk(nouveauTexte);
-        }
-        
-        // Garder une référence au dernier chunk
-        lastChunkWithUsage = chunk;
-      }
-
-      const tempsFin = Date.now();
-      const tempsGeneration = tempsFin - tempsDebut;
-
-      // Récupérer le nombre de tokens
-      if (lastChunkWithUsage?.usage?.total_tokens) {
-        tokensUtilises = lastChunkWithUsage.usage.total_tokens;
-      } else {
-        // Estimation approximative
-        tokensUtilises = Math.ceil(texteComplet.length / 4);
-      }
-
-      //console.log(`✅ Texte généré en ${tempsGeneration}ms`);
-      //console.log(`📏 Longueur : ${texteComplet.length} caractères`);
-      //console.log(`🎯 Tokens : ${tokensUtilises}`);
-      //console.log(`📝 Aperçu : ${texteComplet.substring(0, 100)}...`);
-
-      // 5. Retourner la réponse formatée
-      return {
-        texte: texteComplet,
-        tokensUtilises,
-        tempsGeneration
-      };
-
-    } catch (erreur) {
-      console.error("❌ Erreur lors de la génération :", erreur);
-      
-      throw {
-        code: 'ERREUR_GENERATION',
-        message: 'Erreur lors de la génération du texte',
-        details: erreur instanceof Error ? erreur.message : String(erreur)
-      } as ErreurWebLLM;
-    }
+public async genererTexte(
+  messages: Message[],
+  parametres?: ParametresGeneration,
+  onChunk?: (chunk: string) => void,   
+): Promise<ReponseModele> {
+  // 1. Vérifier que le modèle est prêt
+  if (!this.estPret()) {
+    throw {
+      code: 'MODELE_NON_PRET',
+      message: 'Le modèle doit être chargé avant de générer du texte'
+    } as ErreurWebLLM;
   }
+
+  try {
+    const tempsDebut = Date.now();
+    
+    // ============================================
+    // 📊 LOGS AMÉLIORÉS POUR LE DEBUG
+    // ============================================
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("🚀 MOTEUR : Début génération");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    
+    const contenuSysteme = messages[0]?.contenu || '';
+    
+    // Détection de l'action
+    const actionMatch = contenuSysteme.match(/Action : (corrige|améliore|raccourcis|allonge)/i);
+    const actionDetectee = actionMatch ? actionMatch[1] : 'inconnue';
+    
+    // Vérification structure
+    const hasBalises = contenuSysteme.includes('<TexteUtilisateur>');
+    const hasInstructionsReponse = contenuSysteme.includes('Comment répondre :');
+    
+   // console.log(`📤 Action détectée: ${actionDetectee}`);
+  //  console.log(`📏 Longueur prompt: ${contenuSysteme.length} caractères`);
+    //console.log(`🏷️  Balises TexteUtilisateur: ${hasBalises ? '✅' : '❌'}`);
+  //  console.log(`📝 Instructions réponse: ${hasInstructionsReponse ? '✅' : '❌'}`);
+    
+    // Extraire le texte utilisateur pour info
+    const texteMatch = contenuSysteme.match(/<TexteUtilisateur>\n([\s\S]*?)\n<\/TexteUtilisateur>/);
+    if (texteMatch) {
+      const texteUser = texteMatch[1];
+      console.log(`📄 Texte utilisateur: ${texteUser.substring(0, 50)}... (${texteUser.length} caractères)`);
+    }
+
+    // 2. Paramètres par défaut
+    const paramsFinaux: ParametresGeneration = {
+      temperature: parametres?.temperature ?? 0.7,
+      longueurMaximale: parametres?.longueurMaximale ?? 1000,
+      topP: parametres?.topP ?? 0.9,
+      penaliteFrequence: parametres?.penaliteFrequence ?? 0.0
+    };
+
+    console.log(`⚙️ Paramètres: temp=${paramsFinaux.temperature}, max_tokens=${paramsFinaux.longueurMaximale}`);
+
+    // 3. Convertir nos messages au format WebLLM
+    // IMPORTANT: Garder l'ordre système puis utilisateur
+    const messagesWebLLM = messages.map(msg => ({
+      role: msg.role,
+      content: msg.contenu
+    }));
+
+    console.log("🔄 Génération en cours...");
+
+    // 4. Générer le texte avec streaming
+    const reponseStream = await this.moteur!.chat.completions.create({
+      messages: messagesWebLLM,
+      temperature: paramsFinaux.temperature,
+      max_tokens: paramsFinaux.longueurMaximale,
+      top_p: paramsFinaux.topP,
+      frequency_penalty: paramsFinaux.penaliteFrequence,
+      stream: true
+    });
+
+    let texteComplet = "";
+    let tokensUtilises = 0;
+    let lastChunkWithUsage: any = null;
+    let chunkCount = 0;
+
+    // Traiter les chunks du stream
+    for await (const chunk of reponseStream) {
+      const nouveauTexte = chunk.choices[0]?.delta?.content || "";
+      texteComplet += nouveauTexte;
+      chunkCount++;
+      
+      if (onChunk && nouveauTexte) {
+        onChunk(nouveauTexte);
+      }
+      
+      lastChunkWithUsage = chunk;
+    }
+
+    const tempsFin = Date.now();
+    const tempsGeneration = tempsFin - tempsDebut;
+
+    // Récupérer le nombre de tokens
+    if (lastChunkWithUsage?.usage?.total_tokens) {
+      tokensUtilises = lastChunkWithUsage.usage.total_tokens;
+    } else {
+      tokensUtilises = Math.ceil(texteComplet.length / 4);
+    }
+
+    // ============================================
+    // 📊 LOGS DE RÉSULTAT
+    // ============================================
+    /*console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("✅ GÉNÉRATION TERMINÉE");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log(`⏱️  Temps: ${tempsGeneration}ms`);
+    console.log(`📏 Réponse: ${texteComplet.length} caractères`);
+    console.log(`🎯 Tokens estimés: ${tokensUtilises}`);
+    console.log(`🔄 Chunks reçus: ${chunkCount}`);
+    console.log(`📝 Aperçu réponse: "${texteComplet.substring(0, 100)}..."`);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");*/
+
+    // 5. Retourner la réponse formatée
+    return {
+      texte: texteComplet,
+      tokensUtilises,
+      tempsGeneration
+    };
+
+  } catch (erreur) {
+    console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.error("❌ ERREUR LORS DE LA GÉNÉRATION");
+    console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.error("Détails:", erreur);
+    
+    throw {
+      code: 'ERREUR_GENERATION',
+      message: 'Erreur lors de la génération du texte',
+      details: erreur instanceof Error ? erreur.message : String(erreur)
+    } as ErreurWebLLM;
+  }
+}
 
   /**
    * Décharger le modèle de la mémoire

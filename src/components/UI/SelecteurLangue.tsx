@@ -27,21 +27,21 @@ export default function SelecteurLangue() {
         aria-label="Changer la langue"
       >
         <span className="text-lg">🌐</span>
-        <span className="text-xs font-medium">{langueActuelle.nom}</span>
+        <span className="text-xs font-medium  text-gray-800 dark:text-white">{langueActuelle.nom}</span>
         <span className={`text-xs transition-transform ${menuOuvert ? 'rotate-180' : ''}`}></span>
       </button>
 
       {/* Menu déroulant compact */}
       {menuOuvert && (
-        <div className="absolute top-full mt-1 right-0 bg-gray-800 rounded-md shadow-lg overflow-hidden min-w-[80px] z-10 border border-gray-700">
+        <div className="absolute  bg-gray-200   mt-1 right-0   rounded-md shadow-lg overflow-hidden min-w-[80px] z-10 border  dark:bg-gray-700">
           {langues.map((langue) => (
             <button
               key={langue.code}
               onClick={() => changerLangue(langue.code)}
               className={`w-full text-center px-3 py-2 text-xs font-medium transition-colors ${
                 i18n.language === langue.code
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  ? 'bg-gray-700 text-white cursor-default dark:bg-blue-500 dark:text-white'
+                  : 'text-gray-800 hover:text-white   dark:hover:bg-gray-600'
               }`}
             >
               {langue.nom}

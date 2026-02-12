@@ -247,7 +247,11 @@
     "modifier_persona": "Edit persona",
     "supprimer_persona": "Delete persona",
     "details_persona": "details",
-      "modifier": "Modify"
+    "modifier": "Modify",
+    "recuperer_texte_initial": "Retrieve initial text",
+    "recuperer_texte_modifie": "Retrieve modified text",
+    "supprimer_tout": "Delete all"
+
 
   },
   "placeholders": {
@@ -345,7 +349,19 @@
     "pose_et_reflechi": "poised and reflective",
     "serieux": "serious",
     "technique": "technical",
-    "vulgarisation": "vulgarization"
+    "vulgarisation": "vulgarization",
+    "historique_modifications": "Modification history",
+    "aucun_historique": "No history",
+    "modification_apparaissent_ici": "Modifications will appear here",
+    "texte_modifie": "Modified text",
+    "texte_initial": "Initial text",
+    "maximum_50": "Maximum 50",
+    "entrees":"entries",
+    "entree":"entry",
+    "corrige": "Corrected",
+    "ameliore": "Improved",
+    "allonge": "Expanded",
+    "raccourci": "Shortened"
   },
     "labels": {
     "predefinis": "Predefined",
@@ -373,5 +389,13 @@
     "scientifique_recherche": "Research Scientist",
     "copywriter_publicitaire": "Copywriter Publicitaire",
     "auteur_creatif": "Creative Author"
+  },
+    "title":{
+    "suppprimer": "Delete"
+  },
+  "alert": {
+    "vider_editeur_avant_recuperer": "Please clear the editor before retrieving this text.",
+    "supprimer_entree_historique": "Are you sure you want to delete this entry from the history?",
+    "supprimer_tout_historique": "Are you sure you want to delete all history?"
   }
 }

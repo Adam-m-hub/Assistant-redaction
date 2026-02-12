@@ -115,19 +115,10 @@ export const useStoreModele = create<EtatModele>()(
               return null;
             }
 
-            // 📊 CONSOLE LOG - Avant envoi au modèle
-            console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            //  CONSOLE LOG - Avant envoi au modèle
             console.log("🚀 STORE : Envoi des messages au modèle");
+            console.log(messages[0].contenu);
             console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            console.log("Nombre de messages :", messages.length);
-            messages.forEach((msg, index) => {
-              console.log(`\n[Message ${index + 1}] Rôle : ${msg.role.toUpperCase()}`);
-              console.log("Contenu (100 premiers caractères) :", 
-                msg.contenu.substring(0, 100) + (msg.contenu.length > 100 ? '...' : ''));
-            });
-            console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-            console.log('🤔 Génération de texte en cours...');
             
             set({ 
               generationEnCours: true, 
@@ -149,7 +140,7 @@ export const useStoreModele = create<EtatModele>()(
 
             console.log(`⚙️ Paramètres de génération : max_tokens = ${maxTokens}`);
 
-            // ✅ Générer avec les messages (déjà prêts !)
+            // Générer avec les messages (déjà prêts !)
             const reponse = await serviceMoteur.genererTexte(
               messages,
               { 
@@ -165,8 +156,8 @@ export const useStoreModele = create<EtatModele>()(
               }
             );
             
-            console.log('✅ Texte généré avec', maxTokens, 'tokens max');
-            console.log('📏 Longueur de la réponse :', reponse.texte.length, 'caractères');
+          //  console.log('✅ Texte généré avec', maxTokens, 'tokens max');
+           // console.log('📏 Longueur de la réponse :', reponse.texte.length, 'caractères');
             
             // Nettoyer le texte (enlever guillemets au début/fin)
             const texteNettoye = reponse.texte
@@ -175,7 +166,7 @@ export const useStoreModele = create<EtatModele>()(
               .replace(/["»]$/, '')   
               .trim();
 
-            console.log('🧹 Texte nettoyé :', texteNettoye.substring(0, 100) + '...');
+           // console.log('🧹 Texte nettoyé :', texteNettoye.substring(0, 100) + '...');
 
             set({ 
               derniereReponse: {
