@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import{ File, Folder, History, Save, Upload, Languages } from 'lucide-react';
 
 export default function SelecteurLangue() {
   const { i18n } = useTranslation();
@@ -25,8 +26,9 @@ export default function SelecteurLangue() {
         onClick={() => setMenuOuvert(!menuOuvert)}
         className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors p-1"
         aria-label="Changer la langue"
+        title='changer langue'
       >
-        <span className="text-lg">🌐</span>
+        <Languages className="h-5 w-5" />
         <span className="text-xs font-medium  text-gray-800 dark:text-white">{langueActuelle.nom}</span>
         <span className={`text-xs transition-transform ${menuOuvert ? 'rotate-180' : ''}`}></span>
       </button>

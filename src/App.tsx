@@ -121,7 +121,7 @@ const handleAction = async (action: TypeAction) => {
   }
 
   try {
-    // 🟢 NOUVEAU : Sauvegarder le texte AVANT modification
+    //  NOUVEAU : Sauvegarder le texte AVANT modification
     setTexteAvantModification(texteEditeur);
     setActionEnCours(action);
 
@@ -135,7 +135,9 @@ const handleAction = async (action: TypeAction) => {
       style,
       ton,
       longueur,
-      systemPrompt: personaActif?.systemPrompt  // undefined si pas de persona
+      systemPrompt: personaActif?.systemPrompt,  // undefined si pas de persona
+      expertise: personaActif?.expertise || [], // tableau vide si pas de persona ou pas d'expertise
+      description: personaActif?.description || ''  // chaîne vide si pas de persona ou pas de description
     });
 
     //  Générer le texte avec les messages prêts
@@ -158,7 +160,7 @@ const handleAppliquerSuggestion = async () => {
   // Appliquer le texte dans l'éditeur
   setTexteEditeur(derniereReponse.texte);
   
-  // 🟢 NOUVEAU : Enregistrer dans l'historique
+  //  NOUVEAU : Enregistrer dans l'historique
   try {
     const { personaActif } = useStorePersonas.getState();
     
@@ -388,7 +390,7 @@ const editorRef = useRef<any>(null);
         <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
               {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:text-gray-100 h-[640px]">
+        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:text-gray-100 h-[540px]">
           <PanneauParametres
             style={style}
             ton={ton}
@@ -402,7 +404,7 @@ const editorRef = useRef<any>(null);
         </div>
 
           {/* Zone centrale - Éditeur de texte */}
-          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[640px]">
+          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[540px]">
             
             {/* Zone d'édition avec TipTap */}
             <div className="flex-1 overflow-hidden">
@@ -414,37 +416,81 @@ const editorRef = useRef<any>(null);
                 onEditorReady={(editor) => { editorRef.current = editor; }}
               />
             </div>
-
             {/* Boutons d'action rapide */}
-            <div className="border-t border-gray-200 p-5  bg-gray-50 dark:bg-gray-700">
-              <div className="flex justify-center items-center gap-8 flex-wrap">
+            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+              <div className="flex justify-center items-center gap-3 flex-wrap">
                 <button 
                   onClick={() => handleAction('ameliorer')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
-                  {generationEnCours ? '⏳' : '✨'} {t('buttons.ameliorer')}
+                  {generationEnCours ? (
+                    <div className="relative w-3 h-3">
+                      <div className="absolute inset-0 border-2 border-blue-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                  ) : (
+                    <svg className="w-3 h-3 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  )}
+                  {t('buttons.ameliorer')}
                 </button>
+
                 <button 
                   onClick={() => handleAction('corriger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 dark:from-green-600 dark:to-green-700 dark:hover:from-green-500 dark:hover:to-green-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
-                  {generationEnCours ? '⏳' : '✓'} {t('buttons.corriger')}
+                  {generationEnCours ? (
+                    <div className="relative w-3 h-3">
+                      <div className="absolute inset-0 border-2 border-green-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                  ) : (
+                    <svg className="w-3 h-3 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
+                  {t('buttons.corriger')}
                 </button>
+
                 <button 
                   onClick={() => handleAction('raccourcir')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-500 dark:hover:to-purple-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
-                  {generationEnCours ? '⏳' : '📏'} {t('buttons.raccourcir')}
+                  {generationEnCours ? (
+                    <div className="relative w-3 h-3">
+                      <div className="absolute inset-0 border-2 border-purple-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                  ) : (
+                    <svg className="w-3 h-3 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 5 12 12 19"/>
+                    </svg>
+                  )}
+                  {t('buttons.raccourcir')}
                 </button>
+
                 <button 
                   onClick={() => handleAction('allonger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-500 dark:hover:to-orange-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
-                  {generationEnCours ? '⏳' : '📝'} {t('buttons.allonger')}
+                  {generationEnCours ? (
+                    <div className="relative w-3 h-3">
+                      <div className="absolute inset-0 border-2 border-orange-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                  ) : (
+                    <svg className="w-3 h-3 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  )}
+                  {t('buttons.allonger')}
                 </button>
               </div>
             </div>

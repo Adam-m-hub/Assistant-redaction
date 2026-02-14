@@ -220,6 +220,7 @@
     "exemple_nom_persona": "Developpeur Web, Journaliste"
   },
   "buttons": {
+    "historique": "Historique",
     "ajouter": "Ajouter",
     "ameliorer": "Améliorer",
     "allonger": "Allonger",
@@ -229,7 +230,7 @@
     "confirmer": "Confirmer",
     "supprimer": "Supprimer",
     "charger_le_modele_ia": "Charger le modèle IA",
-    "decharger_le_modele": "Décharger le modèle",
+    "decharger_modele": "Décharger le modèle",
     "generer": "Générer",
     "regenerer": "Régénérer",
     "appliquer": "Appliquer",
@@ -275,7 +276,9 @@
     "parametres": "Paramètres",
     "court": "Court",
     "moyen": "Moyen",
-    "long": "Long"
+    "long": "Long",
+    "persona_actif": "Persona actif",
+     "personas": "Personas"
   },
   "style": {
     "academique": "Académique",
@@ -384,7 +387,9 @@
     "corrige": "Corrigé",
     "ameliore": "Amélioré",
     "allonge": "Allongé",
-    "raccourci": "Raccourci"
+    "raccourci": "Raccourci",
+    "a_l_instant": "À l'instant",
+    "confirmation_suppression_document": "Êtes-vous sûr de vouloir supprimer ce document ?"
     
 
   },
