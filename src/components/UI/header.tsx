@@ -96,28 +96,28 @@ export default function Header({
               <SelecteurLangue /> 
             </div>
             
-            {/* Boutons d'action */}
- {statut === 'inactif' && (
-  <button 
-    onClick={onChargerModele}
-    className="group px-5 py-3 bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 hover:from-blue-500 hover:to-blue-600 dark:hover:from-blue-400 dark:hover:to-blue-500 text-white rounded-xl transition-all duration-200 font-medium shadow-md hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-3"
-  >
-    <svg className="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 17l4 4 4-4"/>
-      <line x1="12" y1="12" x2="12" y2="21"/>
-      <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
-    </svg>
-    {t('buttons.charger_le_modele_ia')}
-  </button>
-)}
-            
+                {/* Boutons d'action */}
+          {statut === 'inactif' && (
+            <button 
+              onClick={onChargerModele}
+              className="group px-5 py-3 bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 hover:from-blue-500 hover:to-blue-600 dark:hover:from-blue-400 dark:hover:to-blue-500 text-white rounded-xl transition-all duration-200 font-medium shadow-md hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-3"
+            >
+              <svg className="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 17l4 4 4-4"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+              </svg>
+              {t('buttons.charger_le_modele_ia')}
+            </button>
+          )}
+                      
             {/* Boutons après chargement du modèle */}
             {statut === 'pret' && (
               <div className="flex items-center gap-2">
                 {/* NOUVEAU DOCUMENT */}
                 <button 
                   onClick={onNouveauDocument}
-                  title={t('boutons.nouveau_document')}
+                  title={t('buttons.nouveau_document')}
                   className="group relative p-2.5 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 text-slate-700 dark:text-slate-100 rounded-2xl hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-600 dark:hover:to-slate-700 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-110 active:scale-95 border border-slate-300 dark:border-slate-600"
                 >
                   <svg className="h-5 w-5 transition-transform group-hover:rotate-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -132,7 +132,7 @@ export default function Header({
                 {/* DOCUMENTS */}
                 <button 
                   onClick={onOuvrirDocuments}
-                  title={t('boutons.mes_documents')}
+                  title={t('buttons.mes_documents')}
                   className="group relative p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 text-white rounded-2xl hover:from-purple-400 hover:to-purple-500 dark:hover:from-purple-500 dark:hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-purple-500/50 dark:hover:shadow-purple-700/50 hover:scale-110 active:scale-95"
                 >
                   <svg className="h-5 w-5 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -145,7 +145,7 @@ export default function Header({
                 {/* HISTORIQUE */}
                 <button 
                   onClick={ouvrirModale}
-                  title={t('boutons.historique')}
+                  title={t('buttons.historique')}
                   className="group relative p-2.5 bg-gradient-to-br from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 text-white rounded-2xl hover:from-indigo-400 hover:to-indigo-500 dark:hover:from-indigo-500 dark:hover:to-indigo-600 transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-indigo-500/50 dark:hover:shadow-indigo-700/50 hover:scale-110 active:scale-95"
                 >
                   <svg className="h-5 w-5 transition-transform group-hover:-rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +159,7 @@ export default function Header({
                 <button 
                   onClick={onEnregistrer}
                   disabled={!texteEditeur.trim()}
-                  title={t('boutons.sauvegarder')}
+                  title={t('buttons.sauvegarder')}
                   className={`group relative p-2.5 rounded-2xl transition-all duration-300 shadow-md hover:shadow-xl hover:scale-110 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md ${
                     estModifie 
                       ? 'bg-gradient-to-br from-orange-500 to-red-500 dark:from-orange-600 dark:to-red-600 hover:from-orange-400 hover:to-red-400 dark:hover:from-orange-500 dark:hover:to-red-500 hover:shadow-orange-500/50 dark:hover:shadow-orange-700/50' 
@@ -183,7 +183,7 @@ export default function Header({
                 {/* DÉCHARGER */}
                 <button 
                   onClick={onDechargerModele}
-                  title={t('boutons.decharger_modele')}
+                  title={t('buttons.decharger_modele')}
                   className="group relative p-2.5 bg-gradient-to-br from-blue-500 to-cyan-500 dark:from-blue-600 dark:to-cyan-600 text-white rounded-2xl hover:from-blue-400 hover:to-cyan-400 dark:hover:from-blue-500 dark:hover:to-cyan-500 transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-blue-500/50 dark:hover:shadow-blue-700/50 hover:scale-110 active:scale-95"
                 >
                   <svg className="h-5 w-5 transition-transform group-hover:translate-y-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

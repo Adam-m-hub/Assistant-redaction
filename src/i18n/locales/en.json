@@ -395,7 +395,9 @@
     "auteur_creatif": "Creative Author"
   },
     "title":{
-    "suppprimer": "Delete"
+    "suppprimer": "Delete",
+    "police_par_defaut": "Default font",
+    "police": "Font"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "Please clear the editor before retrieving this text.",

@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import type { StoreHistorique, EntreeHistorique } from '../types/historique';
-import { serviceHistoriqueDB } from '../lib/storage/servicehistorique';
+import { serviceHistoriqueDB } from '../lib/storage/serviceHistorique';
 
 /**
  * Store Zustand pour l'historique

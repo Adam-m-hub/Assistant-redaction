@@ -407,7 +407,9 @@
     "auteur_creatif": "Auteur Créatif"
   },
   "title":{
-    "suppprimer": "Supprimer"
+    "suppprimer": "Supprimer",
+    "police_par_defaut": "Police par défaut",
+    "police": "Police"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "Veuillez vider l'éditeur avant de récupérer ce texte.",

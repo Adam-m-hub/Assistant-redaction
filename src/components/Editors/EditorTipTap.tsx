@@ -283,9 +283,9 @@ export default function EditorTipTap({
             onChange={(e) => editor.chain().focus().setFontFamily(e.target.value).run()}
             disabled={desactive}
             className="px-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
-            title="Police"
+            title={t('title.police')}
           >
-            <option value="">Police par défaut</option>
+            <option value="">{t('title.police_par_defaut')}</option>
             <option value="Arial">Arial</option>
             <option value="Times New Roman">Times New Roman</option>
             <option value="Courier New">Courier New</option>
