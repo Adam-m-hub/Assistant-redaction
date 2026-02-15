@@ -65,7 +65,7 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-          await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+          //await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
          // await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
 
           // Phi-4 Mini (Plus intelligent)
@@ -76,7 +76,7 @@ function App() {
           //await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
           // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC");
           // // Qwen2.5 - Très léger
-          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+           await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
           // await chargerModele("Qwen2.5-0.5B-Instruct-q4f32_1-MLC");
 
           // // Qwen1.5
@@ -94,7 +94,7 @@ function App() {
          // await chargerModele("gemma-2-2b-it-q4f32_1-MLC");
          // await chargerModele("gemma-2-9b-it-q4f16_1-MLC"); // Attention: lourd!
           // Hermes 3 - Très bon pour l'écriture
-       //   await chargerModele("Hermes-3-Llama-3.2-3B-q4f16_1-MLC");
+        // await chargerModele("Hermes-3-Llama-3.2-3B-q4f16_1-MLC");// bete
           // await chargerModele("Hermes-3-Llama-3.2-3B-q4f32_1-MLC");
           // // Mistral 7B - Excellent mais très lourd
           // await chargerModele("Mistral-7B-Instruct-v0.3-q4f16_1-MLC"); // Très lourd
