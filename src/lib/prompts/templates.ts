@@ -127,21 +127,21 @@ function getInstructionAvecLongueur(action: TypeAction, texte: string): string {
   
   switch(action) {
     case 'raccourcir':
-      if (mots > 150) return 'Réduis à environ 50 mots. Garde l\'essentiel.';
-      if (mots > 100) return 'Réduis à environ 40 mots. Garde l\'essentiel.';
-      if (mots > 50) return 'Réduis à environ 30 mots. Garde l\'essentiel.';
-      return 'Réduis à environ 20 mots. Garde l\'essentiel.';
+      if (mots > 150) return ' Ta mission est de réduire le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> à environ 50 mots. Garde l\'essentiel.';
+      if (mots > 100) return 'Ta mission est de réduire le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> à environ 40 mots. Garde l\'essentiel.';
+      if (mots > 50) return 'Ta mission est de réduire le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> à environ 30 mots. Garde l\'essentiel.';
+      return 'Ta mission est de réduire le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> à environ 20 mots. Garde l\'essentiel.';
       
     case 'allonger':
-      if (mots < 50) return 'Développe pour atteindre environ 100-150 mots.';
-      if (mots < 100) return 'Développe pour atteindre environ 150-200 mots.';
-      return 'Développe pour atteindre environ 200-300 mots.';
+      if (mots < 50) return ' Ta mission est de développer le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> pour atteindre environ 100-150 mots.';
+      if (mots < 100) return 'Ta mission est de développer le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> pour atteindre environ 150-200 mots.';
+      return 'Ta mission est de développer le texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE> pour atteindre environ 200-300 mots.';
       
     case 'corriger':
-      return 'Corrige uniquement orthographe, grammaire, ponctuation.';
+      return 'Ta mission est de corriger uniquement : orthographe, grammaire, ponctuation de texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE>.';
       
     case 'ameliorer':
-      return 'Améliore le vocabulaire, la structure, l\'impact.';
+      return 'Ta mission est d\'améliorer le vocabulaire, la structure, l\'impact du texte entre <texte_A_MODIFIER> et <texte_A_MODIFIE>.';
       
     default:
       return '';
