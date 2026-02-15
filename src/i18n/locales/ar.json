@@ -1,0 +1,306 @@
+
+
+{
+  "header": {
+    "aucun_document_sauvegarde": "لا يوجد مستند محفوظ",
+    "impossible_de_charger_le_modele": "يتعذر تحميل النموذج",
+    "mes_documents": "مستنداتي",
+    "voulez_vous_vraiment_supprimer_ce_docume": "هل تريد حقاً حذف هذا المستند؟"
+  },
+  "editor": {
+    "amelioration_du_texte": "تحسين النص",
+    "commencez_a_ecrire_ou_demandez_a_l": "ابدأ بالكتابة أو اطلب من",
+    "commencez_a_ecrire": "ابدأ بالكتابة...",
+    "developpement_du_texte": "تطوير النص",
+    "le_modele_doit_etre_charge_avant_de_gene": "يجب تحميل النموذج قبل توليد النص",
+    "le_texte_ne_peut_pas_etre_vide": "النص لا يمكن أن يكون فارغاً",
+    "mon_texte": "نصي...",
+    "raccourcissement_du_texte": "اختصار النص"
+  },
+  "personas": {
+    "creer_un_persona": "إنشاء شخصية",
+    "creer_un_nouveau_persona": "إنشاء شخصية جديدة",
+    "impossible_de_modifier_un_persona_predef": "لا يمكن تعديل شخصية محددة مسبقاً",
+    "impossible_de_supprimer_un_persona_prede": "لا يمكن حذف شخصية محددة مسبقاً"
+  },
+  "settings": {
+    "il_ne_faut_pas_faire_ne_change_pas_le_st": "لا تفعل: - لا تغيّر أسلوب",
+    "style_academique_rigoureux_et_precis": "أسلوب أكاديمي دقيق ومنهجي",
+    "style_creatif_et_image": "أسلوب إبداعي وتصويري",
+    "style_journalistique_factuel_et_engagean": "أسلوب صحفي واقعي وجذاب",
+    "style_persuasif_et_oriente_conversion": "أسلوب إقناعي ومرتبط بالتحويل"
+  },
+  "stats": {
+    "caracteres": "أحرف",
+    "comme_un_murmure_dans_le_vent_les_mots_d": "مثل همسة في الرياح... الكلمات ترقص...",
+    "mots": "كلمات",
+    "mots_phrase": "كلمات/جملة",
+    "phrases": "جمل",
+    "ecrivez_du_texte_pour_voir_les_statistiq": "اكتب نصاً لرؤية الإحصاءات"
+  },
+  "loading": {
+    "chargement": "جارٍ التحميل...",
+    "erreur_chargement_liste": "خطأ في تحميل القائمة:",
+    "erreur_lors_du_chargement": "خطأ أثناء التحميل"
+  },
+  "messages": {
+    "erreur": "خطأ",
+    "erreur_lors_de_la_generation": "خطأ أثناء التوليد:",
+    "erreur_lors_de_la_generation_du_texte": "خطأ أثناء توليد النص",
+    "erreur_lors_de_la_sauvegarde": "خطأ أثناء الحفظ",
+    "erreur_lors_de_la_suppression": "خطأ أثناء الحذف",
+    "erreur_lors_du_listage": "خطأ أثناء القائمة",
+    "erreur_lors_du_vidage": "خطأ أثناء التفريغ",
+    "erreur_restauration": "خطأ في الاستعادة:",
+    "erreur_suppression": "خطأ في الحذف:"
+  },
+  "modals": {
+    "annuler_ctrl_z": "إلغاء (Ctrl+Z)"
+  },
+
+    "personas": {
+      "journaliste": {
+      "nom": "📰 صحفي",
+      "description": "أسلوب صحفي واقعي وجذاب"
+    },
+    "scientifique": {
+      "nom": "🔬 عالم",
+      "description": "أسلوب أكاديمي دقيق ومنهجي"
+    },
+    "marketeur": {
+      "nom": "📈 مسوّق",
+      "description": "أسلوب إقناعي ومرتبط بالتحويل"
+    },
+    "poete": {
+      "nom": "🎭 شاعر",
+      "description": "أسلوب إبداعي وتصويري"
+    },
+    "creer_un_persona": "إنشاء شخصية",
+    "creer_un_nouveau_persona": "إنشاء شخصية جديدة",
+    "impossible_de_modifier_un_persona_predef": "لا يمكن تعديل شخصية محددة مسبقاً",
+    "impossible_de_supprimer_un_persona_prede": "لا يمكن حذف شخصية محددة مسبقاً",
+    "supprimer_le_persona": "حذف الشخصية",
+    "creer_le_persona": "إنشاء الشخصية",
+    "modifier_le_persona": "تعديل الشخصية",
+    "creation_en_cours": "جارٍ الإنشاء...",
+    "modification_en_cours": "جارٍ التعديل...",
+    "description": "الوصف",
+    "expertises": "الخبرات",
+    "au_moins_une_expertise": "(خبرة واحدة على الأقل)",
+    "exemples": "أمثلة على العبارات التي قد يقولها هذا الشخص (اختياري)",
+    "nom_du_persona": "اسم الشخصية",
+    "personas_predefinis": "الشخصيات المحددة مسبقاً",
+    "personas_personnalises": "الشخصيات المخصصة",
+    "creation": "إنشاء",
+    "creer": "إنشاء",
+    "temperature_creativite": "درجة الحرارة (الإبداع)",
+    "modification": "تعديل",
+    "suppression": "حذف",
+    "creation_reussie": "تم إنشاء الشخصية بنجاح",
+    "modification_reussie": "تم تعديل الشخصية بنجاح",
+    "suppression_reussie": "تم حذف الشخصية بنجاح",
+    "confirmation_suppression": "هل أنت متأكد من حذف هذه الشخصية؟",
+    "erreur_creation": "خطأ أثناء إنشاء الشخصية",
+    "erreur_modification": "خطأ أثناء تعديل الشخصية",
+    "erreur_suppression": "خطأ أثناء حذف الشخصية",
+    "decriver_le_role_et_les_caracteristiques": "صف دور وخصائص هذه الشخصية.",
+    "exemples_de_expertise": "SEO، الكتابة، الصحافة، إلخ",
+    "exemples_de_phrase": "مرحباً يا أصدقاء! اليوم سنتحدث عن...",
+    "exemple_nom_persona": "مطور ويب، صحفي"
+  },
+  "buttons": {
+    "configurer_parametres": "إعداد الإعدادات",
+    "historique": "السجل",
+    "ajouter": "إضافة",
+    "ameliorer": "تحسين",
+    "allonger": "تمديد",
+    "corriger": "تصحيح",
+    "raccourcir": "اختصار",
+    "annuler": "إلغاء",
+    "confirmer": "تأكيد",
+    "supprimer": "حذف",
+    "charger_le_modele_ia": "تحميل نموذج الذكاء الاصطناعي",
+    "decharger_modele": "إلغاء تحميل النموذج",
+    "generer": "توليد",
+    "regenerer": "إعادة التوليد",
+    "appliquer": "تطبيق",
+    "fermer": "إغلاق",
+    "sauvegarder": "حفظ",
+    "charger": "تحميل",
+    "exporter": "تصدير",
+    "vider": "تفريغ",
+    "nouveau_document": "جديد",
+    "mes_documents": "مستنداتي",
+    "enregistrer": "حفظ",
+    "sauvegarde": "تم الحفظ",
+    "suggestions": "اقتراحات",
+    "statistiques": "إحصائيات",
+    "creer_nouveau_persona": "إنشاء شخصية",
+    "modifier_persona": "تعديل الشخصية",
+    "supprimer_persona": "حذف الشخصية",
+    "details_persona": "التفاصيل",
+    "modifier": "تعديل",
+    "recuperer_texte_initial": "استعادة النص الأصلي",
+    "recuperer_texte_modifie": "استعادة النص المعدّل",
+    "supprimer_tout": "حذف الكل"
+  },
+  "placeholders": {
+    "description_persona": "وصف الشخصية...",
+    "nom_persona": "اسم الشخصية...",
+    "recherche_personas": "البحث عن الشخصيات...",
+    "recherche_documents": "البحث عن المستندات...",
+    "recherche_expertises": "البحث عن الخبرات..."
+  },
+  "labels": {
+    "predefinis": "محدد مسبقاً",
+    "personnalises": "مخصص",
+    "documents": "المستندات",
+    "expertises": "الخبرات",
+    "style": "الأسلوب",
+    "ton": "النبرة",
+    "longueur": "الطول",
+    "choisir_un_persona": "اختر شخصية",
+    "longueur_cible": "الطول المستهدف",
+    "style_ecriture": "أسلوب الكتابة",
+    "parametres": "الإعدادات",
+    "court": "قصير",
+    "moyen": "متوسط",
+    "long": "طويل",
+    "persona_actif": "الشخصية النشطة",
+    "personas": "الشخصيات"
+  },
+  "style": {
+    "academique": "أكاديمي",
+    "creatif": "إبداعي",
+    "journalistique": "صحفي",
+    "persuasif": "إقناعي",
+    "formel": "رسمي",
+    "concis": "موجز",
+    "technique": "تقني"
+  },
+  "ton": {
+    "amical": "ودي",
+    "enthousiaste": "متحمس",
+    "serieux": "جاد",
+    "neutre": "محايد"
+  },
+  "descStyle": {
+    "professionnel_et_structure": "مهني ومنظم",
+    "direct_et_precis": "مباشر ودقيق",
+    "objectif_et_equilibre": "موضوعي ومتوازن",
+    "technique_et_detaille": "تقني ومفصل",
+    "concis_et_direct": "موجز ومباشر",
+    "original_et_imaginatif": "أصيل ومبتكر"
+  },
+  "descTon": {
+    "chaleureux_et_accessible": "ودود ويسهل الوصول إليه",
+    "objectif_et_equilibre": "موضوعي ومتوازن",
+    "positif_et_dynamique": "إيجابي وحيوي",
+    "pose_et_reflechi": "هادئ ومتأمل"
+  },
+  "longueur": {
+    "court": "قصير",
+    "moyen": "متوسط",
+    "long": "طويل"
+  },
+  "difficulte": {
+    "facile": "سهل",
+    "intermediaire": "متوسط",
+    "difficile": "صعب"
+  },
+  "temperature": {
+    "conservateur_0_1": "محافظ (0.1)",
+    "equilibre_0_5": "متوازن (0.5)",
+    "creatif_1_0": "مبدع (1.0)"
+  },
+  "statut": {
+    "modele_pret": "النموذج جاهز",
+    "chargement": "جارٍ التحميل...",
+    "erreur": "خطأ",
+    "hors_ligne": "غير متصل"
+  },
+  "texte": {
+    "Écrivez_du_texte_pour_voir_les_statistiques": "اكتب نصاً لرؤية الإحصاءات",
+    "mots": "كلمات",
+    "caracteres": "أحرف",
+    "phrases": "جمل",
+    "moyenne_mots_par_phrase": "متوسط الكلمات/الجملة",
+    "lisibilite": "سهولة القراءة",
+    "mots_plus_utilises": "الكلمات الأكثر استخداماً",
+    "temps": "وقت التوليد",
+    "tokens_utilises": "الوحدات المستخدمة",
+    "les_suggestions_apparaitront_ici": "ستظهر الاقتراحات هنا",
+    "chargez_d_abord_le_modele_pour_commencer": "حمل النموذج أولاً للبدء",
+    "le_texte_ne_peut_pas_etre_vide": "النص لا يمكن أن يكون فارغاً",
+    "generation_en_cours": "جارٍ التوليد...",
+    "erreur_generation": "خطأ أثناء توليد النص",
+    "lecture_seule": "عرض فقط",
+    "edition": "تحرير",
+    "selection_actuelle": "التحديد الحالي",
+    "astuce": "نصيحة: ",
+    "personnalisez_le_style_de_generation": "خصص أسلوب التوليد",
+    "parametres_influencent_generation": "هذه الإعدادات تؤثر على توليد النص. ",
+    "experimenter_pour_trouver_ce_qui_vous_convient": "جرب للعثور على الأنسب لك!",
+    "document":"مستند",
+    "sauvegarde":"حفظ",
+    "sauvegardes":"النسخ المحفوظة",
+    "sauvegarde_reussie":"تم الحفظ بنجاح",
+    "erreur_sauvegarde":"خطأ أثناء الحفظ",
+    "il_y_a": "يوجد",
+    "minute": "دقيقة",
+    "seconde": "ثانية",
+    "jour": "يوم",
+    "heure": "ساعة",
+    "documents_sauvegardes": "المستندات المحفوظة",
+    "description_court": "50-100 كلمة",
+    "description_moyen": "100-200 كلمة",
+    "description_long": "300-500 كلمة",
+    "chaleureux_et_accessible": "ودود ويسهل الوصول إليه",
+    "direct_et_precis": "مباشر ودقيق",
+    "objectif_et_equilibre": "موضوعي ومتوازن",
+    "original_et_imaginatif": "أصيل ومبتكر",
+    "positif_et_dynamique": "إيجابي وحيوي",
+    "pose_et_reflechi": "هادئ ومتأمل",
+    "serieux": "جاد",
+    "technique": "تقني",
+    "vulgarisation": "تبسيط",
+    "historique_modifications": "سجل التعديلات",
+    "aucun_historique": "لا يوجد سجل",
+    "modification_apparaissent_ici": "ستظهر التعديلات هنا",
+    "texte_modifie": "النص المعدّل",
+    "texte_initial": "النص الأصلي",
+    "maximum_50": "الحد الأقصى 50 ",
+    "entrees": "إدخالات",
+    "entree": "إدخال",
+    "corrige": "مصحح",
+    "ameliore": "محسن",
+    "allonge": "ممدد",
+    "raccourci": "مختصر",
+    "a_l_instant": "الآن",
+    "confirmation_suppression_document": "هل أنت متأكد من حذف هذا المستند؟"
+  },
+  "nom": {
+   "developpeur_web": "مطور ويب",
+   "scietifique": "عالم",
+    "expert_seo": "خبير SEO",
+   "journaliste": "صحفي",
+    "redacteur_seo": "كاتب SEO",
+    "blogueur_tech": "مدون تقني",
+    "expert_marketing": "خبير تسويق",
+    "professeur_universitaire": "أستاذ جامعي",
+    "scientifique_recherche": "عالم بحث",
+    "copywriter_publicitaire": "كاتب إعلاني",
+    "auteur_creatif": "مؤلف إبداعي"
+  },
+  "title":{
+    "suppprimer": "حذف",
+    "police_par_defaut": "الخط الافتراضي",
+    "police": "الخط",
+    "assistant_de_redaction_ia": "مساعد الكتابة بالذكاء الاصطناعي"
+  },
+  "alert": {
+    "vider_editeur_avant_recuperer": "يرجى تفريغ المحرر قبل استعادة هذا النص.",
+    "supprimer_entree_historique": "هل أنت متأكد من حذف هذا الإدخال من السجل؟",
+    "supprimer_tout_historique": "هل أنت متأكد من حذف كل السجل؟"
+  }
+}

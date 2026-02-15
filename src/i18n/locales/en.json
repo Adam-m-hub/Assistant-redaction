@@ -219,6 +219,7 @@
   },
  
   "buttons": {
+      "configurer_parametres": "Configure settings",
     "historique": "History",
     "ajouter": "Add",
     "ameliorer": "Improve",
@@ -397,7 +398,8 @@
     "title":{
     "suppprimer": "Delete",
     "police_par_defaut": "Default font",
-    "police": "Font"
+    "police": "Font",
+    "assistant_de_redaction_ia": "AI Writing Assistant"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "Please clear the editor before retrieving this text.",

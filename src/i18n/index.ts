@@ -2,8 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import fr from './locales/fr.json';
 import en from './locales/en.json';
+import ar from './locales/ar.json'; // ← NOUVEAU
 
-// Récupérer la langue sauvegardée ou français par défaut
 const langueStockee = localStorage.getItem('langue') || 'fr';
 
 i18n
@@ -11,12 +11,13 @@ i18n
   .init({
     resources: {
       fr: { translation: fr },
-      en: { translation: en }
-    }, 
+      en: { translation: en },
+      ar: { translation: ar } // ← NOUVEAU
+    },
     lng: langueStockee,
     fallbackLng: 'fr',
     interpolation: {
-      escapeValue: false // React échappe déjà les valeurs
+      escapeValue: false
     }
   });
 

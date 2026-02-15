@@ -10,7 +10,7 @@
     "amical": "Amical",
     "Améliorer": "Améliorer",
     "analyse": "Analyse",
-     "assistant_de_redaction_ia": "Assistant de redaction IA",
+   
     "assistant_de_redaction_professionnel": "Assistant de rédaction professionnel",
     "assistantredactiondb": "AssistantRedactionDB",
     "astuce": "Astuce :",
@@ -220,6 +220,7 @@
     "exemple_nom_persona": "Developpeur Web, Journaliste"
   },
   "buttons": {
+    "configurer_parametres": "Configurer les paramètres",
     "historique": "Historique",
     "ajouter": "Ajouter",
     "ameliorer": "Améliorer",
@@ -409,7 +410,8 @@
   "title":{
     "suppprimer": "Supprimer",
     "police_par_defaut": "Police par défaut",
-    "police": "Police"
+    "police": "Police",
+    "assistant_de_redaction_ia": "Assistant de redaction IA"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "Veuillez vider l'éditeur avant de récupérer ce texte.",

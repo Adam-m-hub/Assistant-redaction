@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import{ File, Folder, History, Save, Upload, Languages } from 'lucide-react';
+import { File, Folder, History, Save, Upload, Languages } from 'lucide-react';
 
 export default function SelecteurLangue() {
   const { i18n } = useTranslation();
@@ -14,7 +14,8 @@ export default function SelecteurLangue() {
 
   const langues = [
     { code: 'fr', nom: 'FR' },
-    { code: 'en', nom: 'EN' }
+    { code: 'en', nom: 'EN' },
+    { code: 'ar', nom: 'AR' } // ← SEULEMENT CETTE LIGNE AJOUTÉE
   ];
 
   const langueActuelle = langues.find(lang => lang.code === i18n.language) || langues[0];
@@ -29,13 +30,13 @@ export default function SelecteurLangue() {
         title='changer langue'
       >
         <Languages className="h-5 w-5" />
-        <span className="text-xs font-medium  text-gray-800 dark:text-white">{langueActuelle.nom}</span>
+        <span className="text-xs font-medium text-gray-800 dark:text-white">{langueActuelle.nom}</span>
         <span className={`text-xs transition-transform ${menuOuvert ? 'rotate-180' : ''}`}></span>
       </button>
 
       {/* Menu déroulant compact */}
       {menuOuvert && (
-        <div className="absolute  bg-gray-200   mt-1 right-0   rounded-md shadow-lg overflow-hidden min-w-[80px] z-10 border  dark:bg-gray-700">
+        <div className="absolute bg-gray-200 mt-1 right-0 rounded-md shadow-lg overflow-hidden min-w-[80px] z-10 border dark:bg-gray-700">
           {langues.map((langue) => (
             <button
               key={langue.code}
@@ -43,7 +44,7 @@ export default function SelecteurLangue() {
               className={`w-full text-center px-3 py-2 text-xs font-medium transition-colors ${
                 i18n.language === langue.code
                   ? 'bg-gray-700 text-white cursor-default dark:bg-blue-500 dark:text-white'
-                  : 'text-gray-800 hover:text-white   dark:hover:bg-gray-600'
+                  : 'text-gray-800 hover:text-white dark:hover:bg-gray-600'
               }`}
             >
               {langue.nom}
