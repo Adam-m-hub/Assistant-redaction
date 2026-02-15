@@ -40,7 +40,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
     }
 
     if (formulaire.expertise.length === 0) {
-      nouvellesErreurs.expertise = t('personas.ajouter_expertise');
+      nouvellesErreurs.expertise = t('personas.ajouter_au_moins_une_expertise');
     }
 
     setErreurs(nouvellesErreurs);
@@ -95,11 +95,11 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
       });
       
       onFermer();
-      alert(t('personas.persona_cree_avec_succes'));
+      alert('✅ Persona créé avec succès !');
       
     } catch (erreur) {
       console.error('❌ Erreur création persona:', erreur);
-      alert(t('personas.erreur_creation_persona'));
+      alert('❌ Erreur lors de la création du persona');
     } finally {
       setEnCours(false);
     }

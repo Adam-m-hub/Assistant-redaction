@@ -137,7 +137,8 @@
     "erreur_creation_persona": "Erreur lors de la création du persona",
     "persona_cree_avec_succes": "Persona créé avec succès !",
     "description_requise": "La description est requise",
-    "description_court": "description courte (1-2 phrases)"
+    "description_court": "description courte (1-2 phrases)",
+    "ajouter_au_moins_une_expertise": "Ajouter au moins une expertise"
   },
   "settings": {
     "il_ne_faut_pas_faire_ne_change_pas_le_st": "IL NE FAUT PAS FAIRE : - Ne change PAS le style d",

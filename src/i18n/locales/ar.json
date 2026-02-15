@@ -59,6 +59,7 @@
   },
 
     "personas": {
+      
       "journaliste": {
       "nom": "📰 صحفي",
       "description": "أسلوب صحفي واقعي وجذاب"
@@ -106,7 +107,12 @@
     "decriver_le_role_et_les_caracteristiques": "صف دور وخصائص هذه الشخصية.",
     "exemples_de_expertise": "SEO، الكتابة، الصحافة، إلخ",
     "exemples_de_phrase": "مرحباً يا أصدقاء! اليوم سنتحدث عن...",
-    "exemple_nom_persona": "مطور ويب، صحفي"
+    "exemple_nom_persona": "مطور ويب، صحفي",
+   "ajouter_au_moins_une_expertise": "أضف خبرة واحدة على الأقل",
+    "erreur_creation_persona": "خطأ أثناء إنشاء الشخصية",
+    "persona_cree_avec_succes": "تم إنشاء الشخصية بنجاح",
+    "description_requise": "الوصف مطلوب",
+    "description_court": "وصف قصير (1-2 جمل)"
   },
   "buttons": {
     "configurer_parametres": "إعداد الإعدادات",

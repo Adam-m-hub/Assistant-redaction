@@ -179,7 +179,8 @@
     "erreur_creation_persona": "Error during persona creation",
     "persona_cree_avec_succes": "Persona created successfully!",
     "description_requise": "The description is required",
-    "description_court": "short description (1-2 sentences)"
+    "description_court": "short description (1-2 sentences)",
+    "ajouter_au_moins_une_expertise": "Add at least one expertise"
   },
   "settings": {
     "il_ne_faut_pas_faire_ne_change_pas_le_st": "DO NOT: - Do NOT change the style of",
