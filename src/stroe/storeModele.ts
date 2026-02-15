@@ -238,7 +238,7 @@ export const useStoreModele = create<EtatModele>()(
             document.documentElement.classList.remove('dark');
           }
           
-          console.log('🌙 Mode nuit :', nouveauMode ? 'Activé' : 'Désactivé');
+        //  console.log(' Mode nuit :', nouveauMode ? 'Activé' : 'Désactivé');
         },
       };
     },

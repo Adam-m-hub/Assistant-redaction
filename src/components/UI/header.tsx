@@ -90,7 +90,7 @@ export default function Header({
               </span>
             </div>
   
-            {/* 🌙 Toggle Mode Sombre et bouton traduire */}
+            {/*  Toggle Mode Sombre et bouton traduire */}
             <div className="flex items-center gap-3">
               <ToggleModeNuit />
               <SelecteurLangue /> 

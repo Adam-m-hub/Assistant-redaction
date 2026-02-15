@@ -36,11 +36,11 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
     }
 
     if (!formulaire.description.trim()) {
-      nouvellesErreurs.description = 'La description est requise';
+      nouvellesErreurs.description = t('personas.description_requise');
     }
 
     if (formulaire.expertise.length === 0) {
-      nouvellesErreurs.expertise = 'Ajoutez au moins une expertise';
+      nouvellesErreurs.expertise = t('personas.ajouter_expertise');
     }
 
     setErreurs(nouvellesErreurs);
@@ -95,11 +95,11 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
       });
       
       onFermer();
-      alert('✅ Persona créé avec succès !');
+      alert(t('personas.persona_cree_avec_succes'));
       
     } catch (erreur) {
       console.error('❌ Erreur création persona:', erreur);
-      alert('❌ Erreur lors de la création du persona');
+      alert(t('personas.erreur_creation_persona'));
     } finally {
       setEnCours(false);
     }
