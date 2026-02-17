@@ -224,6 +224,8 @@
     "hors_ligne": "Hors ligne"
   },
   "texte": {
+     "aucun_document_sauvegarde": "Aucun document sauvegardé",
+     "vos_decuments_apparaissent_ici": "Tous vos documents sauvegardés ici",
     "Écrivez_du_texte_pour_voir_les_statistiques": "Écrivez du texte pour voir les statistiques",
     "mots": "Mots",
     "caracteres": "Caractères",
@@ -271,7 +273,7 @@
     "vulgarisation": "vulgarisation",
     "historique_modifications": "Historique des modifications",
     "aucun_historique": "Aucun historique",
-    "modification_apparaissent_ici": "Les modifications apparaîtront ici",
+    "modifications_apparaissent_ici": "Les modifications apparaîtront ici",
     "texte_modifie": "Texte modifié",
     "texte_initial": "Texte initial",
     "maximum_50": "Maximum 50 ",

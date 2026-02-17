@@ -312,6 +312,7 @@
     "voulez_vous_vraiment_supprimer_ce_document": "Do you really want to delete this document?"
   },
     "texte": {
+      
       "confimations_suppression_document": "Are you sure you want to delete this document?",
     "Écrivez_du_texte_pour_voir_les_statistiques": "Write text to see statistics",
     "mots": "Words",
@@ -360,7 +361,9 @@
     "vulgarisation": "vulgarization",
     "historique_modifications": "Modification history",
     "aucun_historique": "No history",
-    "modification_apparaissent_ici": "Modifications will appear here",
+     "aucun_document_sauvegarde": "No saved documents",
+     "vos_decuments_apparaissent_ici": "All your saved documents appear here",
+    "modifications_apparaissent_ici": "Modifications will appear here",
     "texte_modifie": "Modified text",
     "texte_initial": "Initial text",
     "maximum_50": "Maximum 50",
