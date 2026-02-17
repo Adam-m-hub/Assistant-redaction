@@ -7,8 +7,8 @@ export interface Persona {
   nom: string;
   description: string;
   expertise: string[];
-  exempleTexte: string;
-  systemPrompt: string;
+ // exempleTexte: string;
+  //systemPrompt: string;
   estPredefini: boolean;
   temperature: number;
   creeLe?: Date;

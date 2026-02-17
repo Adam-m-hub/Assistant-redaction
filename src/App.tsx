@@ -65,18 +65,19 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-          //await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
-         // await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
+         //await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+          await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
+       //  await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
 
           // Phi-4 Mini (Plus intelligent)
-          //await chargerModele("Phi-4-mini-4k-instruct-q4f16_1-MLC");
+         // await chargerModele("Phi-4-mini-4k-instruct-q4f16_1-MLC");
         //  await chargerModele("Phi-4-mini-instruct-q4f32_1-MLC");
          // await chargerModele("Phi-4-mini-4k-instruct-q4f32_1-MLC");
           // TinyLlama 1.1B (Très léger, bon pour l'édition simple)
           //await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
           // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC");
           // // Qwen2.5 - Très léger
-          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+         // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
           // await chargerModele("Qwen2.5-0.5B-Instruct-q4f32_1-MLC");
 
           // // Qwen1.5
@@ -90,7 +91,7 @@ function App() {
         //  await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC"); // un peu bete
          // await chargerModele("Llama-3.2-3B-Instruct-q4f32_1-MLC");
           // Gemma 2 - 2B (Très bon pour l'écriture)
-        await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
+         await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
          // await chargerModele("gemma-2-2b-it-q4f32_1-MLC");
          // await chargerModele("gemma-2-9b-it-q4f16_1-MLC"); // Attention: lourd!
           // Hermes 3 - Très bon pour l'écriture
@@ -129,15 +130,14 @@ const handleAction = async (action: TypeAction) => {
     
     //  Construire le prompt complet (avec ou sans persona)
     const prompt = construirePrompt({
-      action,
-      texte: texteEditeur,
-      style,
-      ton,
-      longueur,
-      systemPrompt: personaActif?.systemPrompt,  // undefined si pas de persona
-      expertise: personaActif?.expertise || [], // tableau vide si pas de persona ou pas d'expertise
-      description: personaActif?.description || ''  // chaîne vide si pas de persona ou pas de description
-    });
+ // Construire le prompt complet avec le persona
+  action,
+  texte: texteEditeur,
+  persona: personaActif,  // ✅ Persona complet (contient déjà nom, description, expertise)
+  style,
+  ton,
+  longueur
+});
 
     //  Générer le texte avec les messages prêts
     await genererTexte(prompt.messages);
@@ -385,25 +385,23 @@ const editorRef = useRef<any>(null);
         />
 
       {/* Zone principale - 3 colonnes */}
-      <main className="max-w-full mx-auto p-1 dark:bg-gray-800 dark:text-gray-100 ">
-        <div className="grid grid-cols-12 gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
+      <main className="max-w-full mx-auto p-1 sm:p-2 md:p-3 lg:p-4 dark:bg-gray-800 dark:text-gray-100">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-3 min-h-[calc(100vh-160px)] dark:bg-gray-800 dark:text-gray-100">
           
-              {/* Panneau gauche - Paramètres et contrôles */}
-        <div className="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:text-gray-100 h-[540px]">
-          <PanneauParametres
-            style={style}
-            ton={ton}
-            longueur={longueur}
-           // onStyleChange={setStyle}
-            onStyleChange={handleStyleChange} 
-            onTonChange={handleTonChange}
-            onLongueurChange={handleLongueurChange}
-          />
-       
-        </div>
+          {/* Panneau gauche - Paramètres et contrôles */}
+          <div className="lg:col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 dark:bg-gray-800 dark:text-gray-100 h-auto lg:h-[540px]">
+            <PanneauParametres
+              style={style}
+              ton={ton}
+              longueur={longueur}
+              onStyleChange={handleStyleChange} 
+              onTonChange={handleTonChange}
+              onLongueurChange={handleLongueurChange}
+            />
+          </div>
 
           {/* Zone centrale - Éditeur de texte */}
-          <div className="col-span-6  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[540px]">
+          <div className="lg:col-span-6 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden dark:bg-gray-800 dark:text-gray-100 h-[500px] sm:h-[540px] md:h-[600px] lg:h-[540px]">
             
             {/* Zone d'édition avec TipTap */}
             <div className="flex-1 overflow-hidden">
@@ -415,13 +413,14 @@ const editorRef = useRef<any>(null);
                 onEditorReady={(editor) => { editorRef.current = editor; }}
               />
             </div>
+
             {/* Boutons d'action rapide */}
-            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-              <div className="flex justify-center items-center gap-3 flex-wrap">
+            <div className="border-t border-gray-200 dark:border-gray-700 p-2 sm:p-3 md:p-4 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+              <div className="flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
                 <button 
                   onClick={() => handleAction('ameliorer')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
+                  className="group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
                   {generationEnCours ? (
                     <div className="relative w-3 h-3">
@@ -433,13 +432,13 @@ const editorRef = useRef<any>(null);
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                   )}
-                  {t('buttons.ameliorer')}
+                  <span className="hidden sm:inline">{t('buttons.ameliorer')}</span>
                 </button>
 
                 <button 
                   onClick={() => handleAction('corriger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 dark:from-green-600 dark:to-green-700 dark:hover:from-green-500 dark:hover:to-green-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
+                  className="group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 dark:from-green-600 dark:to-green-700 dark:hover:from-green-500 dark:hover:to-green-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
                   {generationEnCours ? (
                     <div className="relative w-3 h-3">
@@ -451,13 +450,13 @@ const editorRef = useRef<any>(null);
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   )}
-                  {t('buttons.corriger')}
+                  <span className="hidden sm:inline">{t('buttons.corriger')}</span>
                 </button>
 
                 <button 
                   onClick={() => handleAction('raccourcir')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-500 dark:hover:to-purple-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
+                  className="group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-500 dark:hover:to-purple-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
                   {generationEnCours ? (
                     <div className="relative w-3 h-3">
@@ -470,13 +469,13 @@ const editorRef = useRef<any>(null);
                       <polyline points="12 5 5 12 12 19"/>
                     </svg>
                   )}
-                  {t('buttons.raccourcir')}
+                  <span className="hidden sm:inline">{t('buttons.raccourcir')}</span>
                 </button>
 
                 <button 
                   onClick={() => handleAction('allonger')}
                   disabled={statut !== 'pret' || !texteEditeur.trim() || generationEnCours}
-                  className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-500 dark:hover:to-orange-600 text-white rounded-xl transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
+                  className="group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-500 dark:hover:to-orange-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm"
                 >
                   {generationEnCours ? (
                     <div className="relative w-3 h-3">
@@ -489,27 +488,29 @@ const editorRef = useRef<any>(null);
                       <polyline points="12 5 19 12 12 19"/>
                     </svg>
                   )}
-                  {t('buttons.allonger')}
+                  <span className="hidden sm:inline">{t('buttons.allonger')}</span>
                 </button>
               </div>
             </div>
           </div>
 
-              {/* Panneau droit */}
-              <PanneauDroit
-                tabActif={tabActif}
-                onTabChange={setTabActif}
-                generationEnCours={generationEnCours}
-                texteEnCours={texteEnCours}
-                derniereReponse={derniereReponse}
-                statut={statut}
-                onAppliquerSuggestion={handleAppliquerSuggestion}
-                onRegenererer={() => handleAction('ameliorer')}
-                modaleDocumentsOuverte={modaleDocumentsOuverte}
-                onFermerModalDocuments={() => setModaleDocumentsOuverte(false)}
-                onChargerDocument={handleChargerDocument}
-                texteEditeur={texteEditeur}
-              />
+          {/* Panneau droit */}
+          <div className="lg:col-span-3">
+            <PanneauDroit
+              tabActif={tabActif}
+              onTabChange={setTabActif}
+              generationEnCours={generationEnCours}
+              texteEnCours={texteEnCours}
+              derniereReponse={derniereReponse}
+              statut={statut}
+              onAppliquerSuggestion={handleAppliquerSuggestion}
+              onRegenererer={() => handleAction('ameliorer')}
+              modaleDocumentsOuverte={modaleDocumentsOuverte}
+              onFermerModalDocuments={() => setModaleDocumentsOuverte(false)}
+              onChargerDocument={handleChargerDocument}
+              texteEditeur={texteEditeur}
+            />
+          </div>
 
         </div>
       </main>

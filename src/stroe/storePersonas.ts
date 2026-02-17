@@ -1,5 +1,6 @@
 // src/store/storePersonas.ts
-// 🔒 VERSION SÉCURISÉE avec protection contre prompt injection
+// 🔒 VERSION SÉCURISÉE - Structure simplifiée (sans systemPrompt ni exempleTexte)
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Persona, StorePersonas, CreerPersonaParams } from '../types/personas';
@@ -7,15 +8,13 @@ import { PERSONAS_PREDEFINIS } from '../lib/personas/personasPredefinis';
 import { servicePersonasDB } from '../lib/storage/servicePersonas';
 
 // ============================================
-// 🔒 FONCTIONS DE SÉCURITÉ (RÉSUMÉES)
+// 🔒 FONCTIONS DE SÉCURITÉ
 // ============================================
 
 /**
  * 🔒 Nettoyer les inputs contre l'injection de prompt
- * Version résumée mais logique identique
  */
 function nettoyerInputPersona(texte: string): string {
-  // Tous les patterns dangereux regroupés
   const patternsDangereux = [
     /ignore.*(instruction|règle|prompt|système|commande)/gi,
     /tu es (maintenant|désormais|dorénavant)/gi,
@@ -56,8 +55,7 @@ function nettoyerInputPersona(texte: string): string {
 }
 
 /**
- *  Valider et nettoyer les expertises
- * Version résumée mais logique identique
+ * Valider et nettoyer les expertises
  */
 function validerExpertises(expertises: string[]): string[] {
   const expertisesNettoyees = expertises
@@ -71,8 +69,7 @@ function validerExpertises(expertises: string[]): string[] {
 }
 
 /**
- *  Validation des paramètres
- * Version résumée mais logique identique
+ * Validation des paramètres
  */
 function validerParametresPersona(params: CreerPersonaParams): void {
   if (!params.nom?.trim() || params.nom.trim().length < 2) {
@@ -86,43 +83,23 @@ function validerParametresPersona(params: CreerPersonaParams): void {
   }
 }
 
-/**
- *  Générer un prompt système simplifié
- * Version résumée mais logique identique
- */
-function genererSystemPrompt(params: Partial<CreerPersonaParams>): string {
-  const descriptionNettoyee = params.description 
-    ? nettoyerInputPersona(params.description)
-    : 'assistant de rédaction';
-  return descriptionNettoyee;
-}
-
 // ============================================
-// STORE ZUSTAND (NON MODIFIÉ - reste exactement comme avant)
+// STORE ZUSTAND
 // ============================================
 
-/**
- * Store Zustand pour gérer les personas
- */
 export const useStorePersonas = create<StorePersonas>()(
   persist(
     (set, get) => ({
-      // ============================================
-      // ÉTAT INITIAL
-      // ============================================
+      // État initial
       personas: [],
       personaActif: null,
-
-      // ============================================
-      // ACTIONS
-      // ============================================
 
       /**
        * Charger tous les personas (prédéfinis + personnalisés)
        */
       chargerPersonas: async () => {
         try {
-          console.log('📚 Chargement des personas...');
+        //  console.log('📚 Chargement des personas...');
 
           // Récupérer les personas personnalisés depuis IndexedDB
           const personasDB = await servicePersonasDB.recupererTous();
@@ -134,10 +111,9 @@ export const useStorePersonas = create<StorePersonas>()(
           ];
 
           set({ personas: tousLesPersonas });
+       //   console.log(`✅ ${tousLesPersonas.length} personas chargés`);
 
-          console.log(`✅ ${tousLesPersonas.length} personas chargés`);
-
-          // Si aucun persona actif, sélectionner le journaliste par défaut
+          // Si aucun persona actif, sélectionner le premier
           if (!get().personaActif && tousLesPersonas.length > 0) {
             set({ personaActif: tousLesPersonas[0] });
           }
@@ -150,7 +126,12 @@ export const useStorePersonas = create<StorePersonas>()(
       /**
        * Sélectionner un persona
        */
-      selectionnerPersona: (id: string) => {
+      selectionnerPersona: (id: string | null) => {
+        if (id === null) {
+          set({ personaActif: null });
+          return;
+        }
+
         const persona = get().personas.find(p => p.id === id);
         
         if (persona) {
@@ -162,69 +143,46 @@ export const useStorePersonas = create<StorePersonas>()(
       },
 
       /**
-       *  SÉCURISÉ : Créer un nouveau persona personnalisé
+       * 🔒 SÉCURISÉ : Créer un nouveau persona personnalisé
        */
       creerPersona: async (params: CreerPersonaParams) => {
         try {
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-          console.log('🔒 CRÉATION PERSONA SÉCURISÉE');
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+         // console.log('🔒 Création persona sécurisée');
 
-          //  VALIDATION DES INPUTS
+          // Validation des inputs
           validerParametresPersona(params);
 
-          //  NETTOYER LE NOM
+          // Nettoyer le nom
           const nomNettoye = nettoyerInputPersona(params.nom);
-          
           if (nomNettoye === '[CONTENU_FILTRÉ]' || nomNettoye.length < 2) {
             throw new Error('Le nom contient du contenu non autorisé');
           }
 
-          //  NETTOYER LA DESCRIPTION
+          // Nettoyer la description
           const descriptionNettoyee = nettoyerInputPersona(params.description);
-          
           if (descriptionNettoyee === '[CONTENU_FILTRÉ]' || descriptionNettoyee.length < 10) {
-            throw new Error('La description contient trop de contenu non autorisé');
+            throw new Error('La description contient du contenu non autorisé');
           }
 
-          //  NETTOYER LES EXPERTISES
+          // Nettoyer les expertises
           const expertisesNettoyees = validerExpertises(params.expertise);
 
-          //  NETTOYER L'EXEMPLE
-          const exempleNettoye = params.exempleTexte 
-            ? nettoyerInputPersona(params.exempleTexte)
-            : '';
-
-          //  LOGS DE SÉCURITÉ
-          console.log('Nom nettoyé:', nomNettoye);
-          console.log('Expertises nettoyées:', expertisesNettoyees);
-          console.log('Description sûre:', descriptionNettoyee.length, 'caractères');
+       //   console.log('✅ Données nettoyées:', { nom: nomNettoye, expertises: expertisesNettoyees.length });
 
           // Générer un ID unique
           const id = `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-          //  Créer le persona avec données NETTOYÉES
+          // ✅ Créer le persona SANS systemPrompt ni exempleTexte
           const nouveauPersona: Persona = {
             id,
             nom: nomNettoye,
             description: descriptionNettoyee,
             expertise: expertisesNettoyees,
-            exempleTexte: exempleNettoye,
-            systemPrompt: genererSystemPrompt({
-              ...params,
-              nom: nomNettoye,
-              description: descriptionNettoyee,
-              expertise: expertisesNettoyees,
-              exempleTexte: exempleNettoye
-            }),
             estPredefini: false,
             temperature: params.temperature || 0.7,
             creeLe: new Date(),
             modifieLe: new Date(),
           };
-
-          console.log('✅ SystemPrompt généré avec sécurité (300 premiers caractères):');
-          console.log(nouveauPersona.systemPrompt.substring(0, 300) + '...');
 
           // Sauvegarder dans IndexedDB
           await servicePersonasDB.sauvegarder(nouveauPersona);
@@ -235,9 +193,7 @@ export const useStorePersonas = create<StorePersonas>()(
             personaActif: nouveauPersona,
           }));
 
-          console.log(`✅ Persona créé avec sécurité : ${nouveauPersona.nom}`);
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
+        //  console.log(`✅ Persona créé : ${nouveauPersona.nom}`);
           return nouveauPersona;
 
         } catch (erreur) {
@@ -247,11 +203,11 @@ export const useStorePersonas = create<StorePersonas>()(
       },
 
       /**
-       *  SÉCURISÉ : Modifier un persona existant
+       * 🔒 SÉCURISÉ : Modifier un persona existant
        */
       modifierPersona: async (id: string, params: Partial<CreerPersonaParams>) => {
         try {
-          console.log('🔒 Modification sécurisée du persona:', id);
+      //    console.log('🔒 Modification sécurisée du persona:', id);
 
           const personaExistant = get().personas.find(p => p.id === id);
 
@@ -263,8 +219,8 @@ export const useStorePersonas = create<StorePersonas>()(
             throw new Error('Impossible de modifier un persona prédéfini');
           }
 
-          //  NETTOYER LES INPUTS MODIFIÉS
-          const paramsNettoyés: Partial<CreerPersonaParams> = {};
+          // Nettoyer les inputs modifiés
+          const paramsNettoyés: Partial<Persona> = {};
 
           if (params.nom) {
             paramsNettoyés.nom = nettoyerInputPersona(params.nom);
@@ -278,19 +234,14 @@ export const useStorePersonas = create<StorePersonas>()(
             paramsNettoyés.expertise = validerExpertises(params.expertise);
           }
 
-          if (params.exempleTexte) {
-            paramsNettoyés.exempleTexte = nettoyerInputPersona(params.exempleTexte);
-          }
-
           if (params.temperature !== undefined) {
             paramsNettoyés.temperature = params.temperature;
           }
 
-          //  Fusionner les modifications NETTOYÉES
+          // Fusionner les modifications
           const personaModifie: Persona = {
             ...personaExistant,
             ...paramsNettoyés,
-            systemPrompt: genererSystemPrompt({ ...personaExistant, ...paramsNettoyés }),
             modifieLe: new Date(),
           };
 
@@ -303,7 +254,7 @@ export const useStorePersonas = create<StorePersonas>()(
             personaActif: state.personaActif?.id === id ? personaModifie : state.personaActif,
           }));
 
-          console.log(`✅ Persona modifié avec sécurité : ${personaModifie.nom}`);
+        //  console.log(`✅ Persona modifié : ${personaModifie.nom}`);
 
         } catch (erreur) {
           console.error('❌ Erreur modification persona:', erreur);
@@ -332,8 +283,6 @@ export const useStorePersonas = create<StorePersonas>()(
           // Retirer du store
           set((state) => {
             const nouveauxPersonas = state.personas.filter(p => p.id !== id);
-            
-            // Si c'était le persona actif, sélectionner le premier
             const nouveauActif = state.personaActif?.id === id 
               ? nouveauxPersonas[0] 
               : state.personaActif;
@@ -344,7 +293,7 @@ export const useStorePersonas = create<StorePersonas>()(
             };
           });
 
-          console.log(`🗑️ Persona supprimé : ${persona.nom}`);
+        //  console.log(`🗑️ Persona supprimé : ${persona.nom}`);
 
         } catch (erreur) {
           console.error('❌ Erreur suppression persona:', erreur);
@@ -357,14 +306,9 @@ export const useStorePersonas = create<StorePersonas>()(
        */
       restaurerDefauts: async () => {
         try {
-          // Supprimer tous les personnalisés
           await servicePersonasDB.supprimerPersonnalises();
-
-          // Recharger
           await get().chargerPersonas();
-
-          console.log('✅ Personas par défaut restaurés');
-
+        //  console.log('✅ Personas par défaut restaurés');
         } catch (erreur) {
           console.error('❌ Erreur restauration:', erreur);
           throw erreur;

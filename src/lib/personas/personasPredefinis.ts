@@ -1,58 +1,60 @@
 // src/lib/personas/personasPredefinis.ts
-// VERSION SIMPLIFIÉE - Prompts courts
+// Personas prédéfinis avec structure simplifiée
 
 import type { Persona } from '../../types/personas';
 
+/**
+ * 4 Personas prédéfinis pour l'édition de texte
+ * Structure : id, nom, description, expertise, estPredefini, temperature
+ */
 export const PERSONAS_PREDEFINIS: Persona[] = [
   {
-    id: 'journaliste',
-    nom: '📰 Journaliste',
-    description: 'Style journalistique factuel et engageant',
-    expertise: ['Actualités', 'Investigation', 'Reportage', 'Interview'],
-    exempleTexte: 'Les experts s\'accordent à dire que... Selon nos sources...',
-    systemPrompt: `Tu es un journaliste professionnel.`,
+    id: 'correcteur',
+    nom: 'Correcteur professionnel',
+    description: 'Spécialiste de la correction orthographique et grammaticale',
+    expertise: ['Orthographe', 'Grammaire', 'Ponctuation', 'Typographie'],
     estPredefini: true,
-    temperature: 0.6,
+    temperature: 0.3, // Très précis
   },
 
   {
-    id: 'scientifique',
-    nom: '🔬 Scientifique',
-    description: 'Style académique rigoureux et précis',
-    expertise: ['Recherche', 'Analyse', 'Méthodologie', 'Vulgarisation'],
-    exempleTexte: 'Les données démontrent que... Cette étude révèle...',
-    systemPrompt: `Tu es un chercheur scientifique.`,
+    id: 'editeur-technique',
+    nom: 'Éditeur technique',
+    description: 'Expert en rédaction technique claire et concise',
+    expertise: ['Clarté', 'Précision', 'Concision', 'Structure'],
     estPredefini: true,
-    temperature: 0.4,
+    temperature: 0.4, // Factuel
   },
 
   {
-    id: 'marketeur',
-    nom: '📈 Marketeur',
-    description: 'Style persuasif et orienté conversion',
-    expertise: ['Copywriting', 'Storytelling', 'Call-to-Action', 'SEO'],
-    exempleTexte: 'Découvrez comment... Transformez dès maintenant...',
-    systemPrompt: `Tu es un expert en marketing digital.`,
+    id: 'assistant-redaction',
+    nom: 'Assistant de rédaction',
+    description: 'Assistant polyvalent pour l\'amélioration de textes',
+    expertise: ['Rédaction', 'Style', 'Grammaire', 'Structure'],
     estPredefini: true,
-    temperature: 0.8,
+    temperature: 0.7, // Équilibré
   },
 
   {
-    id: 'poete',
-    nom: '🎭 Poète',
-    description: 'Style créatif et imagé',
-    expertise: ['Métaphores', 'Rythme', 'Émotions', 'Imagery'],
-    exempleTexte: 'Comme un murmure dans le vent... Les mots dansent...',
-    systemPrompt: `Tu es un poète talentueux.`,
+    id: 'redacteur-academique',
+    nom: 'Rédacteur académique',
+    description: 'Spécialiste de la rédaction académique formelle',
+    expertise: ['Style académique', 'Rigueur', 'Objectivité', 'Formalisme'],
     estPredefini: true,
-    temperature: 0.9,
+    temperature: 0.5, // Rigoureux
   },
 ];
 
+/**
+ * Obtenir un persona par ID
+ */
 export function obtenirPersonaParId(id: string): Persona | undefined {
   return PERSONAS_PREDEFINIS.find(p => p.id === id);
 }
 
+/**
+ * Obtenir tous les personas prédéfinis
+ */
 export function obtenirTousLesPersonas(): Persona[] {
   return [...PERSONAS_PREDEFINIS];
 }

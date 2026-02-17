@@ -128,21 +128,21 @@
     "raccourcissement_du_texte": "Text shortening"
   },
   "personas": {
-          "journaliste": {
-      "nom": "📰 Journalist",
-      "description": "Factual and engaging journalistic style"
+      "correcteur": {
+      "nom": "Professional proofreader",
+      "description": "Specialist in orthographic and grammatical correction"
     },
-    "scientifique": {
-      "nom": "🔬 Scientist",
-      "description": "Rigorous and precise academic style"
+    "editeur-technique": {
+      "nom": "Technical editor",
+      "description": "Expert in clear and concise technical writing"
     },
-    "marketeur": {
-      "nom": "📈 Marketer",
-      "description": "Persuasive and conversion-oriented style"
+    "assistant-redaction": {
+      "nom": "Writing assistant",
+      "description": "Versatile assistant for text improvement"
     },
-    "poete": {
-      "nom": "🎭 Poet",
-      "description": "Creative and vivid style"
+    "redacteur-academique": {
+      "nom": "Academic writer",
+      "description": "Specialist in formal academic writing"
     },
     "creer_un_persona": "Create a persona",
     "creer_un_nouveau_persona": "Create a new persona",

@@ -50,7 +50,6 @@ export const useStoreModele = create<EtatModele>()(
       // Enregistrer les observateurs
       serviceMoteur.enregistrerObservateurs({
         surChangementStatut: (nouveauStatut: StatutModele) => {
-          console.log('📊 Statut changé :', nouveauStatut);
           set({ statut: nouveauStatut });
           if (nouveauStatut === 'pret') {
             set({ progression: null });
@@ -62,7 +61,7 @@ export const useStoreModele = create<EtatModele>()(
         },
         
         surErreur: (nouvelleErreur: ErreurWebLLM) => {
-          console.error('❌ Erreur :', nouvelleErreur);
+          console.error('❌ Erreur :', nouvelleErreur.message);
           set({ 
             erreur: nouvelleErreur,
             generationEnCours: false 
@@ -85,27 +84,23 @@ export const useStoreModele = create<EtatModele>()(
         // Actions
         chargerModele: async (nomModele: string) => {
           try {
-            console.log(`🚀 Chargement du modèle : ${nomModele}`);
             set({ erreur: null, nomModele });
-            
             await serviceMoteur.chargerModele({
               nom: nomModele,
               description: "Modèle chargé depuis l'interface"
             });
-            
-            console.log('✅ Modèle chargé avec succès !');
           } catch (erreur) {
             console.error('❌ Échec du chargement :', erreur);
           }
         },
 
         /**
-         * ✅ SIMPLIFIÉ : Génère directement avec les messages fournis
-         * Les messages sont DÉJÀ construits dans App.tsx via construirePrompt()
+         * Génère du texte avec les messages fournis
+         * Les messages sont construits dans App.tsx via construirePrompt()
          */
         genererTexte: async (messages: Message[]) => {
           try {
-            // 🔒 VÉRIFICATION : Modèle prêt
+            // Vérification : Modèle prêt
             if (!serviceMoteur.estPret()) {
               const erreur: ErreurWebLLM = {
                 code: 'MODELE_NON_PRET',
@@ -115,32 +110,20 @@ export const useStoreModele = create<EtatModele>()(
               return null;
             }
 
-            //  CONSOLE LOG - Avant envoi au modèle
-            console.log("🚀 STORE : Envoi des messages au modèle");
-            console.log(messages[0].contenu);
-            console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            
             set({ 
               generationEnCours: true, 
               erreur: null,
               texteEnCours: ''
             });
 
-            // Adapter max_tokens selon la longueur du panneau
+            // Adapter max_tokens selon la longueur
             const parametres = get().parametres;
-            let maxTokens = 600; // Par défaut
-            
-            if (parametres?.longueur === 'court') {
-              maxTokens = 300;
-            } else if (parametres?.longueur === 'moyen') {
-              maxTokens = 600;
-            } else if (parametres?.longueur === 'long') {
-              maxTokens = 1000;
-            }
+            const maxTokens = parametres?.longueur === 'court' ? 300 
+              : parametres?.longueur === 'moyen' ? 600 
+              : parametres?.longueur === 'long' ? 1000 
+              : 600;
 
-            console.log(`⚙️ Paramètres de génération : max_tokens = ${maxTokens}`);
-
-            // Générer avec les messages (déjà prêts !)
+            // Générer avec streaming
             const reponse = await serviceMoteur.genererTexte(
               messages,
               { 
@@ -155,24 +138,9 @@ export const useStoreModele = create<EtatModele>()(
                 }));
               }
             );
-            
-          //  console.log('✅ Texte généré avec', maxTokens, 'tokens max');
-           // console.log('📏 Longueur de la réponse :', reponse.texte.length, 'caractères');
-            
-            // Nettoyer le texte (enlever guillemets au début/fin)
-            const texteNettoye = reponse.texte
-              .trim()
-              .replace(/^["«]/, '')   
-              .replace(/["»]$/, '')   
-              .trim();
-
-           // console.log('🧹 Texte nettoyé :', texteNettoye.substring(0, 100) + '...');
 
             set({ 
-              derniereReponse: {
-                ...reponse,
-                texte: texteNettoye
-              },
+              derniereReponse: reponse,
               generationEnCours: false,
               texteEnCours: ''
             });
@@ -180,7 +148,7 @@ export const useStoreModele = create<EtatModele>()(
             return reponse;
 
           } catch (erreur) {
-            console.error('❌ Erreur lors de la génération :', erreur);
+            console.error('❌ Erreur génération :', erreur);
             
             set({ 
               generationEnCours: false,
@@ -198,7 +166,6 @@ export const useStoreModele = create<EtatModele>()(
 
         dechargerModele: async () => {
           try {
-            console.log('🗑️ Déchargement du modèle...');
             await serviceMoteur.dechargerModele();
             
             set({ 
@@ -207,10 +174,8 @@ export const useStoreModele = create<EtatModele>()(
               progression: null,
               derniereReponse: null
             });
-            
-            console.log('✅ Modèle déchargé');
           } catch (erreur) {
-            console.error('❌ Erreur lors du déchargement :', erreur);
+            console.error('❌ Erreur déchargement :', erreur);
           }
         },
 
@@ -219,7 +184,6 @@ export const useStoreModele = create<EtatModele>()(
         },
 
         mettreAJourParametres: (params) => {
-          console.log('⚙️ Mise à jour des paramètres :', params);
           set((state) => ({
             parametres: { 
               ...state.parametres, 
@@ -237,8 +201,6 @@ export const useStoreModele = create<EtatModele>()(
           } else {
             document.documentElement.classList.remove('dark');
           }
-          
-        //  console.log(' Mode nuit :', nouveauMode ? 'Activé' : 'Désactivé');
         },
       };
     },

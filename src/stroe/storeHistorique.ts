@@ -24,7 +24,7 @@ export const useStoreHistorique = create<StoreHistorique>((set, get) => ({
    */
   chargerHistorique: async () => {
     try {
-      console.log('📚 Chargement de l\'historique...');
+    //  console.log('📚 Chargement de l\'historique...');
       const entrees = await serviceHistoriqueDB.recupererTous();
       set({ historique: entrees });
       console.log(`✅ ${entrees.length} entrées d'historique chargées`);
@@ -80,7 +80,7 @@ export const useStoreHistorique = create<StoreHistorique>((set, get) => ({
         historique: state.historique.filter(e => e.id !== id)
       }));
 
-      console.log('🗑️ Entrée supprimée de l\'historique');
+    //  console.log('🗑️ Entrée supprimée de l\'historique');
     } catch (erreur) {
       console.error('❌ Erreur suppression historique:', erreur);
       throw erreur;
@@ -96,7 +96,7 @@ export const useStoreHistorique = create<StoreHistorique>((set, get) => ({
 
       set({ historique: [] });
 
-      console.log('🗑️ Tout l\'historique a été supprimé');
+     //  console.log('🗑️ Tout l\'historique a été supprimé');
     } catch (erreur) {
       console.error('❌ Erreur suppression historique:', erreur);
       throw erreur;
