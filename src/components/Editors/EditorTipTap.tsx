@@ -275,7 +275,7 @@ export default function EditorTipTap({
     <div className={`flex flex-col h-[465px] bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 ${className}`}>
       
       {/* Barre d'outils */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-3 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-2 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         
         <div className="flex items-center gap-1 flex-wrap">
           {/* Police */}
@@ -286,12 +286,12 @@ export default function EditorTipTap({
             title={t('title.police')}
           >
             <option value="">{t('title.police_par_defaut')}</option>
-            <option value="Arial">Arial</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Courier New">Courier New</option>
-            <option value="Georgia">Georgia</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Comic Sans MS">Comic Sans MS</option>
+            <option value="Arial">{t('title.police_ariel')}</option>
+            <option value="Times New Roman">{t('title.police_times_new_roman')}</option>
+            <option value="Courier New">{t('title.police_courier_new')}</option>
+            <option value="Georgia">{t('title.police_georgia')}</option>
+            <option value="Verdana">{t('title.police_verdana')}</option>
+            <option value="Comic Sans MS">{t('title.police_comic_sans_ms')}</option>
           </select>
 
           <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
@@ -300,8 +300,8 @@ export default function EditorTipTap({
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={desactive}
-            className={`group p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-              editor.isActive('bold') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
+            className={`group p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+              editor.isActive('bold') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-white'
             }`}
             title="Gras (Ctrl+B)"
           >
@@ -315,7 +315,7 @@ export default function EditorTipTap({
             onClick={() => editor.chain().focus().toggleItalic().run()}
             disabled={desactive}
             className={`group p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-              editor.isActive('italic') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
+              editor.isActive('italic') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-white'
             }`}
             title="Italique (Ctrl+I)"
           >
@@ -329,7 +329,7 @@ export default function EditorTipTap({
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             disabled={desactive}
             className={`group p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-              editor.isActive('underline') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
+              editor.isActive('underline') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-white'
             }`}
             title="Souligné (Ctrl+U)"
           >
@@ -361,7 +361,6 @@ export default function EditorTipTap({
           <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
 
           {/* LISTES - Le reste du code reste identique... */}
-          {/* Je garde la même structure pour les boutons de listes */}
           
           {/* Liste à puces */}
           <div className="relative">

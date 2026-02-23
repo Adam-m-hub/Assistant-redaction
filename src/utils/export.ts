@@ -1,99 +1,51 @@
 // src/utils/export.ts
-// Fonctions d'export de documents
+// Fonctions d'export de documents en PDF
 
-import TurndownService from 'turndown';
+import jsPDF from 'jspdf';
 
 /**
- * Convertir HTML en Markdown
- * 
- * @param html - Contenu HTML à convertir
- * @returns Contenu en Markdown
+ * Nettoyer le HTML pour extraire le texte brut
  */
-function convertirHtmlEnMarkdown(html: string): string {
-  // Créer une instance de Turndown
-  const turndown = new TurndownService({
-    headingStyle: 'atx',           // Utiliser # pour les titres
-    bulletListMarker: '-',          // Utiliser - pour les listes
-    codeBlockStyle: 'fenced',       // Utiliser ``` pour le code
-    emDelimiter: '*',               // Utiliser * pour l'italique
-    strongDelimiter: '**',          // Utiliser ** pour le gras
-  });
-
-  // Convertir
-  const markdown = turndown.turndown(html);
-  
-  return markdown;
+function extraireTexte(html: string): string {
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  return temp.textContent || temp.innerText || '';
 }
 
 /**
  * Générer un nom de fichier basé sur le contenu
- * 
- * @param contenu - Contenu du document
- * @returns Nom de fichier
  */
 function genererNomFichier(contenu: string): string {
-  // Essayer d'extraire le premier titre (H1)
-  const match = contenu.match(/^#\s+(.+)$/m);
+  // Extraire les premiers mots comme titre
+  const premiersMots = contenu
+    .trim()
+    .split(/\s+/)
+    .slice(0, 5)
+    .join('-')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '')
+    .substring(0, 50);
   
-  if (match && match[1]) {
-    // Utiliser le titre, en nettoyant les caractères spéciaux
-    const titre = match[1]
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')  // Remplacer caractères spéciaux par -
-      .replace(/^-+|-+$/g, '')       // Enlever - au début/fin
-      .substring(0, 50);              // Limiter à 50 caractères
-    
-    return `${titre}.md`;
+  if (premiersMots) {
+    return `${premiersMots}.pdf`;
   }
   
   // Sinon, utiliser la date
-  const date = new Date().toISOString().split('T')[0]; // Format: 2026-01-19
-  return `document-${date}.md`;
+  const date = new Date().toISOString().split('T')[0];
+  return `document-${date}.pdf`;
 }
 
 /**
- * Télécharger un fichier
- * 
- * @param contenu - Contenu du fichier
- * @param nomFichier - Nom du fichier
- */
-function telechargerFichier(contenu: string, nomFichier: string): void {
-  // Créer un Blob (fichier virtuel)
-  const blob = new Blob([contenu], { type: 'text/markdown;charset=utf-8' });
-  
-  // Créer une URL temporaire pour le blob
-  const url = URL.createObjectURL(blob);
-  
-  // Créer un lien de téléchargement invisible
-  const lien = document.createElement('a');
-  lien.href = url;
-  lien.download = nomFichier;
-  lien.style.display = 'none';
-  
-  // Ajouter au DOM, cliquer, puis retirer
-  document.body.appendChild(lien);
-  lien.click();
-  document.body.removeChild(lien);
-  
-  // Libérer la mémoire
-  setTimeout(() => {
-    URL.revokeObjectURL(url);
-  }, 100);
-  
-  console.log(`✅ Fichier exporté : ${nomFichier}`);
-}
-
-/**
- * Exporter le contenu HTML en Markdown et le télécharger
+ * Exporter le contenu en PDF et le télécharger
  * 
  * @param html - Contenu HTML à exporter
  * @param titrePersonnalise - Titre personnalisé optionnel pour le fichier
  * 
  * @example
- * exporterEnMarkdown(editor.getHTML());
- * exporterEnMarkdown(editor.getHTML(), "mon-article");
+ * exporterEnPDF(editor.getHTML());
+ * exporterEnPDF(editor.getHTML(), "mon-article");
  */
-export function exporterEnMarkdown(html: string, titrePersonnalise?: string): void {
+export function exporterEnPDF(html: string, titrePersonnalise?: string): void {
   // Vérifier que le contenu n'est pas vide
   if (!html || html.trim() === '<p></p>' || html.trim() === '') {
     alert('⚠️ Aucun contenu à exporter');
@@ -101,36 +53,69 @@ export function exporterEnMarkdown(html: string, titrePersonnalise?: string): vo
   }
 
   try {
-    // 1. Convertir HTML → Markdown
-    const markdown = convertirHtmlEnMarkdown(html);
+    // 1. Extraire le texte du HTML
+    const texte = extraireTexte(html);
     
-    // 2. Générer le nom du fichier
+    if (!texte || texte.trim() === '') {
+      alert('⚠️ Aucun contenu textuel à exporter');
+      return;
+    }
+
+    // 2. Créer le PDF
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // 3. Configuration du texte
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    
+    // 4. Ajouter le texte avec gestion des retours à la ligne
+    const margeGauche = 20;
+    const margeDroite = 20;
+    const margeHaut = 20;
+    const largeurTexte = 210 - margeGauche - margeDroite; // A4 = 210mm
+    
+    // Diviser le texte en lignes qui tiennent dans la largeur
+    const lignes = doc.splitTextToSize(texte, largeurTexte);
+    
+    // Ajouter les lignes au PDF
+    doc.text(lignes, margeGauche, margeHaut);
+
+    // 5. Générer le nom du fichier
     let nomFichier: string;
     if (titrePersonnalise) {
-      // Nettoyer le titre personnalisé
       nomFichier = titrePersonnalise
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
-        .substring(0, 50) + '.md';
+        .substring(0, 50) + '.pdf';
     } else {
-      nomFichier = genererNomFichier(markdown);
+      nomFichier = genererNomFichier(texte);
     }
     
-    // 3. Télécharger le fichier
-    telechargerFichier(markdown, nomFichier);
+    // 6. Télécharger le PDF
+    doc.save(nomFichier);
+    
+    console.log(`✅ PDF exporté : ${nomFichier}`);
     
   } catch (erreur) {
-    console.error('❌ Erreur lors de l\'export :', erreur);
-    alert('❌ Erreur lors de l\'export du fichier');
+    console.error('❌ Erreur lors de l\'export PDF :', erreur);
+    alert('❌ Erreur lors de l\'export du fichier PDF');
   }
 }
 
 /**
+ * Alias pour compatibilité (remplace exporterEnMarkdown)
+ */
+export function exporterEnMarkdown(html: string, titrePersonnalise?: string): void {
+  exporterEnPDF(html, titrePersonnalise);
+}
+
+/**
  * Exporter en texte brut (sans formatage)
- * 
- * @param texte - Contenu texte
- * @param nomFichier - Nom du fichier
  */
 export function exporterEnTexte(texte: string, nomFichier: string = 'document.txt'): void {
   if (!texte || texte.trim() === '') {
@@ -139,9 +124,19 @@ export function exporterEnTexte(texte: string, nomFichier: string = 'document.tx
   }
 
   try {
-    telechargerFichier(texte, nomFichier);
+    const blob = new Blob([texte], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const lien = document.createElement('a');
+    lien.href = url;
+    lien.download = nomFichier;
+    lien.style.display = 'none';
+    document.body.appendChild(lien);
+    lien.click();
+    document.body.removeChild(lien);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+    console.log(`✅ Fichier texte exporté : ${nomFichier}`);
   } catch (erreur) {
-    console.error('❌ Erreur lors de l\'export :', erreur);
+    console.error('❌ Erreur lors de l\'export texte :', erreur);
     alert('❌ Erreur lors de l\'export du fichier');
   }
 }

@@ -227,11 +227,11 @@ class ServiceMoteurWebLLM {
    */
   public async dechargerModele(): Promise<void> {
     if (this.moteur) {
-    //  console.log("🗑️ Déchargement...");
+    //  console.log(" Déchargement...");
       this.moteur = null;
       this.changerStatut('inactif');
       this.configuration = null;
-    //  console.log("✅ Déchargé");
+    //  console.log(" Déchargé");
     }
   }
 

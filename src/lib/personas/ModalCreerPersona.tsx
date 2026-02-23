@@ -108,11 +108,11 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[100vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
@@ -124,7 +124,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
           </div>
           <button
             onClick={onFermer}
-            className="group p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+            className="group p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
             aria-label="Fermer"
           >
             <svg className="w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -135,7 +135,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
         </div>
 
         {/* Formulaire */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-2">
           {/* Nom */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
@@ -208,7 +208,7 @@ export function ModalCreerPersona({ ouvert, onFermer }: ModalCreerPersonaProps) 
               <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>
-              {t('personas.expertises')} * <span className="text-xs font-normal text-gray-500">({t('personas.au_moins_une_expertise')})</span>
+              {t('personas.expertises')} * <span className="text-xs font-normal text-gray-500">{t('personas.au_moins_une_expertise')}</span>
             </label>
             
             <div className="flex gap-2">

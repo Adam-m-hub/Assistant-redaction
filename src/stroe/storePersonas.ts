@@ -1,5 +1,5 @@
 // src/store/storePersonas.ts
-// 🔒 VERSION SÉCURISÉE - Structure simplifiée (sans systemPrompt ni exempleTexte)
+//  VERSION SÉCURISÉE - Structure simplifiée (sans systemPrompt ni exempleTexte)
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -8,11 +8,11 @@ import { PERSONAS_PREDEFINIS } from '../lib/personas/personasPredefinis';
 import { servicePersonasDB } from '../lib/storage/servicePersonas';
 
 // ============================================
-// 🔒 FONCTIONS DE SÉCURITÉ
+//  FONCTIONS DE SÉCURITÉ
 // ============================================
 
 /**
- * 🔒 Nettoyer les inputs contre l'injection de prompt
+ *  Nettoyer les inputs contre l'injection de prompt
  */
 function nettoyerInputPersona(texte: string): string {
   const patternsDangereux = [
@@ -143,11 +143,11 @@ export const useStorePersonas = create<StorePersonas>()(
       },
 
       /**
-       * 🔒 SÉCURISÉ : Créer un nouveau persona personnalisé
+       *  SÉCURISÉ : Créer un nouveau persona personnalisé
        */
       creerPersona: async (params: CreerPersonaParams) => {
         try {
-         // console.log('🔒 Création persona sécurisée');
+         // console.log(' Création persona sécurisée');
 
           // Validation des inputs
           validerParametresPersona(params);

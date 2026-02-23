@@ -65,7 +65,7 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-         //await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+        // await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
    //       await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
        //  await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
 
@@ -78,11 +78,11 @@ function App() {
           // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC");
           // // Qwen2.5 - Très léger
          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
-          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f32_1-MLC");
+         //  await chargerModele("Qwen2.5-0.5B-Instruct-q4f32_1-MLC");
 
           // // Qwen1.5
           // await chargerModele("Qwen2-1.5B-Instruct-q4f16_1-MLC");
-          // await chargerModele("Qwen2-1.5B-Instruct-q4f32_1-MLC");
+           await chargerModele("Qwen2-1.5B-Instruct-q4f32_1-MLC");
           // // Llama 3.2 - 1B (TOP RECOMMANDÉ)
           // await chargerModele("Llama-3.2-1B-Instruct-q4f16_1-MLC");
           // await chargerModele("Llama-3.2-1B-Instruct-q4f32_1-MLC");
@@ -91,7 +91,7 @@ function App() {
         //  await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC"); // un peu bete
          // await chargerModele("Llama-3.2-3B-Instruct-q4f32_1-MLC");
           // Gemma 2 - 2B (Très bon pour l'écriture)
-         await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
+        // await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
          // await chargerModele("gemma-2-2b-it-q4f32_1-MLC");
          // await chargerModele("gemma-2-9b-it-q4f16_1-MLC"); // Attention: lourd!
           // Hermes 3 - Très bon pour l'écriture
@@ -133,7 +133,7 @@ const handleAction = async (action: TypeAction) => {
  // Construire le prompt complet avec le persona
   action,
   texte: texteEditeur,
-  persona: personaActif,  // ✅ Persona complet (contient déjà nom, description, expertise)
+  persona: personaActif,  //  Persona complet (contient déjà nom, description, expertise)
   style,
   ton,
   longueur

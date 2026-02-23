@@ -224,6 +224,7 @@
     "hors_ligne": "Hors ligne"
   },
   "texte": {
+    "hier": "Hier",
      "aucun_document_sauvegarde": "Aucun document sauvegardé",
      "vos_documents_apparaissent_ici": "Tous vos documents sauvegardés ici",
     "Écrivez_du_texte_pour_voir_les_statistiques": "Écrivez du texte pour voir les statistiques",
@@ -305,7 +306,13 @@
     "suppprimer": "Supprimer",
     "police_par_defaut": "Police par défaut",
     "police": "Police",
-    "assistant_de_redaction_ia": "Assistant de redaction IA"
+    "assistant_de_redaction_ia": "Assistant de redaction IA",
+    "police_ariel": "Arial",
+    "police_times_new_roman": "Times New Roman",
+    "police_courier_new": "Courier New",
+    "police_georgia": "Georgia",
+    "police_verdana": "Verdana",
+    "police_comic_sans_ms": "Comic Sans MS"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "Veuillez vider l'éditeur avant de récupérer ce texte.",

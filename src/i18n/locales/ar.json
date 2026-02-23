@@ -226,6 +226,7 @@
     "hors_ligne": "غير متصل"
   },
   "texte": {
+   "hier": "أمس",
     "Écrivez_du_texte_pour_voir_les_statistiques": "اكتب نصاً لرؤية الإحصاءات",
     "mots": "كلمات",
     "caracteres": "أحرف",
@@ -304,7 +305,13 @@
     "suppprimer": "حذف",
     "police_par_defaut": "الخط الافتراضي",
     "police": "الخط",
-    "assistant_de_redaction_ia": "مساعد الكتابة بالذكاء الاصطناعي"
+    "assistant_de_redaction_ia": "مساعد الكتابة بالذكاء الاصطناعي",
+    "police_ariel": "Arial",
+    "police_times_new_roman": "Times New Roman",
+    "police_courier_new": "Courier New",
+    "police_georgia": "Georgia",
+    "police_verdana": "Verdana",
+    "police_comic_sans_ms": "Comic Sans MS"
   },
   "alert": {
     "vider_editeur_avant_recuperer": "يرجى تفريغ المحرر قبل استعادة هذا النص.",

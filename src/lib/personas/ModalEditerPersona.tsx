@@ -83,12 +83,12 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
   if (!ouvert || !persona) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[100vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-sm">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -100,7 +100,7 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
           </div>
           <button
             onClick={onFermer}
-            className="group p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
+            className="group p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
             aria-label="Fermer"
           >
             <svg className="w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -111,7 +111,7 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
         </div>
 
         {/* Formulaire */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-3">
           {/* Nom */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
@@ -144,7 +144,7 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
             <textarea
               value={formulaire.description}
               onChange={(e) => setFormulaire({ ...formulaire, description: e.target.value })}
-              rows={4}
+              rows={2}
               className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl
                          bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                          focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 
@@ -222,7 +222,7 @@ export function ModalEditerPersona({ ouvert, persona, onFermer }: ModalEditerPer
               <svg className="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
               </svg>
-              {t('personas.creativite_temperature', { temperature: formulaire.temperature })}
+              {t('personas.temperature_creativite', { temperature: formulaire.temperature })}
             </label>
             <input
               type="range"
