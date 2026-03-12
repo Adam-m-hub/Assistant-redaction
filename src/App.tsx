@@ -65,8 +65,8 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-        // await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
-   //       await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
+         await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+     //     await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
        //  await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
 
           // Phi-4 Mini (Plus intelligent)
@@ -82,7 +82,7 @@ function App() {
 
           // // Qwen1.5
           // await chargerModele("Qwen2-1.5B-Instruct-q4f16_1-MLC");
-           await chargerModele("Qwen2-1.5B-Instruct-q4f32_1-MLC");
+         //  await chargerModele("Qwen2-1.5B-Instruct-q4f32_1-MLC");
           // // Llama 3.2 - 1B (TOP RECOMMANDÉ)
           // await chargerModele("Llama-3.2-1B-Instruct-q4f16_1-MLC");
           // await chargerModele("Llama-3.2-1B-Instruct-q4f32_1-MLC");
