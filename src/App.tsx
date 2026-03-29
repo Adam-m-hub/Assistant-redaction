@@ -65,10 +65,10 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-         await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+        await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
      //     await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
-       //  await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
-
+        // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+//mistral
           // Phi-4 Mini (Plus intelligent)
          // await chargerModele("Phi-4-mini-4k-instruct-q4f16_1-MLC");
         //  await chargerModele("Phi-4-mini-instruct-q4f32_1-MLC");

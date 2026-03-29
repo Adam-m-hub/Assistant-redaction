@@ -126,9 +126,9 @@ function construireSystemPrompt(params: {
   ].join('\n');
 
   // BLOC 3 : MISSION (selon l'action)
-  const blocMission = getMission(action, nbMots, cible, actionAmeliorer);
+  const blocMission = getMission(action,  actionAmeliorer);
 
-  // BLOC 4 : CONTRAINTES (optionnelles)
+ 
   // BLOC 4 : CONTRAINTES (optionnelles)
   const lignesContraintes: string[] = [];
   if (style) lignesContraintes.push(`Style : ${getStyleDescription(style)}`);
@@ -145,14 +145,11 @@ function construireSystemPrompt(params: {
     ? `CONTRAINTES :\n${lignesContraintes.map(l => `- ${l}`).join('\n')}`
     : '';
 
-  // bloc 4 : important
+  // bloc 5 : important
   const blocContraintesImportant = `IMPORTANT : Ne change pas le sens original du texte. Ne modifie pas les faits ou les idées exprimées. Conserve l'essence du message tout en appliquant la mission demandée.`;
 
-  // BLOC 5 : FORMAT DE SORTIE
-  const blocFormat = `SORTIE : Renvoie UNIQUEMENT le texte modifié. Aucun commentaire, aucune explication.
-  Ne reponds jamais a une question sur le format de sortie, réponds seulement par le texte modifié.
-  Ne menstionne jamais les contraintes ou la mission dans ta réponse.
-  Ne mets jamais des symboles  ou de guillemets autour de ta réponse.`;
+  // BLOC 6 : FORMAT DE SORTIE
+  const blocFormat = `SORTIE : Renvoie UNIQUEMENT le texte modifié. Aucun commentaire, aucune explication.`;
 
   return [blocRole, blocTexte, blocMission, blocContraintes, blocContraintesImportant, blocFormat]
     .filter(Boolean)
@@ -162,7 +159,7 @@ function construireSystemPrompt(params: {
 /**
  * Missions par action
  */
-function getMission(action: TypeAction, nbMots: number, cible?: number, actionAmeliorer?: string): string {
+function getMission(action: TypeAction,   actionAmeliorer?: string): string {
   switch (action) {
     case 'corriger':
       return [
@@ -282,9 +279,9 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
 
   // Debug console
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`📤 ACTION : ${action.toUpperCase()}`);
-  console.log(`👤 PERSONA : ${persona.nom}`);
-  console.log(`📊 SOURCE : ${nbMots} mots`);
+  console.log(` ACTION : ${action.toUpperCase()}`);
+  console.log(` PERSONA : ${persona.nom}`);
+  console.log(` SOURCE : ${nbMots} mots`);
   
   if (cibleEstimee !== undefined) {
     const delta = action === 'raccourcir'
