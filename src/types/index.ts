@@ -1,6 +1,5 @@
 // src/types/index.ts
-
-
+// Types globaux pour l'application
 
 // Types pour les paramètres de génération
 export interface GenerationParams {
