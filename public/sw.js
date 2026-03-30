@@ -1,4 +1,4 @@
-const CACHE_NAME = 'assist-redaction-v1';
+const CACHE_NAME = 'assist-ecriture-v1';
 
 // Fichiers à mettre en cache
 const urlsToCache = [
@@ -7,7 +7,7 @@ const urlsToCache = [
   '/manifest.json'
 ];
 
-// Installation : met en cache les fichiers essentiels
+// Installation
 self.addEventListener('install', (event) => {
   console.log('[SW] Installation');
   event.waitUntil(
@@ -19,7 +19,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activation : nettoie les anciens caches
+// Activation
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activation');
   event.waitUntil(
@@ -27,7 +27,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Suppression de l\'ancien cache:', cacheName);
+            console.log('[SW] Suppression ancien cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -36,16 +36,26 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Interception des requêtes : serveur depuis le cache d'abord
+// Interception des requêtes
 self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+  
+  // ✅ IGNORER les requêtes WebLLM (modèles, wasm, etc.)
+  if (url.includes('raw.githubusercontent.com') ||
+      url.includes('.wasm') ||
+      url.includes('.bin') ||
+      url.includes('mlc-ai')) {
+    // Ne pas intercepter, laisser le navigateur gérer normalement
+    return;
+  }
+  
+  // Pour les autres requêtes, utiliser le cache
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Si trouvé dans le cache, on le renvoie
         if (response) {
           return response;
         }
-        // Sinon, on va chercher sur le réseau
         return fetch(event.request);
       })
   );
