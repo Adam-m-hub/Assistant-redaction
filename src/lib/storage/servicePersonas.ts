@@ -42,9 +42,9 @@ class ServicePersonasDB {
         },
       });
 
-      console.log('✅ Base de données personas initialisée');
+      console.log(' Base de données personas initialisée');
     } catch (erreur) {
-      console.error('❌ Erreur initialisation DB personas:', erreur);
+      console.error(' Erreur initialisation DB personas:', erreur);
       throw erreur;
     }
   }
@@ -67,7 +67,7 @@ class ServicePersonasDB {
     };
 
     await this.db.put('personas', personaComplet);
-    console.log(`✅ Persona sauvegardé : ${persona.nom}`);
+    console.log(` Persona sauvegardé : ${persona.nom}`);
   }
 
   /**
@@ -81,7 +81,7 @@ class ServicePersonasDB {
     }
 
     const personas = await this.db.getAll('personas');
-    console.log(`📚 ${personas.length} personas récupérés`);
+    console.log(` ${personas.length} personas récupérés`);
     
     return personas;
   }
@@ -110,7 +110,7 @@ class ServicePersonasDB {
     }
 
     await this.db.delete('personas', id);
-    console.log(`🗑️ Persona supprimé : ${id}`);
+    console.log(` Persona supprimé : ${id}`);
   }
 
   /**
@@ -131,7 +131,7 @@ class ServicePersonasDB {
       await this.supprimer(persona.id);
     }
 
-    console.log(`🗑️ ${personnalises.length} personas personnalisés supprimés`);
+    console.log(` ${personnalises.length} personas personnalisés supprimés`);
   }
 
   /**

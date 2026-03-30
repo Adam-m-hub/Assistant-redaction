@@ -142,7 +142,7 @@ class ServiceHistoriqueDB {
         await this.supprimer(entree.id);
       }
 
-      console.log(`🗑️ ${aSupprimer.length} anciennes entrées supprimées (limite: ${MAX_ENTREES})`);
+      console.log(` ${aSupprimer.length} anciennes entrées supprimées (limite: ${MAX_ENTREES})`);
     }
   }
 }

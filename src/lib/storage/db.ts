@@ -104,12 +104,12 @@ export async function sauvegarderDocument(document: DocumentSauvegarde): Promise
       const requete = store.put(documentAJour);
 
       requete.onsuccess = () => {
-        console.log('✅ Document sauvegardé :', document.id);
+        console.log(' Document sauvegardé :', document.id);
         resolve();
       };
 
       requete.onerror = () => {
-        console.error('❌ Erreur sauvegarde :', requete.error);
+        console.error(' Erreur sauvegarde :', requete.error);
         reject(new Error('Erreur lors de la sauvegarde'));
       };
 
@@ -119,7 +119,7 @@ export async function sauvegarderDocument(document: DocumentSauvegarde): Promise
       };
     });
   } catch (erreur) {
-    console.error('❌ Erreur IndexedDB :', erreur);
+    console.error(' Erreur IndexedDB :', erreur);
     throw erreur;
   }
 }
@@ -149,19 +149,19 @@ export async function chargerDocument(id: string): Promise<DocumentSauvegarde | 
         const doc = requete.result as DocumentSauvegarde | undefined;
         
         if (doc) {
-          console.log('✅ Document chargé :', id);
+          console.log(' Document chargé :', id);
           // Convertir les dates (stockées en string) en objets Date
           doc.dateCreation = new Date(doc.dateCreation);
           doc.dateModification = new Date(doc.dateModification);
         } else {
-          console.log('ℹ️ Document non trouvé :', id);
+          console.log('ℹ Document non trouvé :', id);
         }
         
         resolve(doc || null);
       };
 
       requete.onerror = () => {
-        console.error('❌ Erreur chargement :', requete.error);
+        console.error(' Erreur chargement :', requete.error);
         reject(new Error('Erreur lors du chargement'));
       };
 
@@ -170,7 +170,7 @@ export async function chargerDocument(id: string): Promise<DocumentSauvegarde | 
       };
     });
   } catch (erreur) {
-    console.error('❌ Erreur IndexedDB :', erreur);
+    console.error(' Erreur IndexedDB :', erreur);
     return null;
   }
 }
@@ -205,12 +205,12 @@ export async function listerDocuments(): Promise<DocumentSauvegarde[]> {
           b.dateModification.getTime() - a.dateModification.getTime()
         );
 
-        console.log(`✅ ${documents.length} document(s) trouvé(s)`);
+        console.log(` ${documents.length} document(s) trouvé(s)`);
         resolve(documents);
       };
 
       requete.onerror = () => {
-        console.error('❌ Erreur listage :', requete.error);
+        console.error(' Erreur listage :', requete.error);
         reject(new Error('Erreur lors du listage'));
       };
 
@@ -219,7 +219,7 @@ export async function listerDocuments(): Promise<DocumentSauvegarde[]> {
       };
     });
   } catch (erreur) {
-    console.error('❌ Erreur IndexedDB :', erreur);
+    console.error(' Erreur IndexedDB :', erreur);
     return [];
   }
 }
@@ -242,12 +242,12 @@ export async function supprimerDocument(id: string): Promise<void> {
       const requete = store.delete(id);
 
       requete.onsuccess = () => {
-        console.log('✅ Document supprimé :', id);
+        console.log(' Document supprimé :', id);
         resolve();
       };
 
       requete.onerror = () => {
-        console.error('❌ Erreur suppression :', requete.error);
+        console.error(' Erreur suppression :', requete.error);
         reject(new Error('Erreur lors de la suppression'));
       };
 
@@ -256,7 +256,7 @@ export async function supprimerDocument(id: string): Promise<void> {
       };
     });
   } catch (erreur) {
-    console.error('❌ Erreur IndexedDB :', erreur);
+    console.error(' Erreur IndexedDB :', erreur);
     throw erreur;
   }
 }
@@ -278,12 +278,12 @@ export async function viderDB(): Promise<void> {
       const requete = store.clear();
 
       requete.onsuccess = () => {
-        console.log('✅ Base de données vidée');
+        console.log(' Base de données vidée');
         resolve();
       };
 
       requete.onerror = () => {
-        console.error('❌ Erreur vidage :', requete.error);
+        console.error(' Erreur vidage :', requete.error);
         reject(new Error('Erreur lors du vidage'));
       };
 
@@ -292,7 +292,7 @@ export async function viderDB(): Promise<void> {
       };
     });
   } catch (erreur) {
-    console.error('❌ Erreur IndexedDB :', erreur);
+    console.error(' Erreur IndexedDB :', erreur);
     throw erreur;
   }
 }

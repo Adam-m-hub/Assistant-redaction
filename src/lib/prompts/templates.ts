@@ -291,7 +291,7 @@ export function construirePrompt(params: ParametresPrompt): PromptConstruit {
       : actionAmeliorer === 'similaire'
       ? '±0'
       : `${cibleEstimee > nbMots ? '+' : ''}${cibleEstimee - nbMots}`;
-    console.log(`🎯 CIBLE : ${cibleEstimee} mots (${delta} mots)`);
+    console.log(` CIBLE : ${cibleEstimee} mots (${delta} mots)`);
   }
 
   console.log('\n[SYSTEM]');
