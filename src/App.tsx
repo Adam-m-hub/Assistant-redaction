@@ -65,16 +65,20 @@ function App() {
    * Gestionnaire pour charger le modèle
    */
   const handleChargerModele = async () => {
-        await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
+      //  await chargerModele("Phi-3-mini-4k-instruct-q4f16_1-MLC");
      //     await chargerModele("Phi-3-mini-4k-instruct-q4f32_1-MLC");
-        // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+     // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
+        await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
+          // await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
+
+
 //mistral
           // Phi-4 Mini (Plus intelligent)
          // await chargerModele("Phi-4-mini-4k-instruct-q4f16_1-MLC");
         //  await chargerModele("Phi-4-mini-instruct-q4f32_1-MLC");
          // await chargerModele("Phi-4-mini-4k-instruct-q4f32_1-MLC");
           // TinyLlama 1.1B (Très léger, bon pour l'édition simple)
-          //await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC");
+         
           // await chargerModele("TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC");
           // // Qwen2.5 - Très léger
          // await chargerModele("Qwen2.5-0.5B-Instruct-q4f16_1-MLC");
@@ -91,7 +95,6 @@ function App() {
         //  await chargerModele("Llama-3.2-3B-Instruct-q4f16_1-MLC"); // un peu bete
          // await chargerModele("Llama-3.2-3B-Instruct-q4f32_1-MLC");
           // Gemma 2 - 2B (Très bon pour l'écriture)
-        // await chargerModele("gemma-2-2b-it-q4f16_1-MLC"); // bon 
          // await chargerModele("gemma-2-2b-it-q4f32_1-MLC");
          // await chargerModele("gemma-2-9b-it-q4f16_1-MLC"); // Attention: lourd!
           // Hermes 3 - Très bon pour l'écriture

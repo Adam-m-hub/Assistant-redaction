@@ -6,6 +6,8 @@ import type { StyleEcriture, Ton, Longueur } from '../../lib/prompts/templates';
 import { SelecteurPersonas } from '../../lib/personas/SelecteurPersonas';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { ModalCreerPersona } from '@/lib/personas/ModalCreerPersona';
+import { ModalEditerPersona } from '@/lib/personas/ModalEditerPersona';
 
 /**
  * Props du composant
@@ -37,6 +39,8 @@ export default function PanneauParametres({
   const [tonTemp, setTonTemp] = useState(ton);
   const [longueurTemp, setLongueurTemp] = useState(longueur);
   const [modalCreerOuvert, setModalCreerOuvert] = useState(false);
+  const [modalEditerOuvert, setModalEditerOuvert] = useState(false);
+  const [personaPourDetails, setPersonaPourDetails] = useState<any>(null);
 
   /**
    * Options de style avec icônes
@@ -213,7 +217,7 @@ export default function PanneauParametres({
           </div>
         </div>
 
-      {/* Modal de configuration - VERSION OPTIMISÉE */}
+      {/* Modal de configuration */}
       {modalOuvert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-200 dark:border-gray-700 flex flex-col" style={{ maxHeight: '120vh' }}>
@@ -388,7 +392,7 @@ export default function PanneauParametres({
                 className="group p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200"
                 title={t("buttons.creer_nouveau_persona")}
               >
-                <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="12" y1="8" x2="12" y2="16"/>
                   <line x1="8" y1="12" x2="16" y2="12"/>
@@ -423,6 +427,17 @@ export default function PanneauParametres({
           </div>
         </div>
       )}
+          {/* Modals */}
+    <ModalCreerPersona 
+      ouvert={modalCreerOuvert}
+      onFermer={() => setModalCreerOuvert(false)}
+    />
+
+    <ModalEditerPersona 
+      ouvert={modalEditerOuvert}
+      persona={personaPourDetails}
+      onFermer={() => setModalEditerOuvert(false)}
+    />
     </div>
   );
 }
